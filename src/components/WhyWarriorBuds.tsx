@@ -25,13 +25,13 @@ export default function WhyWarriorBuds() {
 
       <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
         <Reveal>
-          <div className="relative h-80 overflow-hidden rounded-3xl border border-white/10 sm:h-[28rem] lg:h-[34rem]">
+          <div className="relative h-80 overflow-hidden rounded-3xl border border-white/10 bg-black sm:h-[28rem] lg:h-[34rem]">
             <SmartImage
-              src="/images/hero/hero-outside-night.webp"
+              src="/images/hero/why-warrior-buds.webp"
               alt="Warrior Buds dispensary storefront at night"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
+              className="object-contain"
               fallback={
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#2a1206_0%,_#150a04_55%,_#000000_100%)]">
                   <div className="absolute inset-0 bg-noise opacity-[0.05]" />

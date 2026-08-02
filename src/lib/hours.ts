@@ -18,6 +18,7 @@ export const STORE_HOURS: Record<number, DayHours> = {
 export const STORE_TIMEZONE = "America/Toronto";
 
 const CLOSING_SOON_THRESHOLD_MINUTES = 120;
+const LAST_MINUTES_THRESHOLD = 30;
 
 const WEEKDAY_NAMES = [
   "Sunday",
@@ -70,7 +71,7 @@ function getMontrealParts(date: Date) {
 }
 
 export type StoreStatus = {
-  state: "open" | "closing-soon" | "closed";
+  state: "open" | "closing-soon" | "last-30" | "closed";
   primaryLabel: string;
   secondaryLabel: string;
 };
@@ -115,15 +116,25 @@ export function getStoreStatus(date: Date = new Date()): StoreStatus {
   };
 }
 
+function formatDuration(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
 function buildOpenStatus(minutesUntilClose: number, closeTime: string): StoreStatus {
+  if (minutesUntilClose <= LAST_MINUTES_THRESHOLD) {
+    return {
+      state: "last-30",
+      primaryLabel: "LAST 30 MINUTES",
+      secondaryLabel: `Closing in ${formatDuration(minutesUntilClose)}`,
+    };
+  }
   if (minutesUntilClose <= CLOSING_SOON_THRESHOLD_MINUTES) {
-    const h = Math.floor(minutesUntilClose / 60);
-    const m = minutesUntilClose % 60;
-    const duration = h > 0 ? `${h}h ${m}m` : `${m}m`;
     return {
       state: "closing-soon",
       primaryLabel: "CLOSING SOON",
-      secondaryLabel: `Closing in ${duration}`,
+      secondaryLabel: `Closing in ${formatDuration(minutesUntilClose)}`,
     };
   }
   return {

@@ -6,16 +6,16 @@ import { SITE } from "@/lib/site";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[92svh] w-full items-center overflow-hidden bg-black sm:min-h-[100svh]">
+    <section className="relative flex min-h-[72svh] w-full items-center overflow-hidden bg-black sm:min-h-[79svh]">
       {/* Background media — image today, ready for a cinematic video later */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 lg:inset-x-[4%]">
         <SmartImage
           src="/images/hero/hero-outside-night.webp"
           alt="Warrior Buds dispensary storefront at night"
           fill
           preload
           sizes="100vw"
-          className="object-cover object-center lg:object-[75%_center]"
+          className="object-cover object-[center_15%] lg:object-[72%_8%]"
           fallback={
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_#2a1206_0%,_#150a04_45%,_#000000_100%)]">
               <div className="absolute inset-0 bg-noise opacity-[0.05]" />
@@ -36,7 +36,7 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 sm:px-10 lg:px-16">
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center lg:mx-0 lg:ml-[4%] lg:items-start lg:text-left">
-          <Logo className="mb-7" imageClassName="h-11 sm:h-14" />
+          <Logo className="mb-7" imageClassName="h-[13.75rem] sm:h-[17.5rem]" />
 
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-wb-orange sm:text-sm">
             Kanesatake · Oka · Quebec

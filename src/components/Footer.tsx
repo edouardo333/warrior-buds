@@ -2,7 +2,7 @@ import Link from "next/link";
 import Logo from "./Logo";
 import Reveal from "./Reveal";
 import { SITE } from "@/lib/site";
-import { getWeeklySchedule } from "@/lib/hours";
+import OpeningStatus from "./OpeningStatus";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -14,8 +14,6 @@ const NAV_LINKS = [
 ];
 
 export default function Footer() {
-  const schedule = getWeeklySchedule();
-
   return (
     <>
       <section className="relative overflow-hidden border-t border-white/10 bg-black px-5 py-20 sm:px-8">
@@ -103,14 +101,13 @@ export default function Footer() {
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
               Opening Hours
             </h3>
-            <ul className="mt-4 flex flex-col gap-1.5 text-sm text-foreground/70">
-              {schedule.map((entry) => (
-                <li key={entry.label} className="flex justify-between gap-4">
-                  <span>{entry.label}</span>
-                  <span>{entry.hours}</span>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-foreground/90">
+              Open Daily
+            </p>
+            <p className="mt-1 text-sm text-foreground/70">10:00 AM – 2:00 AM</p>
+            <div className="mt-3">
+              <OpeningStatus size="sm" />
+            </div>
           </div>
 
           <div>
