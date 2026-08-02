@@ -8,6 +8,9 @@
   --wb-yellow: #f8b400;
   --wb-charcoal: #0d0b0a;
   --wb-charcoal-light: #17130f;
+  --wb-guardian-green: #3ce27a;
+  --wb-guardian-blue: #2f9bf0;
+  --wb-guardian-red-dim: #5c0f16;
 }
 
 @theme inline {
@@ -90,11 +93,25 @@ body {
   0%,
   100% {
     opacity: 0.85;
+    transform: scale(1);
     filter: brightness(1) saturate(1);
   }
   50% {
     opacity: 1;
+    transform: scale(1.09);
     filter: brightness(1.4) saturate(1.15);
+  }
+}
+
+@keyframes wb-led-halo-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15);
   }
 }
 
@@ -112,44 +129,262 @@ body {
   }
 }
 
-@keyframes wb-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.wb-led-core {
+  animation: wb-led-pulse 2.8s ease-in-out infinite;
 }
 
-.wb-led-core {
-  animation: wb-led-pulse 2.6s ease-in-out infinite;
+.wb-led-halo {
+  animation: wb-led-halo-breathe 2.8s ease-in-out infinite;
+  filter: blur(2px);
 }
 
 .wb-led-wave {
-  animation: wb-led-wave 2.6s cubic-bezier(0.25, 0.6, 0.4, 1) infinite;
+  animation: wb-led-wave 2.8s cubic-bezier(0.25, 0.6, 0.4, 1) infinite;
 }
 
-.wb-clock-ring {
-  transform-origin: 12px 12px;
-  animation: wb-spin 9s linear infinite;
+.wb-clock-hand {
+  transition: transform 0.9s linear;
 }
 
-.wb-clock-hour {
-  transform-origin: 12px 12px;
-  animation: wb-spin 48s linear infinite;
+/* Bud Guardian helmet */
+@keyframes wb-guardian-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
 }
 
-.wb-clock-minute {
-  transform-origin: 12px 12px;
-  animation: wb-spin 16s linear infinite;
+.wb-guardian-breathe {
+  animation: wb-guardian-breathe 4.5s ease-in-out infinite;
+  transform-origin: 50% 58%;
+}
+
+@keyframes wb-guardian-eye-idle {
+  0%,
+  100% {
+    opacity: 0.35;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.6;
+    filter: brightness(1.15);
+  }
+}
+
+.wb-guardian-eye-idle {
+  animation: wb-guardian-eye-idle 3.4s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-eye-think {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: brightness(1.1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.7);
+  }
+}
+
+.wb-guardian-eye-think {
+  animation: wb-guardian-eye-think 0.9s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-eye-search {
+  0%,
+  100% {
+    opacity: 0.6;
+    filter: brightness(1.1);
+  }
+  50% {
+    opacity: 0.9;
+    filter: brightness(1.5);
+  }
+}
+
+.wb-guardian-eye-search {
+  animation: wb-guardian-eye-search 1.1s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-sweep {
+  0% {
+    transform: translateX(-14px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(14px);
+    opacity: 0;
+  }
+}
+
+.wb-guardian-sweep {
+  animation: wb-guardian-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-eye-respond {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1.35);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(2);
+  }
+}
+
+.wb-guardian-eye-respond {
+  animation: wb-guardian-eye-respond 1.6s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-eye-unavailable {
+  0% {
+    opacity: 0.9;
+    filter: brightness(0.7) saturate(1.3);
+  }
+  50% {
+    opacity: 0.5;
+    filter: brightness(0.35) saturate(1.5);
+  }
+  100% {
+    opacity: 0.35;
+    filter: brightness(1) saturate(1);
+  }
+}
+
+.wb-guardian-eye-unavailable {
+  animation: wb-guardian-eye-unavailable 0.9s ease-out 1;
+}
+
+@keyframes wb-guardian-eye-greeting {
+  0% {
+    opacity: 0;
+    filter: brightness(0.5);
+  }
+  60% {
+    opacity: 1;
+    filter: brightness(1.7);
+  }
+  100% {
+    opacity: 0.6;
+    filter: brightness(1.15);
+  }
+}
+
+.wb-guardian-eye-greeting {
+  animation: wb-guardian-eye-greeting 1s ease-out 1;
+}
+
+@keyframes wb-guardian-halo {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.08);
+  }
+}
+
+.wb-guardian-halo {
+  animation: wb-guardian-halo 4.5s ease-in-out infinite;
+}
+
+@keyframes wb-guardian-halo-greeting {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+}
+
+.wb-guardian-halo-greeting {
+  animation: wb-guardian-halo-greeting 1s ease-out 1;
+}
+
+@keyframes wb-guardian-nod {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-2.5deg);
+  }
+  60% {
+    transform: rotate(2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.wb-guardian-nod {
+  animation: wb-guardian-nod 0.6s ease-in-out 1;
+  transform-origin: 50% 88%;
+}
+
+@keyframes wb-guardian-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wb-guardian-message-in {
+  animation: wb-guardian-fade-in 0.28s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .wb-led-core,
   .wb-led-wave,
-  .wb-clock-ring,
-  .wb-clock-hour,
-  .wb-clock-minute {
+  .wb-led-halo {
+    animation: none !important;
+  }
+  .wb-led-wave {
+    opacity: 0 !important;
+  }
+  .wb-led-halo {
+    opacity: 0.4 !important;
+    transform: none !important;
+  }
+  .wb-clock-hand {
+    transition: none !important;
+  }
+  .wb-guardian-breathe,
+  .wb-guardian-eye-idle,
+  .wb-guardian-eye-think,
+  .wb-guardian-eye-search,
+  .wb-guardian-eye-respond,
+  .wb-guardian-eye-unavailable,
+  .wb-guardian-eye-greeting,
+  .wb-guardian-halo,
+  .wb-guardian-halo-greeting,
+  .wb-guardian-nod,
+  .wb-guardian-sweep {
+    animation: none !important;
+  }
+  .wb-guardian-message-in {
     animation: none !important;
   }
 }
