@@ -16,6 +16,7 @@ export type Dictionary = {
       learningCenter: string;
       about: string;
       gallery: string;
+      reviews: string;
       contact: string;
     };
     visitStore: string;
@@ -133,6 +134,23 @@ export type Dictionary = {
       titleHighlight: string;
       subtitle: string;
       callNow: string;
+    };
+  };
+  reviews: {
+    metaTitle: string;
+    metaDescription: string;
+    hero: {
+      eyebrow: string;
+      title: string;
+      titleHighlight: string;
+      subtitle: string;
+      badgeLabel: string;
+    };
+    cta: {
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      button: string;
     };
   };
   contact: {

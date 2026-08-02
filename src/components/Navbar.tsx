@@ -17,6 +17,7 @@ export default function Navbar() {
     { label: t.nav.links.learningCenter, href: "/learning-center" },
     { label: t.nav.links.about, href: "/about" },
     { label: t.nav.links.gallery, href: "/gallery" },
+    { label: t.nav.links.reviews, href: "/reviews" },
     { label: t.nav.links.contact, href: "/contact" },
   ];
 

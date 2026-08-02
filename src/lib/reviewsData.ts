@@ -1,0 +1,133 @@
+export type GoogleReview = {
+  id: number;
+  name: string;
+  avatarInitial: string;
+  avatarClass: string;
+  meta: string;
+  rating: number;
+  timeAgo: string;
+  text: string;
+};
+
+export const GOOGLE_REVIEWS: GoogleReview[] = [
+  {
+    id: 1,
+    name: "Darie Nikcxsan",
+    avatarInitial: "D",
+    avatarClass: "bg-neutral-500",
+    meta: "4 avis · 2 photos",
+    rating: 5,
+    timeAgo: "il y a un mois",
+    text: "First experience... Came here because my usual store was closed that day and I'm happy it happened!\nAwesome person and recommended me great stuff.\nWill be coming back",
+  },
+  {
+    id: 2,
+    name: "Potriote",
+    avatarInitial: "P",
+    avatarClass: "bg-gradient-to-br from-zinc-600 to-zinc-900",
+    meta: "Local Guide · 76 avis · 69 photos",
+    rating: 5,
+    timeAgo: "il y a 2 mois",
+    text: 'They say "Diamonds are a girls best friend" so brought mine here to find her some & Phil\'s service was as flawless as the smoke ;)',
+  },
+  {
+    id: 3,
+    name: "jacob welch",
+    avatarInitial: "J",
+    avatarClass: "bg-neutral-700",
+    meta: "2 avis",
+    rating: 5,
+    timeAgo: "il y a 2 mois",
+    text: "Amazing costumer service from phil and dominik would recommend to everyone",
+  },
+  {
+    id: 4,
+    name: "Sayan",
+    avatarInitial: "S",
+    avatarClass: "bg-neutral-900",
+    meta: "1 avis",
+    rating: 5,
+    timeAgo: "il y a 2 mois",
+    text: "Excellent clientele with main Dom, don't go to any other spot this is the main spot for the best weed in town",
+  },
+  {
+    id: 5,
+    name: "BoOGiEMayne",
+    avatarInitial: "B",
+    avatarClass: "bg-amber-800",
+    meta: "2 avis",
+    rating: 5,
+    timeAgo: "Modifié il y a 2 mois",
+    text: "The best place always welcoming and best prices , they treat you like family 🫶...",
+  },
+  {
+    id: 6,
+    name: "Rachel Douville",
+    avatarInitial: "R",
+    avatarClass: "bg-[#6f4433]",
+    meta: "8 avis · 2 photos",
+    rating: 5,
+    timeAgo: "il y a 6 mois",
+    text: "Let me just say that I was treated like a queen.  Phil & Dom are my new family.  I got my moneys worth and then some!  I really appreciate you guys, thank you for making my experience amazing. I will be back and will def be bringing people with me ❤️❤️❤️❤️❤️",
+  },
+  {
+    id: 7,
+    name: "TrackHouse",
+    avatarInitial: "T",
+    avatarClass: "bg-neutral-800",
+    meta: "2 avis",
+    rating: 5,
+    timeAgo: "il y a 9 mois",
+    text: "My first time in khanasatake and also my first time performing at the shop, the owner was very nice and welcoming, i picked up some piatella and hands down the best piatella i ever had, and i also picked up some new dope brand products, 10/10 recommend this shop, will definitely be back for sure.",
+  },
+  {
+    id: 8,
+    name: "ese 900blockbullies",
+    avatarInitial: "e",
+    avatarClass: "bg-teal-600",
+    meta: "3 avis · 2 photos",
+    rating: 5,
+    timeAgo: "il y a 9 mois",
+    text: "Let's goo definitely worth the time down every nice people Took the time to explain and show me what they got directed me to their best sellers blessed it up 10/10",
+  },
+  {
+    id: 9,
+    name: "William Deschambeault",
+    avatarInitial: "W",
+    avatarClass: "bg-teal-600",
+    meta: "3 avis",
+    rating: 5,
+    timeAgo: "il y a 9 mois",
+    text: "Le meilleur service client que j'ai eu depuis que je viens dans le coin. La place manque de rien, je conseil fortement.  Merci edouardo",
+  },
+  {
+    id: 10,
+    name: "marsh",
+    avatarInitial: "m",
+    avatarClass: "bg-amber-200 text-black",
+    meta: "2 avis",
+    rating: 5,
+    timeAgo: "il y a 9 mois",
+    text: "Never had a better experience anywhere else. This place is the shit, thank you Phil!!!! (and thanks to Cosmo the adorable doggo)",
+  },
+  {
+    id: 11,
+    name: "Jayne Aloe Vera",
+    avatarInitial: "J",
+    avatarClass: "bg-teal-700",
+    meta: "5 avis",
+    rating: 5,
+    timeAgo: "il y a 10 mois",
+    text: "The greatest service ever and the great people great vibes I absolutely loved it !!! The best out of all places honestly their family to me now, big boss philp and big boss Dominique!!!!",
+  },
+  {
+    id: 12,
+    name: "kgb wifi",
+    avatarInitial: "k",
+    avatarClass: "bg-wb-yellow text-black",
+    meta: "3 avis · 1 photo",
+    rating: 5,
+    timeAgo: "il y a 10 mois",
+    text: "Had a great experience here, Phil and Will gave me an unbeatable experience from any store around. Fast and friendly services with a smile! Will be coming back",
+  },
+];

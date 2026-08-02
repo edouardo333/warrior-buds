@@ -15,11 +15,11 @@ export default function AboutBeginning() {
         <Reveal>
           <div className="relative h-80 overflow-hidden rounded-3xl border border-white/10 bg-black sm:h-[28rem] lg:h-[34rem]">
             <SmartImage
-              src="/images/hero/why-warrior-buds.webp"
+              src="/images/hero/comment-tout-a-commencé.webp"
               alt="Inside the Warrior Buds dispensary"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-contain"
+              className="object-cover object-center"
               fallback={
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#2a1206_0%,_#150a04_55%,_#000000_100%)]">
                   <div className="absolute inset-0 bg-noise opacity-[0.05]" />

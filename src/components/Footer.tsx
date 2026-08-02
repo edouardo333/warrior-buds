@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { MapPin, Smartphone } from "lucide-react";
 import Logo from "./Logo";
 import Reveal from "./Reveal";
 import { SITE } from "@/lib/site";
 import OpeningStatus from "./OpeningStatus";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { InstagramIcon, LinktreeIcon } from "./SocialIcons";
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -51,7 +53,7 @@ export default function Footer() {
       <footer className="relative border-t border-white/10 bg-black px-5 pb-8 pt-16 sm:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <Logo imageClassName="h-[90px]" />
+            <Logo imageClassName="h-[150px]" />
             <p className="mt-4 max-w-xs text-sm text-foreground/60">{t.footer.tagline}</p>
           </div>
 
@@ -64,7 +66,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                    className="text-sm text-foreground/70 transition-colors duration-200 hover:text-wb-orange"
                   >
                     {link.label}
                   </Link>
@@ -81,9 +83,10 @@ export default function Footer() {
               href={SITE.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 block"
+              className="group mt-4 flex items-start gap-2 transition-transform duration-200 hover:scale-[1.02]"
             >
-              <address className="flex flex-col gap-1 text-sm not-italic text-foreground/70 transition-colors hover:text-foreground">
+              <MapPin className="mt-0.5 h-[18px] w-[18px] shrink-0 text-red-500 transition-[filter] duration-200 group-hover:brightness-125" />
+              <address className="flex flex-col gap-1 text-sm not-italic text-foreground/70 transition-colors duration-200 group-hover:text-foreground/90">
                 <span>{SITE.addressLine1}</span>
                 <span>{SITE.addressLine2}</span>
               </address>
@@ -92,7 +95,7 @@ export default function Footer() {
               href={SITE.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-block text-sm text-foreground/70 transition-colors hover:text-foreground"
+              className="mt-3 inline-block text-sm text-foreground/70 transition-colors duration-200 hover:text-wb-orange"
             >
               {t.footer.getDirectionsLink}
             </a>
@@ -117,7 +120,11 @@ export default function Footer() {
             </h3>
             <ul className="mt-4 flex flex-col gap-2 text-sm text-foreground/70">
               <li>
-                <a href={SITE.phoneHref} className="transition-colors hover:text-foreground">
+                <a
+                  href={SITE.phoneHref}
+                  className="group inline-flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02] hover:text-foreground/90"
+                >
+                  <Smartphone className="h-[18px] w-[18px] shrink-0 text-blue-500 transition-[filter] duration-200 group-hover:brightness-125" />
                   {SITE.phoneDisplay}
                 </a>
               </li>
@@ -126,8 +133,9 @@ export default function Footer() {
                   href={SITE.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-foreground"
+                  className="group inline-flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02] hover:text-foreground/90"
                 >
+                  <InstagramIcon className="h-[18px] w-[18px] shrink-0 transition-[filter] duration-200 group-hover:brightness-110" />
                   {t.footer.instagram}
                 </a>
               </li>
@@ -136,8 +144,9 @@ export default function Footer() {
                   href={SITE.linktreeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-foreground"
+                  className="group inline-flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02] hover:text-foreground/90"
                 >
+                  <LinktreeIcon className="h-[18px] w-[18px] shrink-0 transition-[filter] duration-200 group-hover:brightness-125" />
                   {t.footer.linktree}
                 </a>
               </li>

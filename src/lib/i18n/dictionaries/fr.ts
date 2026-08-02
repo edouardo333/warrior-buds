@@ -8,6 +8,7 @@ const fr: Dictionary = {
       learningCenter: "Centre d'apprentissage",
       about: "À propos",
       gallery: "Galerie",
+      reviews: "Avis",
       contact: "Contact",
     },
     visitStore: "Visiter la boutique",
@@ -151,6 +152,24 @@ const fr: Dictionary = {
       titleHighlight: "Warrior Buds",
       subtitle: "Passez nous voir à Oka et Kanesatake, et découvrez ce que signifie un dispensaire pensé pour sa communauté.",
       callNow: "Appeler maintenant",
+    },
+  },
+  reviews: {
+    metaTitle: "Avis | Warrior Buds",
+    metaDescription:
+      "De vrais avis de clients Warrior Buds à Oka et Kanesatake — découvrez ce que disent des centaines de clients satisfaits.",
+    hero: {
+      eyebrow: "Ce qu'on dit de nous",
+      title: "AVIS",
+      titleHighlight: "CLIENTS",
+      subtitle: "La confiance de centaines de clients à Oka et Kanesatake.",
+      badgeLabel: "Avis Google",
+    },
+    cta: {
+      titlePrefix: "Découvrez ce qu'on",
+      titleHighlight: "en dit",
+      subtitle: "Rejoignez des centaines de clients satisfaits à Oka et Kanesatake.",
+      button: "Voir tous les avis sur Google",
     },
   },
   contact: {

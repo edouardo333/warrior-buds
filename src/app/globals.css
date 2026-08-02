@@ -84,3 +84,72 @@ body {
 .animate-pulse-glow {
   animation: pulse-glow 2.4s ease-in-out infinite;
 }
+
+/* Opening-status LED badge */
+@keyframes wb-led-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.4) saturate(1.15);
+  }
+}
+
+@keyframes wb-led-wave {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes wb-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wb-led-core {
+  animation: wb-led-pulse 2.6s ease-in-out infinite;
+}
+
+.wb-led-wave {
+  animation: wb-led-wave 2.6s cubic-bezier(0.25, 0.6, 0.4, 1) infinite;
+}
+
+.wb-clock-ring {
+  transform-origin: 12px 12px;
+  animation: wb-spin 9s linear infinite;
+}
+
+.wb-clock-hour {
+  transform-origin: 12px 12px;
+  animation: wb-spin 48s linear infinite;
+}
+
+.wb-clock-minute {
+  transform-origin: 12px 12px;
+  animation: wb-spin 16s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-led-core,
+  .wb-led-wave,
+  .wb-clock-ring,
+  .wb-clock-hour,
+  .wb-clock-minute {
+    animation: none !important;
+  }
+}
