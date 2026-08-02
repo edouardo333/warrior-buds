@@ -1,31 +1,34 @@
+"use client";
+
 import Link from "next/link";
 import Logo from "./Logo";
 import Reveal from "./Reveal";
 import { SITE } from "@/lib/site";
 import OpeningStatus from "./OpeningStatus";
-
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-  { label: "Learning Center", href: "/learning-center" },
-  { label: "About", href: "/about" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Contact", href: "/contact" },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  const NAV_LINKS = [
+    { label: t.nav.links.home, href: "/" },
+    { label: t.nav.links.products, href: "/products" },
+    { label: t.nav.links.learningCenter, href: "/learning-center" },
+    { label: t.nav.links.about, href: "/about" },
+    { label: t.nav.links.gallery, href: "/gallery" },
+    { label: t.nav.links.contact, href: "/contact" },
+  ];
+
   return (
     <>
       <section className="relative overflow-hidden border-t border-white/10 bg-black px-5 py-20 sm:px-8">
         <div className="pointer-events-none absolute left-1/2 top-0 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-wb-orange/10 blur-[150px]" />
         <Reveal className="relative mx-auto max-w-3xl text-center">
           <h2 className="font-display text-4xl tracking-wide text-foreground sm:text-5xl">
-            Ready to Visit <span className="text-gradient-ember">Warrior Buds</span>?
+            {t.footer.ctaTitlePrefix}{" "}
+            <span className="text-gradient-ember">{t.footer.ctaTitleHighlight}</span>?
           </h2>
-          <p className="mt-4 text-foreground/60">
-            Get directions and discover one of Kanesatake&rsquo;s most
-            trusted dispensaries.
-          </p>
+          <p className="mt-4 text-foreground/60">{t.footer.ctaSubtitle}</p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <a
               href={SITE.mapsUrl}
@@ -33,13 +36,13 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
             >
-              Get Directions
+              {t.footer.getDirections}
             </a>
             <a
               href={SITE.phoneHref}
               className="rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
             >
-              Call Now
+              {t.footer.callNow}
             </a>
           </div>
         </Reveal>
@@ -48,15 +51,13 @@ export default function Footer() {
       <footer className="relative border-t border-white/10 bg-black px-5 pb-8 pt-16 sm:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <Logo imageClassName="h-9" />
-            <p className="mt-4 max-w-xs text-sm text-foreground/60">
-              Premium cannabis experience, rooted in Oka &amp; Kanesatake.
-            </p>
+            <Logo imageClassName="h-[90px]" />
+            <p className="mt-4 max-w-xs text-sm text-foreground/60">{t.footer.tagline}</p>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
-              Explore
+              {t.footer.exploreHeading}
             </h3>
             <ul className="mt-4 flex flex-col gap-3">
               {NAV_LINKS.map((link) => (
@@ -74,7 +75,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
-              Visit Us
+              {t.footer.visitHeading}
             </h3>
             <a
               href={SITE.mapsUrl}
@@ -93,18 +94,18 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="mt-3 inline-block text-sm text-foreground/70 transition-colors hover:text-foreground"
             >
-              Get Directions →
+              {t.footer.getDirectionsLink}
             </a>
           </div>
 
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
-              Opening Hours
+              {t.footer.hoursHeading}
             </h3>
             <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-foreground/90">
-              Open Daily
+              {t.footer.openDaily}
             </p>
-            <p className="mt-1 text-sm text-foreground/70">10:00 AM – 2:00 AM</p>
+            <p className="mt-1 text-sm text-foreground/70">{t.footer.hoursValue}</p>
             <div className="mt-3">
               <OpeningStatus size="sm" />
             </div>
@@ -112,7 +113,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
-              Contact
+              {t.footer.contactHeading}
             </h3>
             <ul className="mt-4 flex flex-col gap-2 text-sm text-foreground/70">
               <li>
@@ -127,7 +128,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-foreground"
                 >
-                  Instagram
+                  {t.footer.instagram}
                 </a>
               </li>
               <li>
@@ -137,7 +138,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-foreground"
                 >
-                  Linktree
+                  {t.footer.linktree}
                 </a>
               </li>
             </ul>
@@ -147,22 +148,18 @@ export default function Footer() {
         <div className="divider-ember mx-auto mt-14 max-w-6xl" />
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 pt-6 text-center text-xs text-foreground/40">
           <p>
-            © {new Date().getFullYear()} Warrior Buds. All Rights Reserved.
+            {t.footer.copyright(new Date().getFullYear())}
             <span className="mx-1.5 text-foreground/20">·</span>
-            Website designed &amp; developed by Brochu Digital.
+            {t.footer.credit}
           </p>
           <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
-            <span className="transition-colors hover:text-foreground/70">Privacy Policy</span>
+            <span className="transition-colors hover:text-foreground/70">{t.footer.privacyPolicy}</span>
             <span className="text-foreground/20">•</span>
-            <span className="transition-colors hover:text-foreground/70">Terms &amp; Conditions</span>
+            <span className="transition-colors hover:text-foreground/70">{t.footer.terms}</span>
             <span className="text-foreground/20">•</span>
-            <span className="transition-colors hover:text-foreground/70">Cookie Policy</span>
+            <span className="transition-colors hover:text-foreground/70">{t.footer.cookiePolicy}</span>
           </p>
-          <p className="max-w-2xl text-foreground/30">
-            For adults 18+ only. Cannabis sold in accordance with the laws and
-            regulations of Québec, Canada and the Mohawk Territory of
-            Kanesatake.
-          </p>
+          <p className="max-w-2xl text-foreground/30">{t.footer.disclaimer}</p>
         </div>
       </footer>
     </>

@@ -4,8 +4,8 @@ import PlaceholderSection from "@/components/PlaceholderSection";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Gallery | Warrior Buds",
-  description: "A look inside Warrior Buds. Coming soon.",
+  title: "Galerie | Warrior Buds",
+  description: "Un aperçu de Warrior Buds. Bientôt disponible.",
 };
 
 export default function GalleryPage() {
@@ -13,11 +13,7 @@ export default function GalleryPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <PlaceholderSection
-          eyebrow="Coming Soon"
-          title="Gallery"
-          description="A look inside the store, the products, and the community — coming soon."
-        />
+        <PlaceholderSection page="gallery" />
       </main>
       <Footer />
     </>

@@ -1,4 +1,7 @@
+"use client";
+
 import { SITE } from "@/lib/site";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function StarIcon() {
   return (
@@ -43,15 +46,17 @@ function PinIcon() {
   );
 }
 
-const TRUST_ITEMS = [
-  { icon: StarIcon, primary: `${SITE.googleRating}★`, secondary: "Google Rating" },
-  { icon: ReviewIcon, primary: SITE.googleReviewCount, secondary: "Google Reviews" },
-  { icon: CalendarIcon, primary: "Open", secondary: "7 Days" },
-  { icon: ClockIcon, primary: "24/7", secondary: "Wholesale" },
-  { icon: PinIcon, primary: "Kanesatake", secondary: "Oka" },
-];
-
 export default function TrustBar() {
+  const { t } = useLanguage();
+
+  const TRUST_ITEMS = [
+    { icon: StarIcon, primary: `${SITE.googleRating}★`, secondary: t.trustBar.googleRating },
+    { icon: ReviewIcon, primary: SITE.googleReviewCount, secondary: t.trustBar.googleReviews },
+    { icon: CalendarIcon, primary: t.trustBar.openPrimary, secondary: t.trustBar.openSecondary },
+    { icon: ClockIcon, primary: t.trustBar.wholesalePrimary, secondary: t.trustBar.wholesaleSecondary },
+    { icon: PinIcon, primary: "Kanesatake", secondary: "Oka" },
+  ];
+
   return (
     <div className="relative z-20 mx-auto -mt-8 max-w-6xl px-5 sm:-mt-12 sm:px-8">
       <div className="grid grid-cols-2 divide-y divide-white/10 rounded-2xl border border-white/10 bg-wb-charcoal/90 shadow-2xl shadow-black/50 backdrop-blur-md sm:grid-cols-5 sm:divide-y-0 sm:divide-x">

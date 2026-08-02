@@ -1,14 +1,15 @@
+"use client";
+
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+
 type PlaceholderSectionProps = {
-  eyebrow: string;
-  title: string;
-  description: string;
+  page: "gallery" | "products" | "learningCenter";
 };
 
-export default function PlaceholderSection({
-  eyebrow,
-  title,
-  description,
-}: PlaceholderSectionProps) {
+export default function PlaceholderSection({ page }: PlaceholderSectionProps) {
+  const { t } = useLanguage();
+  const content = t.placeholders[page];
+
   return (
     <section className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden bg-black px-6">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1a0f08_0%,_#050403_55%,_#000000_100%)]" />
@@ -17,13 +18,13 @@ export default function PlaceholderSection({
 
       <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center pt-20 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-wb-orange">
-          {eyebrow}
+          {t.placeholders.comingSoon}
         </p>
         <h1 className="mt-3 font-display text-5xl tracking-wide text-foreground sm:text-6xl">
-          {title}
+          {content.title}
         </h1>
         <p className="mt-6 max-w-md text-balance text-base text-foreground/60 sm:text-lg">
-          {description}
+          {content.description}
         </p>
       </div>
     </section>

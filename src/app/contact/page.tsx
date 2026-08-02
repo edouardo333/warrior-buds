@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import PlaceholderSection from "@/components/PlaceholderSection";
 import Footer from "@/components/Footer";
+import ContactPageContent from "@/components/ContactPageContent";
 
 export const metadata: Metadata = {
   title: "Contact | Warrior Buds",
   description:
-    "Get in touch with Warrior Buds or find directions to our Oka & Kanesatake location.",
+    "Communiquez avec Warrior Buds ou obtenez l'itinéraire vers notre boutique d'Oka et Kanesatake.",
 };
 
 export default function ContactPage() {
@@ -14,11 +14,7 @@ export default function ContactPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <PlaceholderSection
-          eyebrow="Coming Soon"
-          title="Contact"
-          description="A full contact form and map will live here soon. In the meantime, find our details in the footer below."
-        />
+        <ContactPageContent />
       </main>
       <Footer />
     </>

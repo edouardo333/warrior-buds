@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Logo from "./Logo";
-
-const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-  { label: "Learning Center", href: "/learning-center" },
-  { label: "About", href: "/about" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Contact", href: "/contact" },
-];
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { t } = useLanguage();
+
+  const NAV_LINKS = [
+    { label: t.nav.links.home, href: "/" },
+    { label: t.nav.links.products, href: "/products" },
+    { label: t.nav.links.learningCenter, href: "/learning-center" },
+    { label: t.nav.links.about, href: "/about" },
+    { label: t.nav.links.gallery, href: "/gallery" },
+    { label: t.nav.links.contact, href: "/contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -57,18 +60,19 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-6 lg:flex">
+          <LanguageSwitcher />
           <Link
             href="/contact"
             className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-5 py-2 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
           >
-            Visit Store
+            {t.nav.visitStore}
           </Link>
         </div>
 
         <button
           type="button"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-label={isOpen ? t.nav.closeMenu : t.nav.openMenu}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((v) => !v)}
           className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
@@ -110,13 +114,16 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
+          <li className="pt-2">
+            <LanguageSwitcher className="text-base" />
+          </li>
           <li className="pt-4">
             <Link
               href="/contact"
               onClick={() => setIsOpen(false)}
               className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3 text-sm font-semibold uppercase tracking-wide text-black"
             >
-              Visit Store
+              {t.nav.visitStore}
             </Link>
           </li>
         </ul>

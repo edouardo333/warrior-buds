@@ -1,6 +1,8 @@
 // Centralized store hours. Replace these values once the owner confirms
 // official hours — everything else (badge, footer, etc.) reads from here.
 
+import type { Locale } from "./i18n/types";
+
 export type DayHours = { open: string; close: string } | null;
 
 // 0 = Sunday ... 6 = Saturday. "close" earlier than "open" means the store
@@ -20,23 +22,59 @@ export const STORE_TIMEZONE = "America/Toronto";
 const CLOSING_SOON_THRESHOLD_MINUTES = 120;
 const LAST_MINUTES_THRESHOLD = 30;
 
-const WEEKDAY_NAMES = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+type StatusLabels = {
+  openNow: string;
+  closingSoon: string;
+  last30Minutes: string;
+  closed: string;
+  openUntil: (time: string) => string;
+  closingIn: (duration: string) => string;
+  opensAt: (dayLabel: string, time: string) => string;
+  hoursComingSoon: string;
+  today: string;
+  tomorrow: string;
+  weekdayNames: string[];
+};
+
+const LABELS: Record<Locale, StatusLabels> = {
+  en: {
+    openNow: "OPEN NOW",
+    closingSoon: "CLOSING SOON",
+    last30Minutes: "LAST 30 MINUTES",
+    closed: "CLOSED",
+    openUntil: (time) => `Open until ${time}`,
+    closingIn: (duration) => `Closing in ${duration}`,
+    opensAt: (dayLabel, time) => `Opens ${dayLabel} at ${time}`,
+    hoursComingSoon: "Hours coming soon",
+    today: "today",
+    tomorrow: "tomorrow",
+    weekdayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  },
+  fr: {
+    openNow: "OUVERT MAINTENANT",
+    closingSoon: "FERMETURE BIENTÔT",
+    last30Minutes: "DERNIÈRES 30 MINUTES",
+    closed: "FERMÉ",
+    openUntil: (time) => `Ouvert jusqu'à ${time}`,
+    closingIn: (duration) => `Ferme dans ${duration}`,
+    opensAt: (dayLabel, time) => `Ouvre ${dayLabel} à ${time}`,
+    hoursComingSoon: "Horaire à venir",
+    today: "aujourd'hui",
+    tomorrow: "demain",
+    weekdayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+  },
+};
 
 function toMinutes(time: string): number {
   const [h, m] = time.split(":").map(Number);
   return h * 60 + m;
 }
 
-function formatTime12h(time: string): string {
+function formatTime(time: string, locale: Locale): string {
   const [h, m] = time.split(":").map(Number);
+  if (locale === "fr") {
+    return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, "0")}`;
+  }
   const period = h >= 12 ? "PM" : "AM";
   const hour12 = h % 12 === 0 ? 12 : h % 12;
   return m === 0 ? `${hour12}:00 ${period}` : `${hour12}:${String(m).padStart(2, "0")} ${period}`;
@@ -76,7 +114,8 @@ export type StoreStatus = {
   secondaryLabel: string;
 };
 
-export function getStoreStatus(date: Date = new Date()): StoreStatus {
+export function getStoreStatus(date: Date = new Date(), locale: Locale = "fr"): StoreStatus {
+  const labels = LABELS[locale];
   const { weekday, minutesSinceMidnight } = getMontrealParts(date);
   // Continuous timeline: yesterday = [0, 1440), today = [1440, 2880).
   const nowAbs = 1440 + minutesSinceMidnight;
@@ -90,7 +129,7 @@ export function getStoreStatus(date: Date = new Date()): StoreStatus {
     if (rollsOver) {
       const closeAbs = 1440 + rawClose;
       if (nowAbs < closeAbs) {
-        return buildOpenStatus(closeAbs - nowAbs, yesterdayHours.close);
+        return buildOpenStatus(closeAbs - nowAbs, yesterdayHours.close, labels, locale);
       }
     }
   }
@@ -102,17 +141,17 @@ export function getStoreStatus(date: Date = new Date()): StoreStatus {
     const rollsOver = rawClose <= toMinutes(todayHours.open);
     const closeAbs = rollsOver ? 1440 + 1440 + rawClose : 1440 + rawClose;
     if (nowAbs >= openAbs && nowAbs < closeAbs) {
-      return buildOpenStatus(closeAbs - nowAbs, todayHours.close);
+      return buildOpenStatus(closeAbs - nowAbs, todayHours.close, labels, locale);
     }
   }
 
-  const next = findNextOpen(weekday, nowAbs);
+  const next = findNextOpen(weekday, nowAbs, labels);
   return {
     state: "closed",
-    primaryLabel: "CLOSED",
+    primaryLabel: labels.closed,
     secondaryLabel: next
-      ? `Opens ${next.dayLabel} at ${formatTime12h(next.openTime)}`
-      : "Hours coming soon",
+      ? labels.opensAt(next.dayLabel, formatTime(next.openTime, locale))
+      : labels.hoursComingSoon,
   };
 }
 
@@ -122,36 +161,42 @@ function formatDuration(minutes: number): string {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function buildOpenStatus(minutesUntilClose: number, closeTime: string): StoreStatus {
+function buildOpenStatus(
+  minutesUntilClose: number,
+  closeTime: string,
+  labels: StatusLabels,
+  locale: Locale
+): StoreStatus {
   if (minutesUntilClose <= LAST_MINUTES_THRESHOLD) {
     return {
       state: "last-30",
-      primaryLabel: "LAST 30 MINUTES",
-      secondaryLabel: `Closing in ${formatDuration(minutesUntilClose)}`,
+      primaryLabel: labels.last30Minutes,
+      secondaryLabel: labels.closingIn(formatDuration(minutesUntilClose)),
     };
   }
   if (minutesUntilClose <= CLOSING_SOON_THRESHOLD_MINUTES) {
     return {
       state: "closing-soon",
-      primaryLabel: "CLOSING SOON",
-      secondaryLabel: `Closing in ${formatDuration(minutesUntilClose)}`,
+      primaryLabel: labels.closingSoon,
+      secondaryLabel: labels.closingIn(formatDuration(minutesUntilClose)),
     };
   }
   return {
     state: "open",
-    primaryLabel: "OPEN NOW",
-    secondaryLabel: `Open until ${formatTime12h(closeTime)}`,
+    primaryLabel: labels.openNow,
+    secondaryLabel: labels.openUntil(formatTime(closeTime, locale)),
   };
 }
 
-function findNextOpen(weekday: number, nowAbs: number) {
+function findNextOpen(weekday: number, nowAbs: number, labels: StatusLabels) {
   for (let offset = 0; offset <= 7; offset++) {
     const day = (weekday + offset) % 7;
     const hours = STORE_HOURS[day];
     if (!hours) continue;
     const openAbs = 1440 + offset * 1440 + toMinutes(hours.open);
     if (openAbs <= nowAbs) continue;
-    const dayLabel = offset === 0 ? "today" : offset === 1 ? "tomorrow" : WEEKDAY_NAMES[day];
+    const dayLabel =
+      offset === 0 ? labels.today : offset === 1 ? labels.tomorrow : labels.weekdayNames[day];
     return { dayLabel, openTime: hours.open };
   }
   return null;
@@ -159,7 +204,8 @@ function findNextOpen(weekday: number, nowAbs: number) {
 
 export type WeeklyScheduleEntry = { label: string; hours: string };
 
-export function getWeeklySchedule(): WeeklyScheduleEntry[] {
+export function getWeeklySchedule(locale: Locale = "fr"): WeeklyScheduleEntry[] {
+  const labels = LABELS[locale];
   const entries: WeeklyScheduleEntry[] = [];
   let i = 0;
   while (i < 7) {
@@ -172,8 +218,13 @@ export function getWeeklySchedule(): WeeklyScheduleEntry[] {
       if (nextKey !== key) break;
       j++;
     }
-    const label = i === j ? WEEKDAY_NAMES[i].slice(0, 3) : `${WEEKDAY_NAMES[i].slice(0, 3)} – ${WEEKDAY_NAMES[j].slice(0, 3)}`;
-    const value = hours ? `${formatTime12h(hours.open)} – ${formatTime12h(hours.close)}` : "Closed";
+    const label =
+      i === j
+        ? labels.weekdayNames[i].slice(0, 3)
+        : `${labels.weekdayNames[i].slice(0, 3)} – ${labels.weekdayNames[j].slice(0, 3)}`;
+    const value = hours
+      ? `${formatTime(hours.open, locale)} – ${formatTime(hours.close, locale)}`
+      : labels.closed;
     entries.push({ label, hours: value });
     i = j + 1;
   }

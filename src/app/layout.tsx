@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,9 +20,9 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: "Warrior Buds | Premium Cannabis Dispensary in Oka/Kanesatake",
+  title: "Warrior Buds | Dispensaire de cannabis haut de gamme à Oka/Kanesatake",
   description:
-    "Warrior Buds is a premium cannabis dispensary in Oka/Kanesatake offering flower, edibles, vapes, concentrates, CBD, and accessories with expert, friendly service.",
+    "Warrior Buds est un dispensaire de cannabis haut de gamme à Oka/Kanesatake offrant fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires, avec un service expert et chaleureux.",
 };
 
 export default function RootLayout({
@@ -31,11 +32,12 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="fr"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

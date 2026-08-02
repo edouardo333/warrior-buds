@@ -4,9 +4,9 @@ import PlaceholderSection from "@/components/PlaceholderSection";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Learning Center | Warrior Buds",
+  title: "Centre d'apprentissage | Warrior Buds",
   description:
-    "Guides and resources on cannabis products, effects, and responsible use. Coming soon.",
+    "Guides et ressources sur les produits de cannabis, leurs effets et la consommation responsable. Bientôt disponible.",
 };
 
 export default function LearningCenterPage() {
@@ -14,11 +14,7 @@ export default function LearningCenterPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <PlaceholderSection
-          eyebrow="Coming Soon"
-          title="Learning Center"
-          description="Guides on strains, effects, dosing, and responsible use — built to help you choose with confidence."
-        />
+        <PlaceholderSection page="learningCenter" />
       </main>
       <Footer />
     </>

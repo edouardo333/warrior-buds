@@ -1,5 +1,8 @@
+"use client";
+
 import CategoryCard from "./CategoryCard";
 import Reveal from "./Reveal";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function LeafIcon() {
   return (
@@ -52,64 +55,45 @@ function GearIcon() {
   );
 }
 
-const CATEGORIES = [
-  {
-    name: "Flower",
-    description: "Hand-selected premium strains.",
-    fallbackGradient: "from-wb-red/60 via-black to-wb-charcoal",
-    icon: <LeafIcon />,
-  },
-  {
-    name: "Edibles",
-    description: "Crafted, precise, and potent.",
-    fallbackGradient: "from-wb-orange/60 via-black to-wb-charcoal",
-    icon: <GummyIcon />,
-  },
-  {
-    name: "Vapes",
-    description: "Clean hardware, pure extracts.",
-    fallbackGradient: "from-wb-yellow/50 via-black to-wb-charcoal",
-    icon: <VapeIcon />,
-  },
-  {
-    name: "Concentrates",
-    description: "Full-spectrum, high-potency.",
-    fallbackGradient: "from-wb-red/50 via-wb-orange/25 to-black",
-    icon: <DropletIcon />,
-  },
-  {
-    name: "CBD",
-    description: "Balanced wellness, no compromise.",
-    fallbackGradient: "from-foreground/10 via-wb-charcoal to-black",
-    icon: <BalanceIcon />,
-  },
-  {
-    name: "Accessories",
-    description: "Gear built for the ritual.",
-    fallbackGradient: "from-wb-charcoal-light via-black to-wb-charcoal",
-    icon: <GearIcon />,
-  },
-];
+const CATEGORY_META = [
+  { key: "flower", fallbackGradient: "from-wb-red/60 via-black to-wb-charcoal", icon: <LeafIcon /> },
+  { key: "edibles", fallbackGradient: "from-wb-orange/60 via-black to-wb-charcoal", icon: <GummyIcon /> },
+  { key: "vapes", fallbackGradient: "from-wb-yellow/50 via-black to-wb-charcoal", icon: <VapeIcon /> },
+  { key: "concentrates", fallbackGradient: "from-wb-red/50 via-wb-orange/25 to-black", icon: <DropletIcon /> },
+  { key: "cbd", fallbackGradient: "from-foreground/10 via-wb-charcoal to-black", icon: <BalanceIcon /> },
+  { key: "accessories", fallbackGradient: "from-wb-charcoal-light via-black to-wb-charcoal", icon: <GearIcon /> },
+] as const;
 
 export default function Categories() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative bg-background px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-6xl">
         <Reveal className="mb-14 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-wb-orange">
-            The Collection
+            {t.categories.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl">
-            Explore Our Categories
+            {t.categories.title}
           </h2>
         </Reveal>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIES.map((category, index) => (
-            <Reveal key={category.name} delay={index * 80}>
-              <CategoryCard {...category} />
-            </Reveal>
-          ))}
+          {CATEGORY_META.map((category, index) => {
+            const content = t.categories.items[category.key];
+            return (
+              <Reveal key={category.key} delay={index * 80}>
+                <CategoryCard
+                  name={content.name}
+                  description={content.description}
+                  exploreLabel={t.categories.explore}
+                  fallbackGradient={category.fallbackGradient}
+                  icon={category.icon}
+                />
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>

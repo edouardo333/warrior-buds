@@ -1,23 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import SmartImage from "./SmartImage";
 import Reveal from "./Reveal";
-
-const REASONS = [
-  {
-    title: "Premium Selection",
-    description: "Every product is curated for quality, potency, and consistency.",
-  },
-  {
-    title: "Friendly Expert Service",
-    description: "Our team knows the products and takes the time to guide you right.",
-  },
-  {
-    title: "Community-Owned Experience",
-    description: "Proudly rooted in Oka & Kanesatake, built by and for our community.",
-  },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function WhyWarriorBuds() {
+  const { t } = useLanguage();
+
+  const REASONS = [
+    t.whyWarriorBuds.reasons.selection,
+    t.whyWarriorBuds.reasons.service,
+    t.whyWarriorBuds.reasons.community,
+  ];
+
   return (
     <section className="relative overflow-hidden bg-wb-charcoal px-5 py-24 sm:px-8 lg:py-32">
       <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-wb-red/10 blur-[140px]" />
@@ -45,15 +41,12 @@ export default function WhyWarriorBuds() {
         <Reveal delay={150}>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-wb-orange">
-              The Difference
+              {t.whyWarriorBuds.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl">
-              Why Warrior Buds
+              {t.whyWarriorBuds.title}
             </h2>
-            <p className="mt-5 max-w-md text-foreground/60">
-              A dispensary built on trust — curated products, a team that
-              actually knows them, and a business rooted in this community.
-            </p>
+            <p className="mt-5 max-w-md text-foreground/60">{t.whyWarriorBuds.lead}</p>
 
             <div className="mt-10 flex flex-col divide-y divide-white/10 border-t border-white/10">
               {REASONS.map((reason, index) => (
@@ -77,7 +70,7 @@ export default function WhyWarriorBuds() {
               href="/about"
               className="mt-10 inline-flex items-center gap-2 rounded-full border border-white/25 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
             >
-              Our Story
+              {t.whyWarriorBuds.cta}
             </Link>
           </div>
         </Reveal>

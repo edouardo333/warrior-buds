@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 type CategoryCardProps = {
   name: string;
   description: string;
+  exploreLabel: string;
   fallbackGradient: string;
   icon: ReactNode;
 };
@@ -11,6 +12,7 @@ type CategoryCardProps = {
 export default function CategoryCard({
   name,
   description,
+  exploreLabel,
   fallbackGradient,
   icon,
 }: CategoryCardProps) {
@@ -34,7 +36,7 @@ export default function CategoryCard({
         </h3>
         <p className="mt-1.5 max-w-[85%] text-sm text-foreground/70">{description}</p>
         <span className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-wb-orange transition-transform duration-300 ease-out group-hover:translate-x-1.5">
-          Explore
+          {exploreLabel}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
             <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

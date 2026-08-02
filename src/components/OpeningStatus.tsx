@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getStoreStatus, type StoreStatus } from "@/lib/hours";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const DOT_COLOR: Record<StoreStatus["state"], string> = {
   open: "bg-green-500",
@@ -19,13 +20,14 @@ const CONTAINER_STYLE: Record<StoreStatus["state"], string> = {
 
 export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" }) {
   const [status, setStatus] = useState<StoreStatus | null>(null);
+  const { locale } = useLanguage();
 
   useEffect(() => {
-    const update = () => setStatus(getStoreStatus());
+    const update = () => setStatus(getStoreStatus(new Date(), locale));
     update();
     const id = setInterval(update, 30_000);
     return () => clearInterval(id);
-  }, []);
+  }, [locale]);
 
   const state = status?.state ?? "open";
   const dotColor = DOT_COLOR[state];

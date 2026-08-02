@@ -1,21 +1,26 @@
+"use client";
+
 import Link from "next/link";
 import SmartImage from "./SmartImage";
 import Logo from "./Logo";
 import OpeningStatus from "./OpeningStatus";
 import { SITE } from "@/lib/site";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
-    <section className="relative flex min-h-[72svh] w-full items-center overflow-hidden bg-black sm:min-h-[79svh]">
+    <section className="relative flex min-h-[72svh] w-full items-center overflow-hidden bg-black sm:min-h-[79svh] lg:min-h-[96svh]">
       {/* Background media — image today, ready for a cinematic video later */}
-      <div className="absolute inset-0 lg:inset-x-[4%]">
+      <div className="absolute inset-0 lg:inset-x-[15%]">
         <SmartImage
           src="/images/hero/hero-outside-night.webp"
           alt="Warrior Buds dispensary storefront at night"
           fill
           preload
           sizes="100vw"
-          className="object-cover object-[center_15%] lg:object-[72%_8%]"
+          className="object-cover object-[center_15%] lg:object-center"
           fallback={
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_#2a1206_0%,_#150a04_45%,_#000000_100%)]">
               <div className="absolute inset-0 bg-noise opacity-[0.05]" />
@@ -39,7 +44,7 @@ export default function Hero() {
           <Logo className="mb-7" imageClassName="h-[13.75rem] sm:h-[17.5rem]" />
 
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-wb-orange sm:text-sm">
-            Kanesatake · Oka · Quebec
+            {t.hero.kicker}
           </p>
 
           <h1 className="mt-4 font-display text-6xl leading-[0.92] tracking-wide text-foreground sm:text-8xl lg:text-[7rem]">
@@ -47,7 +52,7 @@ export default function Hero() {
           </h1>
 
           <p className="mt-3 text-base font-semibold uppercase tracking-[0.25em] text-foreground/80 sm:text-lg">
-            Premium Cannabis Dispensary
+            {t.hero.tagline}
           </p>
 
           <div className="mt-6">
@@ -55,8 +60,7 @@ export default function Hero() {
           </div>
 
           <p className="mt-6 max-w-lg text-balance text-base text-foreground/70 sm:text-lg">
-            Premium products, unbeatable selection and a community-first
-            experience — open late in the heart of Kanesatake.
+            {t.hero.lead}
           </p>
 
           <div className="mt-9 flex flex-col gap-4 sm:flex-row">
@@ -64,7 +68,7 @@ export default function Hero() {
               href="/products"
               className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
             >
-              Explore Products
+              {t.hero.ctaPrimary}
             </Link>
             <a
               href={SITE.mapsUrl}
@@ -72,12 +76,12 @@ export default function Hero() {
               rel="noopener noreferrer"
               className="rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-foreground backdrop-blur-sm transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
             >
-              Get Directions
+              {t.hero.ctaSecondary}
             </a>
           </div>
 
           <p className="mt-7 text-xs uppercase tracking-widest text-foreground/45">
-            18+ · In-store shopping · Wholesale available
+            {t.hero.finePrint}
           </p>
         </div>
       </div>
