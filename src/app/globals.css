@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050403;
+  --foreground: #f5f1ea;
+  --wb-red: #e0202e;
+  --wb-orange: #f4670f;
+  --wb-yellow: #f8b400;
+  --wb-charcoal: #0d0b0a;
+  --wb-charcoal-light: #17130f;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-wb-red: var(--wb-red);
+  --color-wb-orange: var(--wb-orange);
+  --color-wb-yellow: var(--wb-yellow);
+  --color-wb-charcoal: var(--wb-charcoal);
+  --color-wb-charcoal-light: var(--wb-charcoal-light);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-bebas);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--wb-orange);
+  color: #0d0b0a;
+}
+
+.text-gradient-ember {
+  background: linear-gradient(
+    90deg,
+    var(--wb-red) 0%,
+    var(--wb-orange) 50%,
+    var(--wb-yellow) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-grain {
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      rgba(244, 103, 15, 0.08),
+      transparent 40%
+    ),
+    radial-gradient(circle at 80% 0%, rgba(224, 32, 46, 0.1), transparent 45%);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+.divider-ember {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(244, 103, 15, 0.5),
+    transparent
+  );
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.4s ease-in-out infinite;
 }
