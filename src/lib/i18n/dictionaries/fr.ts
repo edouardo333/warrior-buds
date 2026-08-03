@@ -71,6 +71,14 @@ const fr: Dictionary = {
     },
     cta: "Notre histoire",
   },
+  homeFinalCta: {
+    label: "Visitez le commerce",
+    titlePrefix: "Prêt à visiter",
+    titleHighlight: "Warrior Buds",
+    subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+    getDirections: "Obtenir l'itinéraire",
+    callNow: "Appeler maintenant",
+  },
   footer: {
     tagline: "Une expérience cannabis haut de gamme, enracinée à Oka et Kanesatake.",
     exploreHeading: "Explorer",
@@ -117,6 +125,7 @@ const fr: Dictionary = {
       title: "NOTRE",
       titleHighlight: "HISTOIRE",
       subtitle: "Enracinés à Kanesatake. Bâtis pour la communauté.",
+      locationBadge: "Kanesatake • Oka • Québec",
     },
     beginning: {
       eyebrow: "Nos débuts",
@@ -154,11 +163,35 @@ const fr: Dictionary = {
       paragraph:
         "Warrior Buds est un lieu bâti sur la confiance. Nous prenons le temps de connaître nos habitués, d'accueillir les nouveaux venus à bras ouverts, et de considérer cette communauté comme la raison même de notre présence — pas seulement comme un marché à desservir. Chaque visite est une occasion de renforcer un peu plus ce lien.",
     },
+    experience: {
+      eyebrow: "Ce qui nous distingue",
+      title: "L'expérience Warrior Buds",
+      items: {
+        curated: {
+          title: "Produits soigneusement sélectionnés",
+          description: "Chaque article sur nos tablettes est choisi pour sa qualité, sa puissance et sa constance.",
+        },
+        team: {
+          title: "Une équipe experte et chaleureuse",
+          description: "Un personnel averti qui prend le temps de vous guider vers le bon choix.",
+        },
+        customers: {
+          title: "600+ clients satisfaits",
+          description: "La confiance de centaines d'habitués à Oka et Kanesatake.",
+        },
+        community: {
+          title: "Animés par la communauté",
+          description: "Bâtis par et pour la communauté que nous sommes fiers d'appeler chez nous.",
+        },
+      },
+    },
     cta: {
-      titlePrefix: "Venez découvrir",
+      eyebrow: "Visitez Warrior Buds",
+      titlePrefix: "Prêt à visiter",
       titleHighlight: "Warrior Buds",
-      subtitle: "Passez nous voir à Oka et Kanesatake, et découvrez ce que signifie un dispensaire pensé pour sa communauté.",
-      callNow: "Appeler maintenant",
+      subtitle: "Passez nous voir à Oka et Kanesatake et découvrez ce qu'est un dispensaire axé sur la communauté.",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler",
     },
   },
   reviews: {
@@ -177,6 +210,19 @@ const fr: Dictionary = {
       titleHighlight: "en dit",
       subtitle: "Rejoignez des centaines de clients satisfaits à Oka et Kanesatake.",
       button: "Voir tous les avis sur Google",
+      reviewsLabel: "avis",
+      verifiedLabel: "Vérifié par Google",
+    },
+    storeCta: {
+      label: "Visitez la boutique",
+      titlePrefix: "Prêt à visiter",
+      titleHighlight: "Warrior Buds",
+      subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+      infoLocation: "Oka et Kanesatake",
+      infoHours: "Ouvert 7 jours",
+      infoPickup: "Cueillette en boutique",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler maintenant",
     },
   },
   contact: {
@@ -186,6 +232,7 @@ const fr: Dictionary = {
       eyebrow: "Contact et itinéraire",
       title: "Visitez Warrior Buds",
       subtitle: "Ouvert tous les jours à Kanesatake, tout près de Montréal.",
+      locationBadge: "Kanesatake • Oka • Québec",
     },
     details: {
       eyebrow: "Restons en contact",
@@ -206,20 +253,37 @@ const fr: Dictionary = {
     form: {
       eyebrow: "Des questions?",
       title: "Envoyez-nous un message",
+      subtitle: "Une question sur nos produits ou nos heures? Écrivez-nous et nous vous répondrons rapidement.",
       firstName: "Prénom",
       lastName: "Nom de famille",
       email: "Courriel",
       phone: "Téléphone",
+      subject: "Sujet",
+      subjectPlaceholder: "Choisir un sujet (optionnel)",
+      subjectOptions: ["Question générale", "Produits", "Commandes et ramassage", "Commentaires", "Autre"],
       message: "Message",
+      charactersLabel: "caractères",
       submit: "Envoyer le message",
+      sending: "Envoi en cours…",
       successTitle: "Message envoyé",
       successMessage: "Merci de nous avoir contactés — nous vous répondrons dans les plus brefs délais.",
       sendAnother: "Envoyer un autre message",
+      errorTitle: "Une erreur est survenue",
+      errorMessage: "Nous n'avons pas pu envoyer votre message. Veuillez réessayer.",
+      tryAgain: "Réessayer",
     },
     infoStrip: {
       openDaily: { title: "Ouvert tous les jours", subtitle: "10 h à 2 h" },
       location: { title: "Kanesatake / Oka", subtitle: "Dispensaire local" },
       ageRestriction: { title: "18 ans et plus", subtitle: "Achat en boutique" },
+    },
+    finalCta: {
+      label: "Visitez la boutique",
+      titlePrefix: "Prêt à visiter",
+      titleHighlight: "Warrior Buds",
+      subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler maintenant",
     },
   },
   placeholders: {
@@ -231,6 +295,30 @@ const fr: Dictionary = {
     products: {
       title: "Produits",
       description: "Notre catalogue complet de fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires s'en vient.",
+    },
+  },
+  gallery: {
+    metaTitle: "Galerie | Warrior Buds",
+    metaDescription:
+      "Un aperçu de la boutique Warrior Buds, des produits et de la communauté à Oka et Kanesatake.",
+    hero: {
+      label: "À l'intérieur de Warrior Buds",
+      title: "Galerie",
+      subtitle: "Un aperçu de la boutique, des produits et de la communauté.",
+    },
+    video: {
+      playLabel: "Lire la vidéo",
+      pauseLabel: "Mettre en pause",
+      muteLabel: "Couper le son",
+      unmuteLabel: "Activer le son",
+    },
+    finalCta: {
+      label: "Visitez la boutique",
+      titlePrefix: "Prêt à visiter",
+      titleHighlight: "Warrior Buds",
+      subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler maintenant",
     },
   },
   learningCenter: {
@@ -250,6 +338,14 @@ const fr: Dictionary = {
     disclaimerBadge: "Contenu éducatif",
     disclaimerText:
       "Ce contenu est fourni à titre éducatif seulement. Il ne constitue pas un avis médical et ne garantit aucun effet. Les produits affectent chaque personne différemment — consommez de façon responsable et informez-vous sur les lois de votre région.",
+    cta: {
+      label: "Visitez le commerce",
+      titlePrefix: "Prêt à visiter",
+      titleHighlight: "Warrior Buds",
+      subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler maintenant",
+    },
   },
   auth: {
     login: {
@@ -566,6 +662,17 @@ const fr: Dictionary = {
       noReviews: "Aucun avis pour le moment.",
       verifiedPurchase: "Achat vérifié",
       backToShop: "Retour aux produits",
+      trustSecureCheckout: "Paiement sécurisé",
+      trustInStorePickup: "Cueillette en magasin",
+      trustCustomerSupport: "Service à la clientèle",
+    },
+    finalCta: {
+      label: "Visiter la boutique",
+      titlePrefix: "Prêt à magasiner",
+      titleHighlight: "en personne",
+      subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
+      getDirections: "Obtenir l'itinéraire",
+      callNow: "Appeler maintenant",
     },
   },
 };

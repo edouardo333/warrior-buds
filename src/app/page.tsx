@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import Categories from "@/components/Categories";
 import WhyWarriorBuds from "@/components/WhyWarriorBuds";
+import HomeFinalCta from "@/components/HomeFinalCta";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -14,8 +15,9 @@ export default function Home() {
         <TrustBar />
         <Categories />
         <WhyWarriorBuds />
+        <HomeFinalCta />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

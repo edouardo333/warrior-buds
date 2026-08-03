@@ -16,7 +16,7 @@ export default function ContactPage() {
       <main className="flex-1">
         <ContactPageContent />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

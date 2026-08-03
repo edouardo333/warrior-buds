@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEMO_ACCOUNTS, findDemoAccount, getRoleLabel, startSession } from "@/lib/staff/staff-auth";
 
@@ -14,6 +15,7 @@ const TEXT = {
     error: "Code d'accès invalide. Vérifiez auprès de votre gestionnaire.",
     demoTitle: "Comptes de démonstration",
     notice: "Aucune donnée bancaire ou mot de passe client n'est traitée ici. Toutes les données sont fictives et locales.",
+    backToSite: "Retour au site",
   },
   en: {
     title: "Bud Guardian — Staff space",
@@ -24,6 +26,7 @@ const TEXT = {
     error: "Invalid access code. Check with your manager.",
     demoTitle: "Demo accounts",
     notice: "No banking data or customer passwords are handled here. All data is fictional and local.",
+    backToSite: "Back to website",
   },
 } as const;
 
@@ -45,7 +48,15 @@ export default function StaffLogin() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-background bg-grain px-4 py-12">
+    <div className="relative flex min-h-dvh items-center justify-center bg-background bg-grain px-4 py-12">
+      <a
+        href="/"
+        className="group absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs font-medium text-white/45 backdrop-blur-md transition-all duration-200 hover:border-white/20 hover:text-white/80 hover:shadow-[0_0_16px_-2px_rgba(255,255,255,0.25)] sm:left-6 sm:top-6"
+      >
+        <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
+        {t.backToSite}
+      </a>
+
       <form
         onSubmit={handleSubmit}
         className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-black/55 p-8 backdrop-blur-2xl"

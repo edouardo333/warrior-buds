@@ -9,7 +9,11 @@ import OpeningStatus from "./OpeningStatus";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { InstagramIcon, LinktreeIcon } from "./SocialIcons";
 
-export default function Footer() {
+type FooterProps = {
+  hideCta?: boolean;
+};
+
+export default function Footer({ hideCta = false }: FooterProps = {}) {
   const { t } = useLanguage();
 
   const NAV_LINKS = [
@@ -25,32 +29,34 @@ export default function Footer() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-t border-white/10 bg-black px-5 py-20 sm:px-8">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-wb-orange/10 blur-[150px]" />
-        <Reveal className="relative mx-auto max-w-3xl text-center">
-          <h2 className="font-display text-4xl tracking-wide text-foreground sm:text-5xl">
-            {t.footer.ctaTitlePrefix}{" "}
-            <span className="text-gradient-ember">{t.footer.ctaTitleHighlight}</span>?
-          </h2>
-          <p className="mt-4 text-foreground/60">{t.footer.ctaSubtitle}</p>
-          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <a
-              href={SITE.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
-            >
-              {t.footer.getDirections}
-            </a>
-            <a
-              href={SITE.phoneHref}
-              className="rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
-            >
-              {t.footer.callNow}
-            </a>
-          </div>
-        </Reveal>
-      </section>
+      {!hideCta && (
+        <section className="relative overflow-hidden border-t border-white/10 bg-black px-5 py-20 sm:px-8">
+          <div className="pointer-events-none absolute left-1/2 top-0 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-wb-orange/10 blur-[150px]" />
+          <Reveal className="relative mx-auto max-w-3xl text-center">
+            <h2 className="font-display text-4xl tracking-wide text-foreground sm:text-5xl">
+              {t.footer.ctaTitlePrefix}{" "}
+              <span className="text-gradient-ember">{t.footer.ctaTitleHighlight}</span>?
+            </h2>
+            <p className="mt-4 text-foreground/60">{t.footer.ctaSubtitle}</p>
+            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+              <a
+                href={SITE.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
+              >
+                {t.footer.getDirections}
+              </a>
+              <a
+                href={SITE.phoneHref}
+                className="rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
+              >
+                {t.footer.callNow}
+              </a>
+            </div>
+          </Reveal>
+        </section>
+      )}
 
       <footer className="relative border-t border-white/10 bg-black px-5 pb-8 pt-16 sm:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-[0.9fr_0.85fr_0.9fr_1.5fr_0.85fr]">

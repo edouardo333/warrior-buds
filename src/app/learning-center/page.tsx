@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import LearningCenterHero from "@/components/LearningCenterHero";
 import LearningCenterHub from "@/components/LearningCenterHub";
+import LearningCenterCta from "@/components/LearningCenterCta";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -17,8 +18,9 @@ export default function LearningCenterPage() {
       <main className="flex-1">
         <LearningCenterHero />
         <LearningCenterHub />
+        <LearningCenterCta />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

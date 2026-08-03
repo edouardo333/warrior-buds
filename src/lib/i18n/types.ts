@@ -70,6 +70,14 @@ export type Dictionary = {
     };
     cta: string;
   };
+  homeFinalCta: {
+    label: string;
+    titlePrefix: string;
+    titleHighlight: string;
+    subtitle: string;
+    getDirections: string;
+    callNow: string;
+  };
   footer: {
     tagline: string;
     exploreHeading: string;
@@ -114,6 +122,7 @@ export type Dictionary = {
       title: string;
       titleHighlight: string;
       subtitle: string;
+      locationBadge: string;
     };
     beginning: {
       eyebrow: string;
@@ -136,10 +145,22 @@ export type Dictionary = {
       titleHighlight: string;
       paragraph: string;
     };
+    experience: {
+      eyebrow: string;
+      title: string;
+      items: {
+        curated: { title: string; description: string };
+        team: { title: string; description: string };
+        customers: { title: string; description: string };
+        community: { title: string; description: string };
+      };
+    };
     cta: {
+      eyebrow: string;
       titlePrefix: string;
       titleHighlight: string;
       subtitle: string;
+      getDirections: string;
       callNow: string;
     };
   };
@@ -158,6 +179,19 @@ export type Dictionary = {
       titleHighlight: string;
       subtitle: string;
       button: string;
+      reviewsLabel: string;
+      verifiedLabel: string;
+    };
+    storeCta: {
+      label: string;
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      infoLocation: string;
+      infoHours: string;
+      infoPickup: string;
+      getDirections: string;
+      callNow: string;
     };
   };
   contact: {
@@ -167,6 +201,7 @@ export type Dictionary = {
       eyebrow: string;
       title: string;
       subtitle: string;
+      locationBadge: string;
     };
     details: {
       eyebrow: string;
@@ -187,26 +222,66 @@ export type Dictionary = {
     form: {
       eyebrow: string;
       title: string;
+      subtitle: string;
       firstName: string;
       lastName: string;
       email: string;
       phone: string;
+      subject: string;
+      subjectPlaceholder: string;
+      subjectOptions: string[];
       message: string;
+      charactersLabel: string;
       submit: string;
+      sending: string;
       successTitle: string;
       successMessage: string;
       sendAnother: string;
+      errorTitle: string;
+      errorMessage: string;
+      tryAgain: string;
     };
     infoStrip: {
       openDaily: { title: string; subtitle: string };
       location: { title: string; subtitle: string };
       ageRestriction: { title: string; subtitle: string };
     };
+    finalCta: {
+      label: string;
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      getDirections: string;
+      callNow: string;
+    };
   };
   placeholders: {
     comingSoon: string;
     gallery: { title: string; description: string };
     products: { title: string; description: string };
+  };
+  gallery: {
+    metaTitle: string;
+    metaDescription: string;
+    hero: {
+      label: string;
+      title: string;
+      subtitle: string;
+    };
+    video: {
+      playLabel: string;
+      pauseLabel: string;
+      muteLabel: string;
+      unmuteLabel: string;
+    };
+    finalCta: {
+      label: string;
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      getDirections: string;
+      callNow: string;
+    };
   };
   learningCenter: {
     metaTitle: string;
@@ -222,6 +297,14 @@ export type Dictionary = {
     close: string;
     disclaimerBadge: string;
     disclaimerText: string;
+    cta: {
+      label: string;
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      getDirections: string;
+      callNow: string;
+    };
   };
   auth: {
     login: {
@@ -538,6 +621,17 @@ export type Dictionary = {
       noReviews: string;
       verifiedPurchase: string;
       backToShop: string;
+      trustSecureCheckout: string;
+      trustInStorePickup: string;
+      trustCustomerSupport: string;
+    };
+    finalCta: {
+      label: string;
+      titlePrefix: string;
+      titleHighlight: string;
+      subtitle: string;
+      getDirections: string;
+      callNow: string;
     };
   };
 };

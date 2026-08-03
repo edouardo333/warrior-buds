@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, LayoutDashboard, LogOut, Menu, Package, Shield, User, Users, Warehouse, X } from "lucide-react";
+import { ArrowLeft, CreditCard, LayoutDashboard, LogOut, Menu, Package, Shield, User, Users, Warehouse, X } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getRoleLabel, endSession, type StaffSession } from "@/lib/staff/staff-auth";
 
@@ -17,6 +17,7 @@ const TEXT = {
     account: "Compte",
     logout: "Déconnexion",
     menu: "Menu",
+    backToSite: "Retour au site",
   },
   en: {
     brand: "Bud Guardian",
@@ -29,6 +30,7 @@ const TEXT = {
     account: "Account",
     logout: "Log out",
     menu: "Menu",
+    backToSite: "Back to website",
   },
 } as const;
 
@@ -96,6 +98,13 @@ export default function StaffShell({
               <p className="truncate text-xs text-white/45">{getRoleLabel(session.role, locale)}</p>
             </div>
           </div>
+          <a
+            href="/"
+            className="group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-white/50 transition-all duration-200 hover:bg-white/5 hover:text-white/85 hover:shadow-[0_0_16px_-4px_rgba(255,255,255,0.2)]"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            {t.backToSite}
+          </a>
           <button
             type="button"
             onClick={endSession}
@@ -145,6 +154,13 @@ export default function StaffShell({
                 );
               })}
             </nav>
+            <a
+              href="/"
+              className="group mt-3 flex items-center gap-2.5 rounded-xl border-t border-white/10 px-1 pt-3 text-sm font-medium text-white/50 transition-all duration-200 hover:text-white/85"
+            >
+              <ArrowLeft className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+              {t.backToSite}
+            </a>
             <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-white/50" />

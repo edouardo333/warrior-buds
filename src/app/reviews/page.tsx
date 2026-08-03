@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import ReviewsHero from "@/components/ReviewsHero";
 import ReviewsGrid from "@/components/ReviewsGrid";
 import ReviewsCta from "@/components/ReviewsCta";
+import ReviewsStoreCta from "@/components/ReviewsStoreCta";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
@@ -19,8 +20,9 @@ export default function ReviewsPage() {
         <ReviewsHero />
         <ReviewsGrid />
         <ReviewsCta />
+        <ReviewsStoreCta />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

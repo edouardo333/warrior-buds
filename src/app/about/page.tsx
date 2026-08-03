@@ -4,6 +4,7 @@ import AboutHero from "@/components/AboutHero";
 import AboutBeginning from "@/components/AboutBeginning";
 import AboutValues from "@/components/AboutValues";
 import AboutCommunity from "@/components/AboutCommunity";
+import AboutExperience from "@/components/AboutExperience";
 import AboutCta from "@/components/AboutCta";
 import Footer from "@/components/Footer";
 
@@ -22,9 +23,10 @@ export default function AboutPage() {
         <AboutBeginning />
         <AboutValues />
         <AboutCommunity />
+        <AboutExperience />
         <AboutCta />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

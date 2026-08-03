@@ -26,7 +26,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <main className="flex-1">
         <ProductDetailView slug={slug} />
       </main>
-      <Footer />
+      <Footer hideCta />
     </>
   );
 }

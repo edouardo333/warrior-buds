@@ -103,7 +103,7 @@ export default function Hero() {
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 sm:px-10 sm:pb-20 lg:px-16 lg:pb-28">
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center lg:mx-0 lg:ml-[4%] lg:items-start lg:text-left">
           <Logo
-            className="wb-hero-reveal wb-hero-logo-glow mb-6"
+            className="wb-hero-reveal mb-6"
             imageClassName="h-[11.5rem] sm:h-[14.5rem]"
           />
 

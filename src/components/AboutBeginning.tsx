@@ -15,7 +15,7 @@ export default function AboutBeginning() {
         <Reveal>
           <div className="relative h-80 overflow-hidden rounded-3xl border border-white/10 bg-black sm:h-[28rem] lg:h-[34rem]">
             <SmartImage
-              src="/images/hero/comment-tout-a-commencé.webp"
+              src="/images/hero/comment-tout-a-commencer.webp"
               alt="Inside the Warrior Buds dispensary"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"

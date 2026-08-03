@@ -7,7 +7,7 @@ type LogoProps = {
 
 export default function Logo({ className = "", imageClassName = "" }: LogoProps) {
   return (
-    <span className={`inline-flex items-center ${className}`}>
+    <span className={`wb-logo-glow inline-flex items-center ${className}`}>
       <SmartImage
         src="/images/logo/logo-transparent.webp"
         alt="Warrior Buds"

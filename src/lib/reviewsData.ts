@@ -58,7 +58,7 @@ export const GOOGLE_REVIEWS: GoogleReview[] = [
     meta: "2 avis",
     rating: 5,
     timeAgo: "Modifié il y a 2 mois",
-    text: "The best place always welcoming and best prices , they treat you like family 🫶...",
+    text: "The best place, always welcoming with the best prices. They treat you like family. ",
   },
   {
     id: 6,
