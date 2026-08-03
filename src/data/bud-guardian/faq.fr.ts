@@ -435,6 +435,89 @@ const faqFr: FaqEntry[] = [
     answer: "Bien sûr ! Le plus rapide est de nous appeler ou de nous écrire sur Instagram.",
     suggestions: ["phone", "instagram"],
   },
+
+  // --- Bud Guardian V4.1 — knowledge base additions ---------------------
+  {
+    id: "products-availability",
+    topic: "products",
+    question: "Ce produit est-il disponible ?",
+    keywords: ["disponible", "en stock", "stock", "disponibilite", "reste t il"],
+    answer:
+      "Je n'ai pas de suivi d'inventaire en temps réel. Le mieux est de nous appeler ou de nous écrire sur Instagram pour confirmer la disponibilité d'un produit précis avant votre visite.",
+    suggestions: ["phone", "instagram"],
+  },
+  {
+    id: "products-promotions",
+    topic: "products",
+    question: "Avez-vous des promotions en ce moment ?",
+    keywords: ["promotion", "promotions", "rabais", "solde", "soldes", "special", "aubaine"],
+    answer:
+      "Les promotions en cours sont annoncées sur notre Instagram — c'est la source la plus à jour, je n'invente jamais de rabais ici.",
+    suggestions: ["instagram", "linktree"],
+  },
+  {
+    id: "purchase-pickup-process",
+    topic: "purchase",
+    question: "Comment fonctionne le ramassage en boutique ?",
+    keywords: ["comment fonctionne le ramassage", "processus de ramassage", "comment ca marche le ramassage", "recuperer ma commande comment"],
+    answer:
+      "En boutique : présentez-vous avec une pièce d'identité valide (18 ans ou plus), le paiement se fait sur place par Interac ou comptant, puis vous repartez avec votre commande.",
+    suggestions: ["order-track", "directions"],
+  },
+  {
+    id: "purchase-returns",
+    topic: "purchase",
+    question: "Puis-je retourner ou échanger un produit ?",
+    keywords: ["retour", "retourner", "echange", "echanger", "remboursement", "return", "exchange"],
+    answer:
+      "Je n'ai pas les détails exacts de notre politique de retour/échange sous la main. Le plus fiable est de nous appeler ou de nous écrire sur Instagram, avec votre numéro de commande si possible.",
+    suggestions: ["phone", "instagram"],
+  },
+  {
+    id: "policy-store-general",
+    topic: "policy",
+    question: "Quelles sont vos politiques en boutique ?",
+    keywords: ["politique", "politiques", "reglement", "reglement de la boutique", "conditions"],
+    answer:
+      "Nos règles principales : 18 ans et plus avec pièce d'identité, achat en boutique uniquement, paiement par Interac ou comptant. Pour tout détail plus précis, appelez-nous directement.",
+    suggestions: ["policy-age", "phone"],
+  },
+  {
+    id: "help-beginner",
+    topic: "guidance",
+    question: "Quel produit conseillez-vous à un débutant ?",
+    keywords: ["debutant", "debutante", "premiere fois", "jamais essaye", "nouveau consommateur", "commencer doucement"],
+    answer:
+      "Pour un premier essai, on recommande généralement de commencer doucement avec un produit à faible dosage et d'y aller progressivement. Notre équipe en boutique peut vous guider vers l'option la mieux adaptée à votre tolérance.",
+    suggestions: ["help-thc-cbd", "directions"],
+  },
+  {
+    id: "help-choose-product",
+    topic: "guidance",
+    question: "Comment choisir le bon produit pour moi ?",
+    keywords: ["comment choisir", "quel produit choisir", "quoi choisir", "aide au choix", "quel produit me convient"],
+    answer:
+      "Ça dépend de l'effet recherché, de votre tolérance et de votre expérience. Notre équipe en boutique pose quelques questions rapides pour vous orienter vers le bon format (fleur, comestible, vape, etc.) et le bon dosage.",
+    suggestions: ["categories", "help-beginner"],
+  },
+  {
+    id: "help-thc-cbd-difference",
+    topic: "guidance",
+    question: "Quelle est la différence entre THC et CBD ?",
+    keywords: ["difference entre thc et cbd", "thc vs cbd", "thc cbd difference", "c est quoi le cbd", "c est quoi le thc"],
+    answer:
+      "Le THC est le composé psychoactif du cannabis — il procure l'effet « high ». Le CBD n'est pas psychoactif et est plutôt recherché pour un effet apaisant. Plusieurs produits combinent les deux à différents ratios.",
+    suggestions: ["categories", "help-choose"],
+  },
+  {
+    id: "human-callback-request",
+    topic: "smalltalk",
+    question: "Puis-je demander un rappel ?",
+    keywords: ["demander un rappel", "rappelez moi", "callback", "quelqu un peut il me rappeler"],
+    answer:
+      "Bien sûr — appelez-nous et laissez un message, ou écrivez-nous sur Instagram avec votre nom et numéro, et un membre de l'équipe vous recontactera. Bud Guardian ne peut pas encore effectuer de vrais appels téléphoniques.",
+    suggestions: ["phone", "instagram"],
+  },
 ];
 
 export default faqFr;

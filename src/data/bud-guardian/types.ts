@@ -22,7 +22,44 @@ export type QuickActionId =
   | "order-view-cart"
   | "order-payment-retry"
   | "order-confirm-yes"
-  | "order-confirm-no";
+  | "order-confirm-no"
+  // Bud Guardian V2.2 — payment-assistance quick actions (see payment-engine.ts).
+  | "payment-check-received"
+  | "payment-check-worked"
+  | "payment-remaining"
+  | "payment-interac-info"
+  | "payment-in-store"
+  | "payment-order-confirmed"
+  | "payment-expired"
+  | "payment-simulate-interac"
+  | "payment-confirm-demo"
+  | "payment-decline-demo"
+  // Bud Guardian V4.1 — quick-action category bar (see QuickActions.tsx).
+  | "cat-store"
+  | "cat-products"
+  | "cat-product-help"
+  | "cat-orders"
+  | "cat-payments"
+  | "cat-policies"
+  | "cat-contact"
+  | "cat-human-help"
+  // V4.1 — new leaf actions surfaced as category suggestions.
+  | "store-open-now"
+  | "store-parking"
+  | "product-prerolls"
+  | "product-new-arrivals"
+  | "product-availability"
+  | "product-potency"
+  | "order-pickup-process"
+  | "help-beginner"
+  | "help-choose"
+  | "help-thc-cbd"
+  | "policy-age"
+  | "policy-id"
+  | "policy-returns"
+  | "policy-general"
+  | "contact-message"
+  | "human-callback";
 
 export type FaqTopic =
   | "hours"
@@ -36,6 +73,8 @@ export type FaqTopic =
   | "reviews"
   | "language"
   | "legal"
+  | "policy"
+  | "guidance"
   | "smalltalk";
 
 // "storeStatus" marks entries whose answer should be swapped at render time

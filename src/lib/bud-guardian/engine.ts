@@ -1,7 +1,7 @@
 import type { Locale } from "@/lib/i18n/types";
 import faqFr from "@/data/bud-guardian/faq.fr";
 import faqEn from "@/data/bud-guardian/faq.en";
-import type { FaqEntry, QuickActionId } from "@/data/bud-guardian/types";
+import type { FaqEntry, FaqTopic, QuickActionId } from "@/data/bud-guardian/types";
 import { getStoreStatus } from "@/lib/hours";
 import { findBestMatch } from "./search";
 
@@ -14,6 +14,7 @@ export type GuardianResponse = {
   answer: string;
   suggestions: QuickActionId[];
   found: boolean;
+  topic?: FaqTopic;
 };
 
 const FALLBACK: Record<Locale, string> = {
@@ -38,16 +39,22 @@ export function getFaqEntry(id: string, locale: Locale): FaqEntry | null {
 export function respondToFaqId(id: string, locale: Locale): GuardianResponse | null {
   const entry = getFaqEntry(id, locale);
   if (!entry) return null;
-  return { answer: resolveAnswer(entry, locale), suggestions: entry.suggestions ?? [], found: true };
+  return { answer: resolveAnswer(entry, locale), suggestions: entry.suggestions ?? [], found: true, topic: entry.topic };
 }
 
-export function respondToQuery(query: string, locale: Locale): GuardianResponse {
+// Conversation memory: when the previous turn landed on a topic, a small
+// (<1, so it can only break ties — see findBestMatch) score bonus is given
+// to entries sharing that topic. This lets a bare follow-up like "et les
+// preroules?" naturally stay on-topic without ever overriding a strictly
+// better keyword match elsewhere.
+export function respondToQuery(query: string, locale: Locale, lastTopic?: FaqTopic | null): GuardianResponse {
   const entries = FAQ_BY_LOCALE[locale];
-  const match = findBestMatch(query, entries);
+  const tieBreakBonus = lastTopic ? (entry: FaqEntry) => (entry.topic === lastTopic ? 0.5 : 0) : undefined;
+  const match = findBestMatch(query, entries, tieBreakBonus);
 
   if (!match) {
     return { answer: FALLBACK[locale], suggestions: FALLBACK_SUGGESTIONS, found: false };
   }
 
-  return { answer: resolveAnswer(match, locale), suggestions: match.suggestions ?? [], found: true };
+  return { answer: resolveAnswer(match, locale), suggestions: match.suggestions ?? [], found: true, topic: match.topic };
 }

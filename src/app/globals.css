@@ -355,7 +355,47 @@ body {
   animation: wb-guardian-fade-in 0.28s ease-out;
 }
 
+/* Risk Engine — details panel swap */
+@keyframes wb-risk-details-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wb-risk-details-in {
+  animation: wb-risk-details-in 0.2s ease-out;
+}
+
+/* Risk Engine — badge value change */
+@keyframes wb-badge-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.wb-badge-pop {
+  animation: wb-badge-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .wb-risk-details-in,
+  .wb-badge-pop {
+    animation: none !important;
+  }
   .wb-led-core,
   .wb-led-wave,
   .wb-led-halo {

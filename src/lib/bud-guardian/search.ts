@@ -1,6 +1,9 @@
 // Tiny local keyword matcher — no external API. Normalizes accents/case,
-// then scores each candidate by its single best-matching keyword phrase so
-// the best FAQ entry wins.
+// canonicalizes common synonyms/slang, tolerates small typos, then scores
+// each candidate by its single best-matching keyword phrase so the best FAQ
+// entry wins.
+
+import { SYNONYMS } from "@/data/bud-guardian/synonyms";
 
 export type SearchableEntry = { keywords: string[] };
 
@@ -27,15 +30,69 @@ function normalize(value: string): string {
     .trim();
 }
 
+// Maps colloquial/slang terms to the canonical word used across the FAQ
+// keyword lists (e.g. "mari"/"weed" -> "fleur") so a query written in
+// everyday language still matches entries authored in canonical terms.
+function canonicalize(token: string): string {
+  return SYNONYMS[token] ?? token;
+}
+
 function tokenize(value: string): string[] {
   return normalize(value)
     .split(" ")
-    .filter((word) => word.length > 1 && !STOPWORDS.has(word));
+    .filter((word) => word.length > 1 && !STOPWORDS.has(word))
+    .map(canonicalize);
+}
+
+// Cheap spelling tolerance: classic edit-distance, capped early since we
+// only ever need to know whether the distance is <= 1.
+function levenshteinAtMost1(a: string, b: string): boolean {
+  if (a === b) return true;
+  const lenDiff = a.length - b.length;
+  if (lenDiff > 1 || lenDiff < -1) return false;
+
+  const [shorter, longer] = a.length <= b.length ? [a, b] : [b, a];
+  let i = 0;
+  let j = 0;
+  let edits = 0;
+
+  while (i < shorter.length && j < longer.length) {
+    if (shorter[i] === longer[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    edits++;
+    if (edits > 1) return false;
+    if (shorter.length === longer.length) {
+      // substitution
+      i++;
+      j++;
+    } else {
+      // insertion/deletion in the longer string
+      j++;
+    }
+  }
+  return true;
+}
+
+// A query token "fuzzy-matches" a keyword token if identical, or — for
+// tokens long enough that a typo is unlikely to create an accidental
+// collision with an unrelated word — within one edit.
+function fuzzyTokenMatch(queryToken: string, keywordToken: string): boolean {
+  if (queryToken === keywordToken) return true;
+  if (keywordToken.length < 4 || queryToken.length < 4) return false;
+  return levenshteinAtMost1(queryToken, keywordToken);
+}
+
+function tokenInQuery(keywordToken: string, queryTokens: string[]): boolean {
+  return queryTokens.some((queryToken) => fuzzyTokenMatch(queryToken, keywordToken));
 }
 
 // Best score for a single keyword phrase against the query: an exact phrase
 // match wins outright; otherwise every one of the keyword's significant
-// (non-stopword) tokens must appear in the query for a weaker match.
+// (non-stopword) tokens must appear in the query (allowing synonyms and
+// small typos) for a weaker match.
 function scoreKeyword(normalizedKeyword: string, normalizedQuery: string, queryTokens: string[]): number {
   if (!normalizedKeyword) return 0;
 
@@ -43,14 +100,26 @@ function scoreKeyword(normalizedKeyword: string, normalizedQuery: string, queryT
     return normalizedKeyword.split(" ").length * 2;
   }
 
-  const significantTokens = normalizedKeyword.split(" ").filter((token) => !STOPWORDS.has(token));
+  const significantTokens = normalizedKeyword
+    .split(" ")
+    .filter((token) => !STOPWORDS.has(token))
+    .map(canonicalize);
   if (significantTokens.length === 0) return 0;
 
-  const matched = significantTokens.filter((token) => queryTokens.includes(token));
+  const matched = significantTokens.filter((token) => tokenInQuery(token, queryTokens));
   return matched.length === significantTokens.length ? significantTokens.length : 0;
 }
 
-export function findBestMatch<T extends SearchableEntry>(query: string, entries: T[]): T | null {
+// `tieBreakBonus`, when given, adds a fractional (<1) bonus to entries that
+// match some contextual preference (e.g. conversation memory's last topic).
+// Being fractional, it can only break a tie between otherwise-equal integer
+// scores — it never lets a contextually-preferred entry beat a strictly
+// better keyword match.
+export function findBestMatch<T extends SearchableEntry>(
+  query: string,
+  entries: T[],
+  tieBreakBonus?: (entry: T) => number
+): T | null {
   const normalizedQuery = normalize(query);
   if (!normalizedQuery) return null;
 
@@ -59,6 +128,7 @@ export function findBestMatch<T extends SearchableEntry>(query: string, entries:
 
   let best: T | null = null;
   let bestScore = 0;
+  let bestEffectiveScore = 0;
 
   for (const entry of entries) {
     let entryScore = 0;
@@ -66,8 +136,12 @@ export function findBestMatch<T extends SearchableEntry>(query: string, entries:
       const keywordScore = scoreKeyword(normalize(keyword), normalizedQuery, queryTokens);
       if (keywordScore > entryScore) entryScore = keywordScore;
     }
-    if (entryScore > bestScore) {
+    if (entryScore === 0) continue;
+
+    const effectiveScore = entryScore + (tieBreakBonus ? tieBreakBonus(entry) : 0);
+    if (effectiveScore > bestEffectiveScore) {
       bestScore = entryScore;
+      bestEffectiveScore = effectiveScore;
       best = entry;
     }
   }

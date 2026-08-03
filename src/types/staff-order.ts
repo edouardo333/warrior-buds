@@ -5,7 +5,7 @@
 
 import type { OrderStatus } from "./order";
 
-export type StaffRole = "employee" | "manager" | "admin";
+export type StaffRole = "employee" | "manager" | "admin" | "supervisor";
 
 export type TimelineEntry = {
   id: string;

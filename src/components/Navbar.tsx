@@ -1,15 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+const STAFF_ACCESS_CLICK_COUNT = 5;
+const STAFF_ACCESS_WINDOW_MS = 3000;
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { t } = useLanguage();
+  const router = useRouter();
+  const logoClickTimestamps = useRef<number[]>([]);
+
+  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const now = Date.now();
+    const recentClicks = logoClickTimestamps.current.filter(
+      (timestamp) => now - timestamp < STAFF_ACCESS_WINDOW_MS
+    );
+    recentClicks.push(now);
+
+    if (recentClicks.length >= STAFF_ACCESS_CLICK_COUNT) {
+      logoClickTimestamps.current = [];
+      event.preventDefault();
+      setIsOpen(false);
+      router.push("/staff");
+      return;
+    }
+
+    logoClickTimestamps.current = recentClicks;
+    setIsOpen(false);
+  };
 
   const NAV_LINKS = [
     { label: t.nav.links.home, href: "/" },
@@ -44,7 +69,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" onClick={() => setIsOpen(false)}>
+        <Link href="/" onClick={handleLogoClick}>
           <Logo imageClassName="h-9 sm:h-11" />
         </Link>
 

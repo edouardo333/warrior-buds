@@ -431,6 +431,89 @@ const faqEn: FaqEntry[] = [
     answer: "Of course! The fastest way is to call us or message us on Instagram.",
     suggestions: ["phone", "instagram"],
   },
+
+  // --- Bud Guardian V4.1 — knowledge base additions ---------------------
+  {
+    id: "products-availability",
+    topic: "products",
+    question: "Is this product in stock?",
+    keywords: ["available", "in stock", "stock", "availability", "do you have any left"],
+    answer:
+      "I don't have real-time inventory tracking. Best to call us or message us on Instagram to confirm a specific product's availability before your visit.",
+    suggestions: ["phone", "instagram"],
+  },
+  {
+    id: "products-promotions",
+    topic: "products",
+    question: "Do you have any promotions right now?",
+    keywords: ["promotion", "promotions", "discount", "sale", "deal", "special"],
+    answer:
+      "Current promotions are announced on our Instagram — that's the most up-to-date source; I never make up a discount here.",
+    suggestions: ["instagram", "linktree"],
+  },
+  {
+    id: "purchase-pickup-process",
+    topic: "purchase",
+    question: "How does in-store pickup work?",
+    keywords: ["how does pickup work", "pickup process", "how do i pick up my order", "how does in-store pickup work"],
+    answer:
+      "In-store: come with valid photo ID (18+), payment happens on the spot by Interac or cash, then you leave with your order.",
+    suggestions: ["order-track", "directions"],
+  },
+  {
+    id: "purchase-returns",
+    topic: "purchase",
+    question: "Can I return or exchange a product?",
+    keywords: ["return", "returns", "exchange", "refund"],
+    answer:
+      "I don't have the exact return/exchange policy details on hand. Best to call us or message us on Instagram, with your order number if you have it.",
+    suggestions: ["phone", "instagram"],
+  },
+  {
+    id: "policy-store-general",
+    topic: "policy",
+    question: "What are your store policies?",
+    keywords: ["policy", "policies", "store rules", "terms"],
+    answer:
+      "Our main rules: 18+ with valid ID, in-store purchase only, payment by Interac or cash. For anything more specific, call us directly.",
+    suggestions: ["policy-age", "phone"],
+  },
+  {
+    id: "help-beginner",
+    topic: "guidance",
+    question: "What is good for a beginner?",
+    keywords: ["beginner", "first time", "never tried", "new to this", "start slow"],
+    answer:
+      "For a first try, it's generally best to start low and go slow with a low-dose product. Our in-store team can help point you to what fits your tolerance.",
+    suggestions: ["help-thc-cbd", "directions"],
+  },
+  {
+    id: "help-choose-product",
+    topic: "guidance",
+    question: "How do I choose the right product for me?",
+    keywords: ["how do i choose", "which product should i pick", "help me choose", "what product is right for me"],
+    answer:
+      "It depends on the effect you're after, your tolerance, and experience. Our in-store team asks a few quick questions to point you to the right format (flower, edible, vape, etc.) and dose.",
+    suggestions: ["categories", "help-beginner"],
+  },
+  {
+    id: "help-thc-cbd-difference",
+    topic: "guidance",
+    question: "What is the difference between THC and CBD?",
+    keywords: ["difference between thc and cbd", "thc vs cbd", "what is cbd", "what is thc"],
+    answer:
+      "THC is the psychoactive compound in cannabis — it produces the \"high\". CBD is non-psychoactive and is generally sought for a calming effect. Many products combine both at different ratios.",
+    suggestions: ["categories", "help-choose"],
+  },
+  {
+    id: "human-callback-request",
+    topic: "smalltalk",
+    question: "Can I request a callback?",
+    keywords: ["request a callback", "call me back", "callback", "can someone call me"],
+    answer:
+      "Of course — call us and leave a message, or message us on Instagram with your name and number, and a team member will get back to you. Bud Guardian can't place real phone calls yet.",
+    suggestions: ["phone", "instagram"],
+  },
 ];
 
 export default faqEn;

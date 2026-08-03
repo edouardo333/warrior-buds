@@ -2,32 +2,27 @@
 
 import { useState, type FormEvent } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { STAFF_ROLES, getRoleLabel, startSession, verifyAccessCode } from "@/lib/staff/staff-auth";
-import type { StaffRole } from "@/types/staff-order";
+import { DEMO_ACCOUNTS, findDemoAccount, getRoleLabel, startSession } from "@/lib/staff/staff-auth";
 
 const TEXT = {
   fr: {
     title: "Bud Guardian — Espace employé",
     subtitle: "Connexion réservée à l'équipe Warrior Buds. Accès temporaire de démonstration.",
-    nameLabel: "Votre nom",
-    namePlaceholder: "Ex. Camille",
-    roleLabel: "Rôle",
     codeLabel: "Code d'accès",
-    codePlaceholder: "Code fourni par la direction",
+    codePlaceholder: "Ex. WB2026",
     submit: "Se connecter",
     error: "Code d'accès invalide. Vérifiez auprès de votre gestionnaire.",
+    demoTitle: "Comptes de démonstration",
     notice: "Aucune donnée bancaire ou mot de passe client n'est traitée ici. Toutes les données sont fictives et locales.",
   },
   en: {
     title: "Bud Guardian — Staff space",
     subtitle: "Sign-in reserved for the Warrior Buds team. Temporary demo access.",
-    nameLabel: "Your name",
-    namePlaceholder: "E.g. Camille",
-    roleLabel: "Role",
     codeLabel: "Access code",
-    codePlaceholder: "Code provided by management",
+    codePlaceholder: "E.g. WB2026",
     submit: "Sign in",
     error: "Invalid access code. Check with your manager.",
+    demoTitle: "Demo accounts",
     notice: "No banking data or customer passwords are handled here. All data is fictional and local.",
   },
 } as const;
@@ -35,19 +30,18 @@ const TEXT = {
 export default function StaffLogin() {
   const { locale } = useLanguage();
   const t = TEXT[locale];
-  const [name, setName] = useState("");
-  const [role, setRole] = useState<StaffRole>("employee");
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!verifyAccessCode(code)) {
+    const account = findDemoAccount(code);
+    if (!account) {
       setError(true);
       return;
     }
     setError(false);
-    startSession(name, role);
+    startSession(account.name, account.role);
   }
 
   return (
@@ -63,33 +57,6 @@ export default function StaffLogin() {
         <p className="mt-2 text-sm text-white/60">{t.subtitle}</p>
 
         <div className="mt-6 flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-sm text-white/80">
-            {t.nameLabel}
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t.namePlaceholder}
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-foreground outline-none transition-colors focus:border-wb-orange/60"
-              autoComplete="off"
-            />
-          </label>
-
-          <label className="flex flex-col gap-1.5 text-sm text-white/80">
-            {t.roleLabel}
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as StaffRole)}
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-foreground outline-none transition-colors focus:border-wb-orange/60"
-            >
-              {STAFF_ROLES.map((r) => (
-                <option key={r} value={r} className="bg-wb-charcoal">
-                  {getRoleLabel(r, locale)}
-                </option>
-              ))}
-            </select>
-          </label>
-
           <label className="flex flex-col gap-1.5 text-sm text-white/80">
             {t.codeLabel}
             <input
@@ -113,6 +80,20 @@ export default function StaffLogin() {
           >
             {t.submit}
           </button>
+        </div>
+
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-white/50">{t.demoTitle}</p>
+          <ul className="mt-2 flex flex-col gap-1.5 text-xs text-white/60">
+            {DEMO_ACCOUNTS.map((account) => (
+              <li key={account.code} className="flex items-center justify-between gap-3">
+                <span>
+                  {getRoleLabel(account.role, locale)} — {account.name}
+                </span>
+                <span className="font-mono text-white/80">{account.code}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <p className="mt-6 text-xs leading-relaxed text-white/40">{t.notice}</p>

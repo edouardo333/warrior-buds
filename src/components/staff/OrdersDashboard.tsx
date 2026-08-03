@@ -3,18 +3,18 @@
 import { useMemo, useState } from "react";
 import type { OrderStatus } from "@/types/order";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { getRoleLabel, endSession, type StaffSession } from "@/lib/staff/staff-auth";
+import type { StaffSession } from "@/lib/staff/staff-auth";
 import { useAuditLog, useStaffOrders, type StaffOrderView } from "@/lib/staff/order-actions";
 import { getStatusLabel } from "@/lib/bud-guardian/order-engine";
 import OrdersTable from "./OrdersTable";
 import OrderDetails from "./OrderDetails";
+import StaffShell from "./StaffShell";
 import { STATUS_FLOW } from "./OrderStatusEditor";
 
 const TEXT = {
   fr: {
     title: "Bud Guardian — Espace employé",
     subtitle: "Gestion des commandes en temps réel, connectée au chatbot Bud Guardian.",
-    logout: "Déconnexion",
     searchPlaceholder: "Numéro, nom, téléphone ou courriel…",
     statusAll: "Tous les statuts",
     dateLabel: "Date",
@@ -34,7 +34,6 @@ const TEXT = {
   en: {
     title: "Bud Guardian — Staff space",
     subtitle: "Real-time order management, connected to the Bud Guardian chatbot.",
-    logout: "Log out",
     searchPlaceholder: "Order #, name, phone or email…",
     statusAll: "All statuses",
     dateLabel: "Date",
@@ -116,26 +115,11 @@ export default function OrdersDashboard({ session }: { session: StaffSession }) 
   ];
 
   return (
-    <div className="min-h-dvh bg-background bg-grain px-4 py-8 sm:px-6 lg:px-10">
+    <StaffShell session={session} active="orders">
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
-        <header className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-gradient-ember font-display text-3xl tracking-wide sm:text-4xl">{t.title}</h1>
-            <p className="mt-1 text-sm text-white/55">{t.subtitle}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="text-right text-sm">
-              <p className="font-medium text-white/85">{session.name}</p>
-              <p className="text-xs text-white/45">{getRoleLabel(session.role, locale)}</p>
-            </div>
-            <button
-              type="button"
-              onClick={endSession}
-              className="rounded-xl border border-white/15 px-3.5 py-2 text-sm font-medium text-white/75 transition-colors hover:border-wb-red/50 hover:text-wb-red"
-            >
-              {t.logout}
-            </button>
-          </div>
+        <header>
+          <h1 className="text-gradient-ember font-display text-3xl tracking-wide sm:text-4xl">{t.title}</h1>
+          <p className="mt-1 text-sm text-white/55">{t.subtitle}</p>
         </header>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -227,6 +211,6 @@ export default function OrdersDashboard({ session }: { session: StaffSession }) 
           </div>
         </details>
       </div>
-    </div>
+    </StaffShell>
   );
 }

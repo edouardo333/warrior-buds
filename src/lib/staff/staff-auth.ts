@@ -1,8 +1,9 @@
-// Bud Guardian V2.1 — simulated employee authentication for /staff/orders.
-// This is a local demo gate only: one shared access code + a display name
-// picked at login, held in sessionStorage so it clears when the tab closes.
-// No real accounts, no password hashing, nothing sent over the network.
-// Swap for real auth (Supabase, etc.) later — see AGENTS.md.
+// Bud Guardian V2.1/V2.2 — simulated employee authentication for
+// /staff/orders and /staff/payments. This is a local demo gate only: a
+// fixed set of named accounts (see DEMO_ACCOUNTS below), held in
+// sessionStorage so a session clears when the tab closes. No real accounts,
+// no password hashing, nothing sent over the network. Swap for real auth
+// (Supabase, etc.) later — see AGENTS.md.
 
 import type { StaffRole } from "@/types/staff-order";
 
@@ -36,16 +37,12 @@ export function subscribeSessionChange(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
-// Demo-only credential, deliberately never rendered or interpolated into any
-// UI string — the public build must not leak it. In a real deployment this
-// is replaced entirely by proper authentication.
-const DEMO_ACCESS_CODE = "WARRIOR-2026";
-
-export const STAFF_ROLES: StaffRole[] = ["employee", "manager", "admin"];
+export const STAFF_ROLES: StaffRole[] = ["employee", "manager", "supervisor", "admin"];
 
 const ROLE_LABELS: Record<StaffRole, { fr: string; en: string }> = {
   employee: { fr: "Employé", en: "Employee" },
   manager: { fr: "Gestionnaire", en: "Manager" },
+  supervisor: { fr: "Superviseur", en: "Supervisor" },
   admin: { fr: "Administrateur", en: "Administrator" },
 };
 
@@ -53,14 +50,32 @@ export function getRoleLabel(role: StaffRole, locale: "fr" | "en"): string {
   return ROLE_LABELS[role][locale];
 }
 
-export function verifyAccessCode(code: string): boolean {
-  return code.trim().toUpperCase() === DEMO_ACCESS_CODE;
+export type DemoAccount = {
+  name: string;
+  role: StaffRole;
+  code: string;
+};
+
+// Fixed demo accounts — each access code logs the person in as that exact
+// name + role, no free-form name/role entry. Deliberately fictional and
+// local only; grants access to both /staff/orders and /staff/payments,
+// since neither page gates on role, only on having a session at all.
+export const DEMO_ACCOUNTS: DemoAccount[] = [
+  { name: "Admin", role: "manager", code: "WB2026" },
+  { name: "Camille", role: "employee", code: "EMP2026" },
+  { name: "Supervisor", role: "supervisor", code: "SUP2026" },
+];
+
+export function findDemoAccount(code: string): DemoAccount | null {
+  const normalized = code.trim().toUpperCase();
+  return DEMO_ACCOUNTS.find((account) => account.code === normalized) ?? null;
 }
 
-// Managers and admins can cancel orders; plain employees cannot — a small,
-// forward-looking taste of the role separation the spec asks to plan for.
+// Managers, supervisors, and admins can cancel orders; plain employees
+// cannot — a small, forward-looking taste of the role separation the spec
+// asks to plan for.
 export function canCancelOrder(role: StaffRole): boolean {
-  return role === "manager" || role === "admin";
+  return role === "manager" || role === "supervisor" || role === "admin";
 }
 
 export function readSession(): StaffSession | null {
