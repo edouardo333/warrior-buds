@@ -83,6 +83,9 @@ export default function BudGuardian() {
   // Conversation memory: the topic of the last successfully-answered FAQ,
   // used only as a tie-breaker for follow-up questions (see engine.ts).
   const [lastTopic, setLastTopic] = useState<FaqTopic | null>(null);
+  // UI-only: which category pill is highlighted/centered in the persistent
+  // bar (desktop). Purely presentational, does not affect chatbot logic.
+  const [activeCategory, setActiveCategory] = useState<QuickActionId | null>(null);
   const hasOpenedOnce = useRef(false);
   const { state: guardianState, isTyping, nodding, runThinkingSequence, flashResponding } = useGuardianState();
   const orderSession = useOrderSession();
@@ -187,6 +190,7 @@ export default function BudGuardian() {
     pushUserMessage(action.label[locale]);
 
     if (action.kind === "category") {
+      setActiveCategory(action.id);
       const suggestions = CATEGORY_SUGGESTIONS[action.id] ?? [];
       flashResponding();
       pushBotMessage(getCategoryIntro(action.id, locale), suggestions);
@@ -257,6 +261,7 @@ export default function BudGuardian() {
           isTyping={isTyping}
           guardianState={guardianState}
           nodding={nodding}
+          activeCategory={activeCategory}
           onClose={() => setIsOpen(false)}
           onSend={handleSend}
           onQuickAction={handleQuickAction}

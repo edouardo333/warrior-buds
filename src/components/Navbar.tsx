@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Heart, PackageSearch, ShoppingCart, User } from "lucide-react";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
+import MiniCart from "./cart/MiniCart";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAccount } from "@/lib/shop/auth-actions";
 
 const STAFF_ACCESS_CLICK_COUNT = 5;
 const STAFF_ACCESS_WINDOW_MS = 3000;
@@ -15,6 +18,8 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { t } = useLanguage();
   const router = useRouter();
+  const account = useAccount();
+  const accountHref = account ? "/account" : "/login";
   const logoClickTimestamps = useRef<number[]>([]);
 
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -73,7 +78,7 @@ export default function Navbar() {
           <Logo imageClassName="h-9 sm:h-11" />
         </Link>
 
-        <ul className="hidden items-center gap-8 lg:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
@@ -86,7 +91,33 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-6 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/track-order"
+            aria-label={t.nav.trackOrder}
+            title={t.nav.trackOrder}
+            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+          >
+            <PackageSearch className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/wishlist"
+            aria-label={t.nav.wishlist}
+            title={t.nav.wishlist}
+            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+          >
+            <Heart className="h-5 w-5" />
+          </Link>
+          <Link
+            href={accountHref}
+            aria-label={account ? t.nav.account : t.nav.login}
+            title={account ? t.nav.account : t.nav.login}
+            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+          >
+            <User className="h-5 w-5" />
+          </Link>
+          <MiniCart />
+          <span className="mx-1 h-6 w-px bg-white/10" aria-hidden="true" />
           <LanguageSwitcher />
           <Link
             href="/contact"
@@ -140,6 +171,40 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
+          <li className="flex items-center gap-6 pt-2">
+            <Link
+              href="/track-order"
+              onClick={() => setIsOpen(false)}
+              aria-label={t.nav.trackOrder}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-foreground/80 transition-colors hover:border-wb-orange/50 hover:text-wb-orange"
+            >
+              <PackageSearch className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/wishlist"
+              onClick={() => setIsOpen(false)}
+              aria-label={t.nav.wishlist}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-foreground/80 transition-colors hover:border-wb-orange/50 hover:text-wb-orange"
+            >
+              <Heart className="h-5 w-5" />
+            </Link>
+            <Link
+              href={accountHref}
+              onClick={() => setIsOpen(false)}
+              aria-label={account ? t.nav.account : t.nav.login}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-foreground/80 transition-colors hover:border-wb-orange/50 hover:text-wb-orange"
+            >
+              <User className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/cart"
+              onClick={() => setIsOpen(false)}
+              aria-label={t.nav.cart}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-foreground/80 transition-colors hover:border-wb-orange/50 hover:text-wb-orange"
+            >
+              <ShoppingCart className="h-5 w-5" />
+            </Link>
+          </li>
           <li className="pt-2">
             <LanguageSwitcher className="text-base" />
           </li>

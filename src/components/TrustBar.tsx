@@ -5,7 +5,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 function StarIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 sm:h-[55%] sm:w-[55%]">
       <path d="M12 2.5l2.9 6.06 6.6.79-4.9 4.5 1.3 6.55L12 16.9l-5.9 3.5 1.3-6.55-4.9-4.5 6.6-.79L12 2.5z" />
     </svg>
   );
@@ -13,7 +13,7 @@ function StarIcon() {
 
 function ReviewIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5 sm:h-[55%] sm:w-[55%]">
       <path d="M4 5.5h16a1 1 0 011 1V15a1 1 0 01-1 1H9l-4.5 4V16H4a1 1 0 01-1-1V6.5a1 1 0 011-1z" strokeLinejoin="round" />
     </svg>
   );
@@ -21,7 +21,7 @@ function ReviewIcon() {
 
 function CalendarIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5 sm:h-[55%] sm:w-[55%]">
       <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
       <path d="M8 3v4M16 3v4M3.5 10h17" strokeLinecap="round" />
     </svg>
@@ -30,7 +30,7 @@ function CalendarIcon() {
 
 function ClockIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5 sm:h-[55%] sm:w-[55%]">
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 7.5V12l3 2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -39,7 +39,7 @@ function ClockIcon() {
 
 function PinIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-5 w-5 sm:h-[55%] sm:w-[55%]">
       <path d="M12 21s7-6.4 7-11.5A7 7 0 105 9.5C5 14.6 12 21 12 21z" strokeLinejoin="round" />
       <circle cx="12" cy="9.5" r="2.3" />
     </svg>
@@ -58,21 +58,21 @@ export default function TrustBar() {
   ];
 
   return (
-    <div className="relative z-20 mx-auto -mt-8 max-w-6xl px-5 sm:-mt-12 sm:px-8">
-      <div className="grid grid-cols-2 divide-y divide-white/10 rounded-2xl border border-white/10 bg-wb-charcoal/90 shadow-2xl shadow-black/50 backdrop-blur-md sm:grid-cols-5 sm:divide-y-0 sm:divide-x">
+    <div className="relative z-20 mx-auto -mt-11 max-w-6xl px-5 sm:-mt-14 sm:px-8 lg:-mt-16">
+      <div className="grid grid-cols-2 divide-y divide-white/10 rounded-2xl border border-white/10 bg-wb-charcoal/90 shadow-2xl shadow-black/50 backdrop-blur-md sm:grid-cols-5 sm:divide-y-0 sm:divide-x sm:border-white/[0.12]">
         {TRUST_ITEMS.map(({ icon: Icon, primary, secondary }) => (
           <div
             key={secondary}
-            className="flex items-center justify-center gap-3 px-4 py-6 text-center sm:flex-col sm:gap-2 sm:text-center"
+            className="group flex items-center justify-center gap-3 px-4 py-6 text-center sm:flex-col sm:gap-[clamp(0.3rem,1vh,0.55rem)] sm:px-3 sm:py-[clamp(0.65rem,2.4vh,1.375rem)] sm:text-center sm:transition-all sm:duration-[220ms] sm:ease-out sm:hover:-translate-y-0.5 sm:hover:bg-white/[0.03]"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-wb-red via-wb-orange to-wb-yellow text-black">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-wb-red via-wb-orange to-wb-yellow text-black transition-all duration-[220ms] ease-out sm:h-[clamp(1.75rem,4.2vh,2.25rem)] sm:w-[clamp(1.75rem,4.2vh,2.25rem)] sm:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_16px_-4px_rgba(244,103,15,0.55)] sm:group-hover:scale-105 sm:group-hover:shadow-[0_0_0_1px_rgba(255,255,255,0.14),0_0_20px_-2px_rgba(244,103,15,0.9)]">
               <Icon />
             </span>
             <span className="flex flex-col items-start leading-tight sm:items-center">
-              <span className="font-display text-lg tracking-wide text-foreground sm:text-xl">
+              <span className="font-display text-lg tracking-wide text-foreground sm:text-lg sm:leading-none lg:text-xl">
                 {primary}
               </span>
-              <span className="text-[11px] font-medium uppercase tracking-widest text-foreground/55">
+              <span className="text-[11px] font-medium uppercase tracking-widest text-foreground/55 sm:mt-0.5 sm:text-[10px] lg:text-[11px]">
                 {secondary}
               </span>
             </span>

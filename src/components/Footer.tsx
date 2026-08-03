@@ -19,6 +19,8 @@ export default function Footer() {
     { label: t.nav.links.about, href: "/about" },
     { label: t.nav.links.gallery, href: "/gallery" },
     { label: t.nav.links.contact, href: "/contact" },
+    { label: t.nav.trackOrder, href: "/track-order" },
+    { label: t.nav.account, href: "/account" },
   ];
 
   return (
@@ -51,7 +53,7 @@ export default function Footer() {
       </section>
 
       <footer className="relative border-t border-white/10 bg-black px-5 pb-8 pt-16 sm:px-8">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-[0.9fr_0.85fr_0.9fr_1.5fr_0.85fr]">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <Logo imageClassName="h-[150px]" />
             <p className="mt-4 max-w-xs text-sm text-foreground/60">{t.footer.tagline}</p>
@@ -101,7 +103,7 @@ export default function Footer() {
             </a>
           </div>
 
-          <div>
+          <div className="col-span-2 sm:col-span-2 lg:col-span-1">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-wb-orange">
               {t.footer.hoursHeading}
             </h3>

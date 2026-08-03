@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import PlaceholderSection from "@/components/PlaceholderSection";
+import LearningCenterHero from "@/components/LearningCenterHero";
+import LearningCenterHub from "@/components/LearningCenterHub";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Centre d'apprentissage | Warrior Buds",
   description:
-    "Guides et ressources sur les produits de cannabis, leurs effets et la consommation responsable. Bientôt disponible.",
+    "Découvrez le Centre d'apprentissage de Warrior Buds — des guides clairs sur les bases du cannabis, les concentrés, les produits à haute puissance, les psychédéliques, les produits de nicotine et la consommation responsable.",
 };
 
 export default function LearningCenterPage() {
@@ -14,7 +15,8 @@ export default function LearningCenterPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <PlaceholderSection page="learningCenter" />
+        <LearningCenterHero />
+        <LearningCenterHub />
       </main>
       <Footer />
     </>

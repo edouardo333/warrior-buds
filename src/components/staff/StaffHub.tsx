@@ -13,6 +13,7 @@ const TEXT = {
       payments: { title: "Paiements", desc: "Suivi des paiements simulés, connecté aux commandes." },
       security: { title: "Risk Engine", desc: "Analyse automatique du risque de chaque commande." },
       customers: { title: "Clients", desc: "Intelligence client connectée aux commandes, paiements et au Risk Engine." },
+      inventory: { title: "Inventaire", desc: "Gestion du stock et des mouvements, connectée aux commandes et aux paiements." },
     },
   },
   en: {
@@ -23,6 +24,7 @@ const TEXT = {
       payments: { title: "Payments", desc: "Simulated payment tracking, connected to orders." },
       security: { title: "Risk Engine", desc: "Automatic per-order risk analysis." },
       customers: { title: "Customers", desc: "Customer intelligence connected to orders, payments and the Risk Engine." },
+      inventory: { title: "Inventory", desc: "Stock and movement management, connected to orders and payments." },
     },
   },
 } as const;
@@ -32,6 +34,7 @@ const CARDS = [
   { key: "payments", href: "/staff/payments" },
   { key: "security", href: "/staff/security" },
   { key: "customers", href: "/staff/customers" },
+  { key: "inventory", href: "/staff/inventory" },
 ] as const;
 
 export default function StaffHub({ session }: { session: StaffSession }) {

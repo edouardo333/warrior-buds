@@ -3,7 +3,7 @@
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type PlaceholderSectionProps = {
-  page: "gallery" | "products" | "learningCenter";
+  page: "gallery" | "products";
 };
 
 export default function PlaceholderSection({ page }: PlaceholderSectionProps) {

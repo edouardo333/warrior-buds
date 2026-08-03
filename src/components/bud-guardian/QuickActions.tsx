@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BadgeCheck,
   BanknoteArrowUp,
@@ -151,30 +152,182 @@ export function getCategoryIntro(categoryId: QuickActionId, locale: "fr" | "en")
   return CATEGORY_INTRO[categoryId]?.[locale] ?? "";
 }
 
+const BAR_ACTIONS = QUICK_ACTIONS.filter((action) => action.showInBar !== false);
+
+// Desktop-only enhancements (wheel/drag scroll, edge fades, active-category
+// centering + slide) are gated behind this breakpoint; below it the bar
+// keeps its original mobile-only markup and behavior untouched.
+const DESKTOP_QUERY = "(min-width: 768px)";
+const CENTER_MS = 220;
+
 type QuickActionsProps = {
   onAction: (action: QuickActionConfig) => void;
   className?: string;
+  activeId?: QuickActionId | null;
 };
 
-export default function QuickActions({ onAction, className = "" }: QuickActionsProps) {
+export default function QuickActions({ onAction, className = "", activeId = null }: QuickActionsProps) {
   const { locale } = useLanguage();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const dragRef = useRef<{ startX: number; startScroll: number; moved: boolean } | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [edgeFade, setEdgeFade] = useState({ left: false, right: false });
+  const [highlight, setHighlight] = useState<{ left: number; width: number } | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP_QUERY);
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const updateEdgeFade = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setEdgeFade({ left: el.scrollLeft > 4, right: el.scrollLeft < max - 4 });
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    updateEdgeFade();
+    const onScroll = () => updateEdgeFade();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", updateEdgeFade);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateEdgeFade);
+    };
+  }, [isDesktop, updateEdgeFade]);
+
+  // Slide the active-category highlight pill and smoothly center it.
+  useEffect(() => {
+    if (!isDesktop) return;
+    const scroller = scrollerRef.current;
+    const btn = activeId ? buttonRefs.current.get(activeId) : null;
+    if (!scroller || !btn) {
+      setHighlight(null);
+      return;
+    }
+    setHighlight({ left: btn.offsetLeft, width: btn.offsetWidth });
+
+    const target = btn.offsetLeft - scroller.clientWidth / 2 + btn.offsetWidth / 2;
+    const max = scroller.scrollWidth - scroller.clientWidth;
+    const clamped = Math.max(0, Math.min(max, target));
+    const from = scroller.scrollLeft;
+    const delta = clamped - from;
+    if (Math.abs(delta) < 1) return;
+    const start = performance.now();
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    let frame: number;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / CENTER_MS);
+      scroller.scrollLeft = from + delta * easeOutCubic(t);
+      if (t < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [isDesktop, activeId]);
+
+  function handleWheel(e: React.WheelEvent<HTMLDivElement>) {
+    if (!isDesktop) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (delta === 0) return;
+    e.preventDefault();
+    el.scrollLeft += delta;
+  }
+
+  function handleMouseDown(e: React.MouseEvent<HTMLDivElement>) {
+    if (!isDesktop) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const state = { startX: e.pageX, startScroll: el.scrollLeft, moved: false };
+    dragRef.current = state;
+    const onMove = (ev: MouseEvent) => {
+      const dx = ev.pageX - state.startX;
+      if (Math.abs(dx) > 3) state.moved = true;
+      el.scrollLeft = state.startScroll - dx;
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
+
+  function handleActionClick(action: QuickActionConfig) {
+    if (dragRef.current?.moved) {
+      dragRef.current.moved = false;
+      return;
+    }
+    onAction(action);
+  }
 
   return (
-    <div className={`flex gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${className}`}>
-      {QUICK_ACTIONS.filter((action) => action.showInBar !== false).map((action) => {
-        const Icon = action.icon;
-        return (
-          <button
-            key={action.id}
-            type="button"
-            onClick={() => onAction(action)}
-            className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-medium text-foreground/80 transition-colors duration-200 hover:border-wb-orange/50 hover:text-wb-orange"
-          >
-            <Icon className="h-3.5 w-3.5 shrink-0" />
-            {action.label[locale]}
-          </button>
-        );
-      })}
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        className={`relative flex gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:gap-2.5 md:px-5 ${
+          isDesktop ? "cursor-grab select-none active:cursor-grabbing" : ""
+        } ${className}`}
+      >
+        {isDesktop && highlight && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-0 h-8 -translate-y-1/2 rounded-full bg-wb-orange/15 ring-1 ring-wb-orange/40 transition-[transform,width] duration-[220ms] ease-out"
+            style={{ transform: `translateX(${highlight.left}px)`, width: highlight.width }}
+          />
+        )}
+        {BAR_ACTIONS.map((action) => {
+          const Icon = action.icon;
+          const isActive = isDesktop && action.id === activeId;
+          return (
+            <button
+              key={action.id}
+              type="button"
+              ref={(node) => {
+                if (node) buttonRefs.current.set(action.id, node);
+                else buttonRefs.current.delete(action.id);
+              }}
+              onClick={() => handleActionClick(action)}
+              className={`relative flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors duration-200 md:px-4 ${
+                isActive
+                  ? "border-transparent bg-transparent text-wb-orange"
+                  : "border-white/10 bg-white/5 text-foreground/80 hover:border-wb-orange/50 hover:text-wb-orange"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5 shrink-0" />
+              {action.label[locale]}
+            </button>
+          );
+        })}
+      </div>
+
+      {isDesktop && (
+        <>
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 left-0 w-8 rounded-l-2xl bg-gradient-to-r from-black/80 via-black/40 to-transparent transition-opacity duration-200 ${
+              edgeFade.left ? "opacity-100" : "opacity-0"
+            }`}
+          />
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute inset-y-0 right-0 w-8 rounded-r-2xl bg-gradient-to-l from-black/80 via-black/40 to-transparent transition-opacity duration-200 ${
+              edgeFade.right ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        </>
+      )}
     </div>
   );
 }

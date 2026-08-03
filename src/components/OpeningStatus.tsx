@@ -182,7 +182,7 @@ function AnalogClock({
   );
 }
 
-export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" }) {
+export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" | "hero" }) {
   const [status, setStatus] = useState<StoreStatus | null>(null);
   const [ledColor, setLedColor] = useState<LedColor>("green");
   const [angles, setAngles] = useState<HandAngles>({ hour: 0, minute: 0, second: 0 });
@@ -217,21 +217,26 @@ export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" }) {
   const palette = STATUS_PALETTE[state];
   const ledPalette = LED_PALETTE[ledColor];
   const isSmall = size === "sm";
+  // The footer card shares the hero card's font sizes, clock size, and LED —
+  // only its outer padding/gap/glow are tightened for the compact layout.
+  const useHeroMetrics = isSmall || size === "hero";
 
-  const dotBox = isSmall ? 8 : 10;
-  const dotCore = isSmall ? 6 : 7;
-  const clockSize = isSmall ? 42 : 58;
+  const dotBox = useHeroMetrics ? 9 : 10;
+  const dotCore = useHeroMetrics ? 6.5 : 7;
+  const clockSize = useHeroMetrics ? 52 : 58;
 
   return (
     <div className="relative inline-flex items-center">
       <div
-        className="pointer-events-none absolute -inset-4 rounded-[36px] opacity-70 blur-2xl transition-colors duration-1000"
+        className={`pointer-events-none absolute rounded-[36px] opacity-70 blur-2xl transition-colors duration-1000 ${
+          isSmall ? "-inset-3" : "-inset-4"
+        }`}
         style={{ background: `radial-gradient(circle, rgba(${palette.rgb}, 0.32), transparent 72%)` }}
       />
 
       <div
         className={`relative flex items-center overflow-hidden rounded-[26px] border border-white/10 bg-black/55 backdrop-blur-2xl transition-colors duration-700 ${
-          isSmall ? "gap-3.5 px-4 py-3" : "gap-5 px-6 py-4"
+          isSmall ? "gap-3 px-3.5 py-2.5" : useHeroMetrics ? "gap-4 px-5 py-3" : "gap-5 px-6 py-4"
         }`}
         style={{
           boxShadow: `inset 0 1px 0 0 rgba(255,255,255,0.08), 0 24px 48px -24px rgba(0,0,0,0.85), 0 0 0 1px rgba(${palette.rgb}, 0.14)`,
@@ -278,12 +283,14 @@ export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" }) {
         {/* Text */}
         <span className="relative z-10 flex flex-col leading-tight">
           <span
-            className={`font-semibold tracking-tight text-white ${isSmall ? "text-base" : "text-xl sm:text-2xl"}`}
+            className={`font-semibold tracking-tight text-white text-xl sm:text-2xl ${
+              isSmall ? "whitespace-nowrap" : ""
+            }`}
             style={{ textShadow: `0 0 18px rgba(${palette.rgb}, 0.35)` }}
           >
             {status?.primaryLabel ?? " "}
           </span>
-          <span className={`font-medium text-white/50 ${isSmall ? "text-[11px]" : "text-xs sm:text-sm"}`}>
+          <span className="font-medium text-white/50 text-xs sm:text-sm">
             {status?.secondaryLabel ?? " "}
           </span>
         </span>

@@ -22,6 +22,12 @@ export type Dictionary = {
     visitStore: string;
     openMenu: string;
     closeMenu: string;
+    account: string;
+    login: string;
+    cart: string;
+    wishlist: string;
+    trackOrder: string;
+    cartItemsAria: (count: number) => string;
   };
   hero: {
     kicker: string;
@@ -30,6 +36,7 @@ export type Dictionary = {
     ctaPrimary: string;
     ctaSecondary: string;
     finePrint: string;
+    trustText: string;
   };
   trustBar: {
     googleRating: string;
@@ -200,6 +207,337 @@ export type Dictionary = {
     comingSoon: string;
     gallery: { title: string; description: string };
     products: { title: string; description: string };
-    learningCenter: { title: string; description: string };
+  };
+  learningCenter: {
+    metaTitle: string;
+    metaDescription: string;
+    hero: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+    };
+    guidesLabel: string;
+    backToCategories: string;
+    readGuide: string;
+    close: string;
+    disclaimerBadge: string;
+    disclaimerText: string;
+  };
+  auth: {
+    login: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      subtitle: string;
+      email: string;
+      password: string;
+      submit: string;
+      submitting: string;
+      forgotPassword: string;
+      noAccount: string;
+      signUpLink: string;
+      errorInvalidCredentials: string;
+    };
+    signup: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      subtitle: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      password: string;
+      marketingOptIn: string;
+      submit: string;
+      submitting: string;
+      haveAccount: string;
+      loginLink: string;
+      errorEmailTaken: string;
+    };
+    forgotPassword: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      subtitle: string;
+      email: string;
+      submit: string;
+      backToLogin: string;
+      successTitle: string;
+      successMessage: string;
+      devTokenLabel: string;
+      continueToReset: string;
+      errorNotFound: string;
+    };
+    resetPassword: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      subtitle: string;
+      token: string;
+      newPassword: string;
+      confirmPassword: string;
+      submit: string;
+      successTitle: string;
+      successMessage: string;
+      goToLogin: string;
+      errorInvalidToken: string;
+      errorMismatch: string;
+    };
+    verifyEmail: {
+      metaTitle: string;
+      metaDescription: string;
+      title: string;
+      subtitle: string;
+      token: string;
+      submit: string;
+      successTitle: string;
+      successMessage: string;
+      resend: string;
+      resent: string;
+      alreadyVerified: string;
+      errorInvalidToken: string;
+    };
+  };
+  account: {
+    nav: {
+      dashboard: string;
+      profile: string;
+      addresses: string;
+      paymentMethods: string;
+      orders: string;
+      wishlist: string;
+      settings: string;
+      logout: string;
+    };
+    guardTitle: string;
+    guardMessage: string;
+    guardCta: string;
+    dashboard: {
+      title: string;
+      welcomeBack: (name: string) => string;
+      recentOrders: string;
+      viewAllOrders: string;
+      noOrders: string;
+      shopNow: string;
+      quickLinks: string;
+    };
+    profile: {
+      title: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      save: string;
+      saved: string;
+    };
+    addresses: {
+      title: string;
+      addNew: string;
+      empty: string;
+      label: string;
+      fullName: string;
+      line1: string;
+      line2: string;
+      city: string;
+      province: string;
+      postalCode: string;
+      country: string;
+      phone: string;
+      setDefault: string;
+      defaultBadge: string;
+      edit: string;
+      delete: string;
+      save: string;
+      cancel: string;
+    };
+    paymentMethods: {
+      title: string;
+      addNew: string;
+      empty: string;
+      label: string;
+      provider: string;
+      setDefault: string;
+      defaultBadge: string;
+      delete: string;
+      save: string;
+      cancel: string;
+      interacHint: string;
+    };
+    orders: {
+      title: string;
+      empty: string;
+      shopNow: string;
+      orderNumber: string;
+      placedOn: string;
+      status: string;
+      total: string;
+      viewDetails: string;
+    };
+    settings: {
+      title: string;
+      marketingOptIn: string;
+      changePassword: string;
+      currentPassword: string;
+      newPassword: string;
+      save: string;
+      saved: string;
+      errorCurrentPassword: string;
+    };
+  };
+  cart: {
+    metaTitle: string;
+    title: string;
+    empty: string;
+    emptyCta: string;
+    product: string;
+    price: string;
+    quantity: string;
+    lineTotal: string;
+    remove: string;
+    subtotal: string;
+    shipping: string;
+    freeShipping: string;
+    tax: string;
+    total: string;
+    checkout: string;
+    continueShopping: string;
+    miniCartTitle: string;
+    viewCart: string;
+    itemsInCart: (count: number) => string;
+  };
+  wishlist: {
+    metaTitle: string;
+    title: string;
+    empty: string;
+    emptyCta: string;
+    addToCart: string;
+    remove: string;
+    moveToCart: string;
+  };
+  checkout: {
+    metaTitle: string;
+    title: string;
+    steps: {
+      shipping: string;
+      billing: string;
+      review: string;
+      payment: string;
+    };
+    shipping: {
+      title: string;
+      addNew: string;
+      method: string;
+      standard: string;
+      expedited: string;
+      pickup: string;
+      continueBtn: string;
+      noAddresses: string;
+    };
+    billing: {
+      title: string;
+      sameAsShipping: string;
+      continueBtn: string;
+    };
+    review: {
+      title: string;
+      items: string;
+      edit: string;
+      continueBtn: string;
+    };
+    payment: {
+      title: string;
+      choose: string;
+      placeOrder: string;
+      placing: string;
+    };
+    confirmation: {
+      metaTitle: string;
+      title: string;
+      thankYou: (orderId: string) => string;
+      whatNext: string;
+      viewOrder: string;
+      continueShopping: string;
+    };
+    back: string;
+    emptyCartTitle: string;
+    emptyCartMessage: string;
+    emptyCartCta: string;
+  };
+  trackOrder: {
+    metaTitle: string;
+    metaDescription: string;
+    title: string;
+    subtitle: string;
+    orderNumber: string;
+    email: string;
+    submit: string;
+    notFound: string;
+  };
+  orderDetail: {
+    title: string;
+    orderNumber: string;
+    placedOn: string;
+    shippingMethod: string;
+    shippingMethods: { standard: string; expedited: string; pickup: string };
+    trackingNumber: string;
+    trackingPending: string;
+    items: string;
+    shippingAddress: string;
+    billingAddress: string;
+    paymentMethod: string;
+    simulateAdvance: string;
+    orderComplete: string;
+    timeline: string;
+    total: string;
+    subtotal: string;
+    shippingCost: string;
+    tax: string;
+  };
+  productCatalog: {
+    metaTitle: string;
+    metaDescription: string;
+    filters: {
+      allCategories: string;
+      category: string;
+      strain: string;
+      allStrains: string;
+      onSaleOnly: string;
+      search: string;
+      searchPlaceholder: string;
+      sort: string;
+      sortFeatured: string;
+      sortPriceAsc: string;
+      sortPriceDesc: string;
+      sortNewest: string;
+      sortRating: string;
+      clear: string;
+      noResults: string;
+      resultsCount: (count: number) => string;
+    };
+    card: {
+      addToCart: string;
+      outOfStock: string;
+      lowStock: string;
+    };
+    detail: {
+      addToCart: string;
+      addedToCart: string;
+      addToWishlist: string;
+      removeFromWishlist: string;
+      outOfStock: string;
+      thc: string;
+      cbd: string;
+      strain: string;
+      weight: string;
+      brand: string;
+      category: string;
+      quantity: string;
+      description: string;
+      reviewsTitle: string;
+      noReviews: string;
+      verifiedPurchase: string;
+      backToShop: string;
+    };
   };
 };

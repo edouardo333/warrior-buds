@@ -7,12 +7,14 @@ import Message, { type ChatMessage } from "./Message";
 import TypingIndicator from "./TypingIndicator";
 import QuickActions, { type QuickActionConfig } from "./QuickActions";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { QuickActionId } from "@/data/bud-guardian/types";
 
 type ChatWindowProps = {
   messages: ChatMessage[];
   isTyping: boolean;
   guardianState: GuardianVisualState;
   nodding?: boolean;
+  activeCategory?: QuickActionId | null;
   onClose: () => void;
   onSend: (text: string) => void;
   onQuickAction: (action: QuickActionConfig) => void;
@@ -42,6 +44,7 @@ export default function ChatWindow({
   isTyping,
   guardianState,
   nodding = false,
+  activeCategory = null,
   onClose,
   onSend,
   onQuickAction,
@@ -106,7 +109,7 @@ export default function ChatWindow({
 
       {/* Quick actions */}
       <div className="shrink-0 border-t border-white/10">
-        <QuickActions onAction={onQuickAction} />
+        <QuickActions onAction={onQuickAction} activeId={activeCategory} />
       </div>
 
       {/* Input */}

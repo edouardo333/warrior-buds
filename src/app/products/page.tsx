@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
-import PlaceholderSection from "@/components/PlaceholderSection";
 import Footer from "@/components/Footer";
+import ProductCatalogView from "@/components/shop/ProductCatalogView";
 
 export const metadata: Metadata = {
   title: "Produits | Warrior Buds",
-  description: "Parcourez le catalogue de produits Warrior Buds. Bientôt disponible.",
+  description: "Parcourez le catalogue complet de produits Warrior Buds — fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires.",
 };
 
 export default function ProductsPage() {
@@ -13,7 +13,7 @@ export default function ProductsPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <PlaceholderSection page="products" />
+        <ProductCatalogView />
       </main>
       <Footer />
     </>
