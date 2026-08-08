@@ -49,6 +49,7 @@ const fr: Dictionary = {
       concentrates: { name: "Concentrés", description: "Spectre complet, haute puissance." },
       cbd: { name: "CBD", description: "Bien-être équilibré, sans compromis." },
       accessories: { name: "Accessoires", description: "De l'équipement pensé pour le rituel." },
+      mushrooms: { name: "Champignons", description: "Champignons fonctionnels, sans THC, sans compromis." },
     },
   },
   whyWarriorBuds: {
@@ -95,6 +96,8 @@ const fr: Dictionary = {
     ctaTitleHighlight: "Warrior Buds",
     ctaSubtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
     callNow: "Appeler maintenant",
+    paymentMethodsHeading: "Modes de paiement",
+    paymentMethodsNote: "Modes de paiement sécurisés disponibles lors du paiement.",
     copyright: (year: number) => `© ${year} Warrior Buds. Tous droits réservés.`,
     credit: "Site web conçu et développé par Brochu Digital.",
     privacyPolicy: "Politique de confidentialité",
@@ -294,7 +297,7 @@ const fr: Dictionary = {
     },
     products: {
       title: "Produits",
-      description: "Notre catalogue complet de fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires s'en vient.",
+      description: "Notre catalogue complet de fleurs, comestibles, vapoteuses, concentrés, CBD, accessoires et champignons s'en vient.",
     },
   },
   gallery: {
@@ -366,7 +369,7 @@ const fr: Dictionary = {
       metaTitle: "Inscription | Warrior Buds",
       metaDescription: "Créez un compte Warrior Buds pour un paiement plus rapide, le suivi de vos commandes et une liste de souhaits.",
       title: "Créer votre compte",
-      subtitle: "Rejoignez Warrior Buds pour un paiement plus rapide et le suivi de vos commandes.",
+      subtitle: "Créez un compte pour profiter d'un paiement plus rapide, du suivi de commandes, de bonus membres et de promotions exclusives.",
       firstName: "Prénom",
       lastName: "Nom de famille",
       email: "Courriel",
@@ -486,7 +489,7 @@ const fr: Dictionary = {
       delete: "Supprimer",
       save: "Enregistrer",
       cancel: "Annuler",
-      interacHint: "Enregistré comme rappel pour de futurs virements Interac — aucune information financière n'est conservée.",
+      interacHint: "Enregistrez votre mode de paiement préféré pour accélérer le paiement. Aucune information financière sensible n'est stockée.",
     },
     orders: {
       title: "Historique des commandes",
@@ -548,9 +551,32 @@ const fr: Dictionary = {
       review: "Révision",
       payment: "Paiement",
     },
+    identity: {
+      subtitle: "Aucun compte requis — commandez en tant qu'invité, ou créez un compte pour profiter d'avantages membres.",
+      guestTitle: "Continuer en tant qu'invité",
+      guestSubtitle: "Aucun compte requis. Passez votre commande en quelques étapes.",
+      guestEmailLabel: "Courriel",
+      guestCta: "Continuer en tant qu'invité",
+      accountTitle: "Créer un compte",
+      accountSubtitle: "Recommandé — profitez de bonus membres, promotions exclusives et récompenses à venir.",
+      accountCta: "Créer un compte",
+      haveAccount: "Vous avez déjà un compte ?",
+      loginLink: "Se connecter",
+      benefitsTitle: "Pourquoi créer un compte Warrior Buds ?",
+      benefits: [
+        "Promotions exclusives",
+        "Bonus réservés aux membres",
+        "Offres spéciales fréquentes",
+        "Paiement plus rapide",
+        "Historique des commandes",
+        "Futures récompenses de fidélité",
+      ],
+      benefitsFooter: "Pas de compte ? Aucun problème. Vous pouvez toujours commander en tant qu'invité.",
+    },
     shipping: {
       title: "Informations de livraison",
       addNew: "Ajouter une nouvelle adresse",
+      useAddress: "Utiliser cette adresse",
       method: "Mode de livraison",
       standard: "Standard (3 à 5 jours ouvrables)",
       expedited: "Accéléré (1 à 2 jours ouvrables)",
@@ -572,6 +598,7 @@ const fr: Dictionary = {
     payment: {
       title: "Paiement",
       choose: "Choisissez un mode de paiement",
+      demoBadge: "Démo",
       placeOrder: "Passer la commande",
       placing: "Envoi de la commande…",
     },
@@ -620,7 +647,7 @@ const fr: Dictionary = {
   },
   productCatalog: {
     metaTitle: "Produits | Warrior Buds",
-    metaDescription: "Parcourez le catalogue complet Warrior Buds — fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires.",
+    metaDescription: "Parcourez le catalogue complet Warrior Buds — fleurs, comestibles, vapoteuses, concentrés, CBD, accessoires et champignons.",
     filters: {
       allCategories: "Toutes les catégories",
       category: "Catégorie",
@@ -673,6 +700,516 @@ const fr: Dictionary = {
       subtitle: "Obtenez l'itinéraire et découvrez l'un des dispensaires les plus fiables de Kanesatake.",
       getDirections: "Obtenir l'itinéraire",
       callNow: "Appeler maintenant",
+    },
+  },
+  legal: {
+    onThisPage: "Sur cette page",
+    backToTopLabel: "Retour en haut",
+    lastUpdatedLabel: "Dernière mise à jour",
+    contactEyebrow: "Des questions ?",
+    contactTitle: "Contactez-nous",
+    contactSubtitle: "Notre équipe se fera un plaisir de répondre à tout ce qui n'est pas couvert ici.",
+    contactCta: "Nous contacter",
+    todoLabel: "À confirmer",
+    privacy: {
+      metaTitle: "Politique de confidentialité | Warrior Buds",
+      metaDescription:
+        "Découvrez quelles informations Warrior Buds recueille sur ce site, pourquoi, et comment elles sont conservées et utilisées.",
+      eyebrow: "Mentions légales",
+      title: "Politique de confidentialité",
+      intro:
+        "Cette Politique de confidentialité explique quelles informations Warrior Buds recueille sur ce site, pourquoi nous les recueillons, et comment elles sont conservées et utilisées. En utilisant ce site, vous acceptez les pratiques décrites ici.",
+      lastUpdated: "8 août 2026",
+      sections: [
+        {
+          id: "scope",
+          title: "Portée de cette politique",
+          blocks: [
+            {
+              type: "p",
+              text: "Cette Politique couvre le site Warrior Buds, y compris notre catalogue de produits, le panier et le paiement, les comptes clients, le suivi de commande, le formulaire de contact et l'assistant Bud Guardian. Elle ne couvre pas les sites tiers vers lesquels nous créons des liens, comme Instagram, Linktree ou Google Maps.",
+            },
+          ],
+        },
+        {
+          id: "information-we-collect",
+          title: "Informations que nous recueillons",
+          blocks: [
+            { type: "p", text: "Nous recueillons des informations de différentes façons, selon votre utilisation du site :" },
+            {
+              type: "list",
+              items: [
+                "Informations de compte — prénom, nom, adresse courriel, numéro de téléphone et mot de passe, lorsque vous créez un compte Warrior Buds.",
+                "Informations de paiement invité — les détails de livraison et de facturation ainsi que le courriel de contact que vous saisissez pour une commande unique, lorsque vous passez au paiement en tant qu'invité plutôt que de créer un compte.",
+                "Informations de panier, de liste de souhaits et de commande — les produits que vous ajoutez à votre panier ou à votre liste de souhaits, ainsi que votre historique de commandes, votre adresse de livraison, votre méthode d'expédition et le total de vos commandes.",
+                "Métadonnées de paiement — le mode de paiement que vous choisissez (p. ex. virement Interac, carte ou une option cryptomonnaie) et l'étiquette que vous lui donnez dans vos préférences de paiement enregistrées. Nous ne recueillons ni ne conservons de numéros de carte, de coordonnées bancaires ou d'identifiants de portefeuille crypto sur ce site.",
+                "Soumissions du formulaire de contact — votre nom, courriel, téléphone, sujet et message, lorsque vous nous écrivez via la page Contact.",
+                "Conversations avec Bud Guardian — les messages que vous saisissez dans notre assistant de clavardage Bud Guardian, utilisés pour répondre à votre question sur le moment.",
+                "Préférence marketing — si vous avez consenti à recevoir des communications marketing lors de la création de votre compte.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "how-we-store-data",
+          title: "Comment nous conservons vos informations",
+          blocks: [
+            {
+              type: "p",
+              text: "La boutique en ligne de Warrior Buds fonctionne actuellement sans base de données clients à distance : les détails de votre compte, votre panier, votre liste de souhaits, votre historique de commandes et vos adresses enregistrées sont stockés localement dans votre propre navigateur (au moyen de son stockage intégré), et non sur un serveur Warrior Buds. Ces données restent donc sur l'appareil et le navigateur avec lesquels vous les avez créées, et l'effacement des données du site dans votre navigateur les supprimera.",
+            },
+            {
+              type: "todo",
+              text: "À mesure que la plateforme évolue, une partie ou l'ensemble de ces informations pourrait être transférée vers une base de données sécurisée côté serveur. Cette Politique sera mise à jour avant que ce changement n'ait lieu.",
+            },
+            {
+              type: "p",
+              text: "Les messages échangés avec Bud Guardian ne sont conservés qu'en mémoire pour la durée de votre visite — ils ne sont pas enregistrés sur votre appareil et sont effacés lorsque vous fermez ou actualisez le clavardage.",
+            },
+          ],
+        },
+        {
+          id: "cookies-and-storage",
+          title: "Témoins (cookies) et stockage du navigateur",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous utilisons le stockage local et de session de votre navigateur plutôt que des témoins de suivi traditionnels pour faire fonctionner le site. Consultez notre Politique relative aux témoins pour la liste complète de ce qui est stocké et pourquoi.",
+            },
+          ],
+        },
+        {
+          id: "how-we-use-info",
+          title: "Comment nous utilisons vos informations",
+          blocks: [
+            {
+              type: "list",
+              items: [
+                "Pour créer et gérer votre compte et traiter vos commandes.",
+                "Pour communiquer avec vous au sujet de votre commande, de votre compte ou d'une question que vous nous avez soumise.",
+                "Pour mémoriser votre préférence de langue (français/anglais) et votre panier entre vos visites.",
+                "Pour aider notre équipe à répondre au service à la clientèle et aux demandes liées à la boutique.",
+                "Pour aider à détecter et prévenir les commandes suspectes ou frauduleuses.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "third-parties",
+          title: "Tiers",
+          blocks: [
+            { type: "p", text: "Nous ne vendons pas vos informations personnelles. Un nombre limité de services tiers sont intégrés au site :" },
+            {
+              type: "list",
+              items: [
+                "Google Maps — intégré à notre page Contact pour afficher notre emplacement et fournir un itinéraire. Google peut déposer ses propres témoins lors du chargement de la carte; consultez la politique de confidentialité de Google.",
+                "Instagram et Linktree — des liens externes dans notre pied de page et notre page Contact vous dirigent vers ces plateformes, qui ont leurs propres pratiques de confidentialité.",
+              ],
+            },
+            {
+              type: "todo",
+              text: "Nous n'utilisons actuellement aucun outil d'analyse ou de publicité tiers. Si cela change, cette Politique sera mise à jour au préalable.",
+            },
+          ],
+        },
+        {
+          id: "security",
+          title: "Sécurité",
+          blocks: [
+            {
+              type: "p",
+              text: "Comme la plupart des données clients sont stockées dans votre propre navigateur plutôt que sur un serveur central, nous vous recommandons de ne pas enregistrer votre mot de passe sur un appareil partagé ou public, et de vous déconnecter de votre compte une fois terminé — votre session reste autrement ouverte jusqu'à ce que vous vous déconnectiez.",
+            },
+            {
+              type: "todo",
+              text: "Les pratiques de sécurité formelles (normes de chiffrement, processus de notification en cas d'incident) pour une future infrastructure côté serveur sont encore en cours de finalisation et seront documentées ici avant le lancement.",
+            },
+          ],
+        },
+        {
+          id: "data-retention",
+          title: "Conservation des données",
+          blocks: [
+            {
+              type: "p",
+              text: "Les informations stockées dans votre navigateur y demeurent jusqu'à ce que vous effaciez les données du site dans votre navigateur, que vous vous déconnectiez et effaciez le stockage, ou que vous supprimiez vous-même l'élément concerné lorsque c'est possible — par exemple, en supprimant une adresse ou une préférence de paiement enregistrée dans Votre compte.",
+            },
+          ],
+        },
+        {
+          id: "your-rights",
+          title: "Vos droits en matière de confidentialité",
+          blocks: [
+            {
+              type: "p",
+              text: "Vous pouvez consulter et mettre à jour la plupart de vos informations directement dans Votre compte — détails du profil, adresses, préférences de paiement et consentement marketing. Vous pouvez aussi effacer le stockage local de votre navigateur en tout temps pour supprimer les données stockées localement.",
+            },
+            {
+              type: "p",
+              text: "Pour demander une copie de vos informations, en demander la correction, ou demander la suppression de votre compte et des données associées, contactez-nous en utilisant les coordonnées ci-dessous. Conformément à la loi canadienne sur la protection des renseignements personnels (LPRPDE), nous répondrons aux demandes raisonnables dans un délai raisonnable.",
+            },
+            {
+              type: "todo",
+              text: "La suppression de compte en libre-service dans Votre compte est prévue pour une mise à jour future; les demandes de suppression sont traitées manuellement par notre équipe entre-temps.",
+            },
+          ],
+        },
+        {
+          id: "minors",
+          title: "Mineurs",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds vend des produits de cannabis et s'adresse uniquement aux adultes ayant l'âge légal (voir nos Modalités et conditions). Nous ne recueillons pas sciemment de renseignements personnels auprès de mineurs, et tout compte identifié comme appartenant à un mineur sera fermé.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Modifications de cette politique",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous pouvons mettre à jour cette Politique de confidentialité de temps à autre à mesure que le site et nos pratiques évoluent. La date « Dernière mise à jour » en haut de cette page reflète la révision la plus récente. Les changements importants seront reflétés ici avant leur entrée en vigueur.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Nous contacter",
+          blocks: [{ type: "p", text: "Des questions sur cette Politique de confidentialité ou sur vos informations ? Contactez notre équipe." }],
+        },
+      ],
+    },
+    terms: {
+      metaTitle: "Modalités et conditions | Warrior Buds",
+      metaDescription: "Les modalités qui régissent votre utilisation du site Warrior Buds et toute commande passée avec nous.",
+      eyebrow: "Mentions légales",
+      title: "Modalités et conditions",
+      intro:
+        "Ces Modalités et conditions régissent votre utilisation du site Warrior Buds et toute commande que vous passez avec nous. Veuillez les lire avant de passer une commande.",
+      lastUpdated: "8 août 2026",
+      sections: [
+        {
+          id: "acceptance",
+          title: "Acceptation de ces modalités",
+          blocks: [
+            {
+              type: "p",
+              text: "En accédant à ce site, en créant un compte ou en passant une commande, vous acceptez d'être lié par ces Modalités et conditions. Si vous n'êtes pas d'accord, veuillez ne pas utiliser le site ni passer de commande.",
+            },
+          ],
+        },
+        {
+          id: "eligibility",
+          title: "Admissibilité et exigence d'âge",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds vend du cannabis et des produits connexes. Vous devez avoir au moins 18 ans et avoir l'âge légal pour acheter du cannabis dans votre juridiction afin d'utiliser ce site ou de passer une commande. En passant une commande, vous confirmez que vous répondez à cette exigence, et nous pouvons demander une pièce d'identité gouvernementale avec photo valide pour vérifier votre âge lors du paiement, à la livraison ou à la cueillette.",
+            },
+            {
+              type: "p",
+              text: "Toutes les ventes sont effectuées conformément aux lois et règlements sur le cannabis du Québec, du Canada, et du territoire mohawk de Kanesatake. Nous nous réservons le droit de refuser ou d'annuler toute commande lorsque l'âge ou l'identité ne peuvent être vérifiés.",
+            },
+          ],
+        },
+        {
+          id: "accounts",
+          title: "Comptes et paiement invité",
+          blocks: [
+            {
+              type: "p",
+              text: "Vous pouvez créer un compte Warrior Buds ou passer au paiement en tant qu'invité. Si vous créez un compte, vous êtes responsable de garder votre mot de passe confidentiel et de toute activité effectuée sous votre compte. Veuillez garder vos nom, courriel, téléphone et adresse exacts et à jour.",
+            },
+            {
+              type: "p",
+              text: "Les informations fournies lors d'un paiement invité ne servent qu'à compléter et expédier cette commande; elles ne sont pas enregistrées dans un compte.",
+            },
+          ],
+        },
+        {
+          id: "products-availability",
+          title: "Produits et disponibilité",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous faisons de notre mieux pour décrire et photographier fidèlement nos produits, y compris la teneur en THC/CBD, la variété, le poids et le prix. Les images des produits sont fournies à titre indicatif; l'emballage et l'apparence réels peuvent varier selon le lot.",
+            },
+            {
+              type: "p",
+              text: "Tous les produits sont offerts sous réserve de disponibilité. Nous pouvons limiter les quantités par commande ou par client, et discontinuer ou remplacer des produits sans préavis.",
+            },
+          ],
+        },
+        {
+          id: "orders-pricing",
+          title: "Commandes et tarification",
+          blocks: [
+            {
+              type: "p",
+              text: "Les prix sont affichés en dollars canadiens (CAD) et n'incluent pas les taxes applicables ni les frais d'expédition, sauf indication contraire; les taxes et les frais d'expédition sont calculés automatiquement lors du paiement. Nous nous réservons le droit de corriger les erreurs de prix ou de fiche produit, même après qu'une commande a été passée, et d'annuler les commandes touchées en vous en avisant.",
+            },
+            {
+              type: "p",
+              text: "Passer une commande constitue une offre d'achat, que nous pouvons accepter ou refuser à notre discrétion — par exemple, lorsqu'un produit est en rupture de stock, qu'une vérification d'âge ou d'identité échoue, ou en cas de soupçon de fraude.",
+            },
+          ],
+        },
+        {
+          id: "cancellations",
+          title: "Annulations",
+          blocks: [
+            {
+              type: "p",
+              text: "Vous pouvez nous demander d'annuler une commande qui n'a pas encore été expédiée ou préparée pour la cueillette en nous contactant dès que possible. Nous pouvons également annuler une commande — par exemple pour des raisons de stock, de paiement ou de vérification d'âge — et vous en informerons le cas échéant.",
+            },
+          ],
+        },
+        {
+          id: "payments",
+          title: "Paiements",
+          blocks: [
+            {
+              type: "p",
+              text: "Lors du paiement, nous offrons un choix de modes de paiement, pouvant inclure le virement Interac, Visa, Mastercard, American Express, Bitcoin, Ethereum et Shakepay. Les instructions affichées lors du paiement pour le mode choisi sont celles qui s'appliquent à votre commande.",
+            },
+            {
+              type: "p",
+              text: "Nous ne conservons pas votre numéro de carte, vos coordonnées bancaires ni les identifiants de votre portefeuille de cryptomonnaie sur ce site. Les virements Interac sont envoyés directement depuis votre propre application bancaire; les autres modes de paiement électroniques sont traités par le fournisseur affiché au moment du paiement.",
+            },
+            {
+              type: "todo",
+              text: "Il se peut que tous les modes de paiement affichés ne soient pas pleinement actifs en tout temps pendant la finalisation de notre plateforme; l'écran de paiement affiche toujours les instructions exactes et à jour pour chaque mode actif.",
+            },
+          ],
+        },
+        {
+          id: "fulfillment",
+          title: "Traitement des commandes et cueillette",
+          blocks: [
+            {
+              type: "p",
+              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 100 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
+            },
+            {
+              type: "todo",
+              text: "Les zones de livraison précises, les heures limites de commande et les délais de préparation pour la cueillette sont en cours de finalisation et seront confirmés au paiement ou par notre équipe.",
+            },
+          ],
+        },
+        {
+          id: "tracking",
+          title: "Suivi de commande",
+          blocks: [
+            {
+              type: "p",
+              text: "Vous pouvez suivre l'état de votre commande depuis Votre compte ou sur notre page Suivre ma commande à l'aide de votre numéro de commande et de votre courriel. Les commandes expédiées reçoivent un numéro de suivi Postes Canada dès qu'il est disponible.",
+            },
+          ],
+        },
+        {
+          id: "refunds-disputes",
+          title: "Remboursements et litiges",
+          blocks: [
+            {
+              type: "todo",
+              text: "Notre politique détaillée de retour, d'échange et de remboursement est en cours de finalisation. En attendant, si un problème survient avec votre commande — produit endommagé, article manquant ou litige de paiement — contactez-nous directement avec votre numéro de commande et nous collaborerons avec vous pour le résoudre.",
+            },
+          ],
+        },
+        {
+          id: "acceptable-use",
+          title: "Utilisation acceptable",
+          blocks: [
+            { type: "p", text: "Vous acceptez de ne pas :" },
+            {
+              type: "list",
+              items: [
+                "Utiliser ce site à des fins illégales, ou tenter d'acheter du cannabis pour un mineur ou au nom d'une personne n'ayant pas l'âge légal.",
+                "Tenter de contourner la vérification d'âge ou d'identité.",
+                "Tenter d'accéder au compte d'un autre client, ou à toute zone d'administration ou réservée au personnel du site, sans autorisation.",
+                "Utiliser Bud Guardian ou le formulaire de contact pour demander quoi que ce soit d'illégal, ou pour tenter d'extraire des données auxquelles vous n'êtes pas autorisé à accéder.",
+                "Perturber ou interrompre le fonctionnement du site, y introduire des logiciels malveillants, ou tenter de l'extraire (scraping) ou de le désassembler.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "intellectual-property",
+          title: "Propriété intellectuelle",
+          blocks: [
+            {
+              type: "p",
+              text: "Le nom Warrior Buds, son logo, et le contenu de ce site — textes, graphiques, photos et design — appartiennent à Warrior Buds ou à ses concédants et sont protégés par le droit d'auteur et le droit des marques. Vous ne pouvez pas les copier, les reproduire ou les utiliser sans notre autorisation écrite, sauf pour votre usage personnel et non commercial du site.",
+            },
+          ],
+        },
+        {
+          id: "bud-guardian",
+          title: "Avis relatif à l'assistant IA Bud Guardian",
+          blocks: [
+            {
+              type: "p",
+              text: "Bud Guardian est un assistant automatisé qui répond à des questions générales sur nos produits, nos politiques de magasin et vos commandes. Ses réponses sont fournies à titre informatif seulement, ne constituent pas des conseils médicaux, juridiques ou professionnels, et peuvent parfois être incomplètes ou inexactes.",
+            },
+            {
+              type: "p",
+              text: "Bud Guardian n'aidera pas à contourner la vérification d'âge ou d'identité, ne fournira pas d'informations sur des produits ou activités illégaux, et ne remplace pas les services d'urgence ou de crise. Pour toute question exigeant une réponse définitive, veuillez contacter notre équipe directement.",
+            },
+          ],
+        },
+        {
+          id: "accuracy",
+          title: "Exactitude des informations",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous faisons des efforts raisonnables pour que les informations sur les produits, les prix et la boutique soient exactes et à jour, mais des erreurs peuvent survenir. Nous ne sommes pas responsables des erreurs typographiques, de prix ou de fiche produit, et nous nous réservons le droit de les corriger et, au besoin, d'annuler les commandes touchées.",
+            },
+          ],
+        },
+        {
+          id: "liability",
+          title: "Limitation de responsabilité",
+          blocks: [
+            {
+              type: "p",
+              text: "Dans la mesure permise par la loi, Warrior Buds n'est pas responsable des dommages indirects, accessoires ou consécutifs découlant de votre utilisation de ce site ou de votre commande, au-delà de la valeur de cette commande. Rien dans ces Modalités ne limite une responsabilité qui ne peut être exclue en vertu de la loi applicable.",
+            },
+          ],
+        },
+        {
+          id: "governing-law",
+          title: "Droit applicable",
+          blocks: [
+            {
+              type: "p",
+              text: "Ces Modalités sont régies par les lois de la province de Québec et les lois du Canada qui s'y appliquent, sans égard aux principes de conflit de lois.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Modifications de ces modalités",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous pouvons mettre à jour ces Modalités de temps à autre. La date « Dernière mise à jour » ci-dessus reflète la révision la plus récente, et le fait de continuer à utiliser le site ou de passer une commande après l'entrée en vigueur de changements signifie que vous acceptez les Modalités mises à jour.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Nous contacter",
+          blocks: [{ type: "p", text: "Des questions sur ces Modalités ? Contactez notre équipe." }],
+        },
+      ],
+    },
+    cookies: {
+      metaTitle: "Politique relative aux témoins | Warrior Buds",
+      metaDescription: "Comment Warrior Buds utilise le stockage local, le stockage de session et les intégrations tierces — et comment les contrôler.",
+      eyebrow: "Mentions légales",
+      title: "Politique relative aux témoins",
+      intro:
+        "Cette page explique les technologies de stockage du navigateur utilisées par Warrior Buds — y compris le stockage local, le stockage de session et tout témoin déposé par du contenu tiers intégré — et comment vous pouvez les contrôler.",
+      lastUpdated: "8 août 2026",
+      sections: [
+        {
+          id: "how-we-use-storage",
+          title: "Comment nous utilisons le stockage du navigateur",
+          blocks: [
+            {
+              type: "p",
+              text: "Le site Warrior Buds n'utilise pas de témoins de suivi traditionnels. Il utilise plutôt le stockage local et de session intégré à votre navigateur pour mémoriser votre panier, votre compte et vos préférences entre vos visites, entièrement dans votre propre navigateur.",
+            },
+          ],
+        },
+        {
+          id: "essential-storage",
+          title: "Stockage essentiel",
+          blocks: [
+            { type: "p", text: "Ces éléments sont nécessaires au bon fonctionnement des fonctionnalités de base du site, comme magasiner et payer :" },
+            {
+              type: "list",
+              items: [
+                "Préférence de langue — mémorise si vous naviguez en français ou en anglais.",
+                "Panier et liste de souhaits — mémorise les produits que vous avez ajoutés afin qu'ils soient toujours là à votre retour.",
+                "Cache du catalogue de produits — une copie locale de notre fiche de produits utilisée pour afficher la boutique rapidement.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "account-auth-storage",
+          title: "Stockage lié au compte et à l'authentification",
+          blocks: [
+            {
+              type: "p",
+              text: "Si vous créez un compte ou vous connectez, nous utilisons le stockage local pour vous garder connecté entre vos visites (une « session persistante »), et pour stocker les détails de votre compte, vos adresses enregistrées, vos préférences de paiement et votre historique de commandes, comme décrit dans notre Politique de confidentialité.",
+            },
+            {
+              type: "p",
+              text: "Les membres du personnel qui se connectent aux outils internes de Warrior Buds utilisent le stockage de session pour leur connexion, qui s'efface automatiquement à la fermeture de l'onglet du navigateur.",
+            },
+          ],
+        },
+        {
+          id: "bud-guardian-storage",
+          title: "Stockage lié à Bud Guardian",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous stockons un petit indicateur dans le stockage local pour nous souvenir que vous avez déjà vu l'animation de bienvenue de Bud Guardian, afin qu'elle ne se répète pas à chaque visite. Vos messages de clavardage ne sont pas enregistrés — ils n'existent qu'en mémoire pendant que la fenêtre de clavardage est ouverte et sont effacés lorsque vous la fermez ou l'actualisez.",
+            },
+          ],
+        },
+        {
+          id: "third-party-embeds",
+          title: "Intégrations tierces",
+          blocks: [
+            {
+              type: "p",
+              text: "Notre page Contact intègre une vue Google Maps de notre emplacement. Le chargement de cette carte peut permettre à Google de déposer ses propres témoins dans votre navigateur, régis par les propres politiques de témoins et de confidentialité de Google, et non les nôtres.",
+            },
+          ],
+        },
+        {
+          id: "analytics",
+          title: "Analyse et publicité",
+          blocks: [
+            {
+              type: "todo",
+              text: "Nous n'utilisons actuellement aucun témoin d'analyse ou de publicité tiers sur ce site. Si cela change, cette Politique relative aux témoins sera mise à jour avant l'ajout d'un tel outil.",
+            },
+          ],
+        },
+        {
+          id: "managing-storage",
+          title: "Gérer et effacer le stockage",
+          blocks: [
+            {
+              type: "p",
+              text: "Vous pouvez effacer les témoins et les données de ce site en tout temps depuis les paramètres de votre navigateur (habituellement sous Confidentialité / Paramètres de site). Cela vous déconnectera, videra votre panier et votre liste de souhaits, et réinitialisera votre préférence de langue enregistrée.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Modifications de cette politique",
+          blocks: [
+            {
+              type: "p",
+              text: "Nous pouvons mettre à jour cette Politique relative aux témoins à mesure que les technologies de stockage que nous utilisons évoluent. La date « Dernière mise à jour » ci-dessus reflète la révision la plus récente.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Nous contacter",
+          blocks: [{ type: "p", text: "Des questions sur cette Politique relative aux témoins ? Contactez notre équipe." }],
+        },
+      ],
     },
   },
 };

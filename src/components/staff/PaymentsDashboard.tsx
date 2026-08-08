@@ -159,7 +159,7 @@ export default function PaymentsDashboard({ session }: { session: StaffSession }
           </div>
           <div className="lg:col-span-5">
             {selectedPayment ? (
-              <PaymentDetails payment={selectedPayment} actor={session.name} onClose={() => setSelectedId(null)} />
+              <PaymentDetails payment={selectedPayment} session={session} onClose={() => setSelectedId(null)} />
             ) : (
               <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center text-sm text-white/40">
                 {t.selectHint}

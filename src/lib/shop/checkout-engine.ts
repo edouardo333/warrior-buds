@@ -16,7 +16,12 @@ function uid(prefix: string): string {
 }
 
 export type CreateOrderInput = {
+  // Cart owner id — a real CustomerAccount["id"] when signed in, or
+  // GUEST_OWNER_ID ("guest") for Guest Checkout (see cart-actions.ts
+  // useOwnerId()).
   accountId: string;
+  // Contact email for guest orders — null when accountId is a real account.
+  guestEmail?: string | null;
   shippingAddress: Address;
   billingAddress: Address;
   shippingMethod: ShippingMethod;
@@ -32,6 +37,7 @@ export function createOrderFromCart(input: CreateOrderInput): ShopOrder | null {
   const order: ShopOrder = {
     id: uid("WB"),
     accountId: input.accountId,
+    guestEmail: input.guestEmail ?? null,
     items: lines.map((l) => ({
       productId: l.product.id,
       name: l.product.name,

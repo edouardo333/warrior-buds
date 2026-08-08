@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, CreditCard, LayoutDashboard, LogOut, Menu, Package, Shield, User, Users, Warehouse, X } from "lucide-react";
+import { ArrowLeft, BarChart3, CreditCard, LayoutDashboard, LogOut, Menu, Package, Shield, User, UserCog, Users, Warehouse, X } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getRoleLabel, endSession, type StaffSession } from "@/lib/staff/staff-auth";
 
@@ -14,6 +14,8 @@ const TEXT = {
     security: "Risk Engine",
     customers: "Clients",
     inventory: "Inventaire",
+    analytics: "Analytique",
+    team: "Personnel",
     account: "Compte",
     logout: "Déconnexion",
     menu: "Menu",
@@ -27,6 +29,8 @@ const TEXT = {
     security: "Risk Engine",
     customers: "Customers",
     inventory: "Inventory",
+    analytics: "Analytics",
+    team: "Staff",
     account: "Account",
     logout: "Log out",
     menu: "Menu",
@@ -41,6 +45,8 @@ const LINKS = [
   { key: "security", href: "/staff/security", icon: Shield },
   { key: "customers", href: "/staff/customers", icon: Users },
   { key: "inventory", href: "/staff/inventory", icon: Warehouse },
+  { key: "analytics", href: "/staff/analytics", icon: BarChart3 },
+  { key: "team", href: "/staff/team", icon: UserCog },
 ] as const;
 
 export type StaffNavKey = (typeof LINKS)[number]["key"];

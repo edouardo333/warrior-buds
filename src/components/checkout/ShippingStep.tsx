@@ -22,6 +22,10 @@ const EMPTY_FORM = {
 
 const SHIPPING_METHODS: ShippingMethod[] = ["standard", "expedited", "pickup"];
 
+// Storefront — used for both signed-in checkout (addresses saved to the
+// account) and Guest Checkout (account === null): a guest always sees the
+// inline form and their entry is only ever attached to the order, never
+// persisted to any account.
 export default function ShippingStep({
   account,
   selected,
@@ -30,7 +34,7 @@ export default function ShippingStep({
   onShippingMethodChange,
   onContinue,
 }: {
-  account: CustomerAccount;
+  account: CustomerAccount | null;
   selected: Address | null;
   onSelect: (address: Address) => void;
   shippingMethod: ShippingMethod;
@@ -39,11 +43,19 @@ export default function ShippingStep({
 }) {
   const { t } = useLanguage();
   const { addAddress } = useAddressActions();
-  const [showForm, setShowForm] = useState(account.addresses.length === 0);
+  const [showForm, setShowForm] = useState(!account || account.addresses.length === 0);
   const [form, setForm] = useState(EMPTY_FORM);
 
   function handleAddAddress(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!account) {
+      // Guest Checkout never saves to an account — the address only lives
+      // on this order. `label` isn't shown to the guest; it's just internal
+      // bookkeeping for the Address shape.
+      onSelect({ ...form, id: `guest-${Date.now().toString(36)}`, label: "Shipping Address", line2: form.line2 || null, isDefault: true });
+      setForm(EMPTY_FORM);
+      return;
+    }
     const created = addAddress(account.id, { ...form, line2: form.line2 || null });
     const newAddress = created?.addresses[created.addresses.length - 1];
     if (newAddress) onSelect(newAddress);
@@ -55,9 +67,11 @@ export default function ShippingStep({
     <div className="flex flex-col gap-8">
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.checkout.shipping.title}</h2>
-        {account.addresses.length === 0 && !showForm && <p className="mt-3 text-sm text-foreground/60">{t.checkout.shipping.noAddresses}</p>}
+        {account && account.addresses.length === 0 && !showForm && (
+          <p className="mt-3 text-sm text-foreground/60">{t.checkout.shipping.noAddresses}</p>
+        )}
 
-        {account.addresses.length > 0 && (
+        {account && account.addresses.length > 0 && (
           <div className="mt-4 flex flex-col gap-3">
             {account.addresses.map((address) => (
               <label
@@ -95,15 +109,17 @@ export default function ShippingStep({
           </button>
         ) : (
           <form onSubmit={handleAddAddress} noValidate className="mt-4 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-            <FormField label={t.account.addresses.label} htmlFor="ship-label">
-              <input
-                id="ship-label"
-                required
-                value={form.label}
-                onChange={(e) => setForm((p) => ({ ...p, label: e.target.value }))}
-                className={fieldClass()}
-              />
-            </FormField>
+            {account && (
+              <FormField label={t.account.addresses.label} htmlFor="ship-label">
+                <input
+                  id="ship-label"
+                  required
+                  value={form.label}
+                  onChange={(e) => setForm((p) => ({ ...p, label: e.target.value }))}
+                  className={fieldClass()}
+                />
+              </FormField>
+            )}
             <FormField label={t.account.addresses.fullName} htmlFor="ship-fullname">
               <input
                 id="ship-fullname"
@@ -163,9 +179,9 @@ export default function ShippingStep({
             </div>
             <div className="flex gap-3">
               <PrimaryButton type="submit" className="px-6 py-2.5 text-xs">
-                {t.account.addresses.save}
+                {account ? t.account.addresses.save : t.checkout.shipping.useAddress}
               </PrimaryButton>
-              {account.addresses.length > 0 && (
+              {account && account.addresses.length > 0 && (
                 <SecondaryButton type="button" onClick={() => setShowForm(false)} className="px-6 py-2.5 text-xs">
                   {t.account.addresses.cancel}
                 </SecondaryButton>

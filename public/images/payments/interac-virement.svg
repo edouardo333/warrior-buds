@@ -1,0 +1,11 @@
+<svg role="img" viewBox="2.2 4.2 97.7 26.1" xmlns="http://www.w3.org/2000/svg" aria-labelledby="wb-interac-title">
+  <title id="wb-interac-title">Interac e-Transfer</title>
+  <!-- Two interlocking chevrons — Interac's signature "transfer" mark — in
+       Interac Yellow with a cool gray counter-arrow; the black gap between
+       them is the page background showing through, completing the
+       yellow / black / gray palette without needing an opaque card. -->
+  <path fill="#FFC72C" d="M4 8h11l5 8-5 8H4l5-8z"/>
+  <path fill="#9CA3AF" d="M26 10H15l-5 6 5 6h11l-5-6z"/>
+  <text x="38" y="20" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="16" fill="#F5F5F5" letter-spacing="0.2">Interac</text>
+  <text x="38" y="27.5" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="7" fill="#9CA3AF" letter-spacing="1.5">E-TRANSFER</text>
+</svg>

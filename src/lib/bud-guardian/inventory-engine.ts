@@ -37,11 +37,16 @@ import { findRiskAssessmentByOrderId } from "@/data/bud-guardian/risk";
 import {
   addMovement,
   findProductById,
+  getInventoryMovements,
   getInventoryProducts,
   getOrderStockLinks,
   setOrderStockLink,
   updateProductLocation,
 } from "@/data/bud-guardian/inventory-store";
+// audit-log.ts is shared infrastructure (like orders-store.ts or risk.ts),
+// not staff business logic, so importing it here doesn't invert the
+// data -> engine -> staff-action layering described above.
+import { hasAuditEntry, logAuditEntry } from "@/data/bud-guardian/audit-log";
 import { getOrderTotal, maskName } from "./order-engine";
 
 // ---------------------------------------------------------------------------
@@ -204,6 +209,61 @@ function computeDeductions(order: Order): { productId: string; quantity: number 
   return deductions;
 }
 
+// Bud Guardian V6 — Inventory Matching Safety. The keyword-matching hook
+// above (see header) means an order item with no matching product's
+// matchKeywords simply never deducts stock — before V6 that failure was
+// completely silent. This doesn't change the matching itself (no product/
+// order architecture redesign), it just makes the failure visible: any item
+// on a stock-committing order that can't be matched is surfaced here so
+// warnUnmatchedItems() below can log it instead of letting it disappear.
+export function getUnmatchedItemNames(order: Order): string[] {
+  return order.items.filter((item) => matchProductByItemName(item.name) === null).map((item) => item.name);
+}
+
+const UNMATCHED_ITEM_ACTION = "inventory.unmatchedItem";
+
+// Logs a warning to the shared audit log the first time an order with
+// unmatched items commits stock — guarded by hasAuditEntry so a repeated
+// reconciliation pass (this runs on every order/payment change) never logs
+// the same order twice, the same "check independently, don't just trust a
+// flag" belt-and-suspenders approach hasOutstandingDeduction() already uses
+// for the deduction/restore guards below.
+function warnUnmatchedItems(order: Order): void {
+  const unmatched = getUnmatchedItemNames(order);
+  if (unmatched.length === 0) return;
+  if (hasAuditEntry("inventory", UNMATCHED_ITEM_ACTION, order.id)) return;
+  logAuditEntry({
+    actor: "Bud Guardian (auto)",
+    role: "system",
+    module: "inventory",
+    action: UNMATCHED_ITEM_ACTION,
+    entityId: order.id,
+    description: `${unmatched.length} article(s) de la commande ${order.id} n'ont pas pu être associés à un produit d'inventaire et n'ont pas été déduits : ${unmatched.join(", ")}.`,
+    metadata: { orderId: order.id, unmatchedItemNames: unmatched },
+    outcome: "warning",
+  });
+}
+
+// Bud Guardian V5.0 — Inventory Safety & Permissions. Duplicate-deduction
+// guard: the order-stock link (applied/reversed) is the primary idempotency
+// key, but before committing a deduction or a restore we also re-derive the
+// same fact independently from the movement log itself — outstanding
+// deductions = every "stock-out" for this orderId minus every "return"
+// stock-in that already restored one. That second, independent check is
+// what makes "the same order never reduces inventory twice" (and "a
+// cancelled order is restored exactly once") hold even if the link were
+// ever missing or stale — belt-and-suspenders on top of the link, not a
+// replacement for it. It also stays correct across legitimate multiple
+// commit/reverse cycles (e.g. a payment that fails then later succeeds),
+// since each cycle nets back to zero outstanding deductions instead of
+// permanently latching on "a stock-out happened once".
+function hasOutstandingDeduction(orderId: string): boolean {
+  const movements = getInventoryMovements().filter((m) => m.orderId === orderId);
+  const deducted = movements.filter((m) => m.type === "stock-out").length;
+  const restored = movements.filter((m) => m.type === "stock-in" && m.reason === "return").length;
+  return deducted > restored;
+}
+
 export function reconcileOrders(actor = "Bud Guardian (auto)"): void {
   const orders = getOrders();
   const links = getOrderStockLinks();
@@ -214,6 +274,18 @@ export function reconcileOrders(actor = "Bud Guardian (auto)"): void {
     const currentlyCommitted = link?.status === "applied";
 
     if (desiredCommitted && !currentlyCommitted) {
+      // V6 — surface (once per order) any item that can't be matched to a
+      // product, whether this is a fresh deduction or a resync below.
+      warnUnmatchedItems(order);
+
+      // Guard: never deduct twice for the same order, even if the link is
+      // missing/stale — if the movement log already shows an outstanding
+      // (un-returned) deduction for this order, just resync the link
+      // instead of deducting again.
+      if (hasOutstandingDeduction(order.id)) {
+        setOrderStockLink({ orderId: order.id, status: "applied", deductions: link?.deductions ?? [], updatedAt: new Date().toISOString() });
+        continue;
+      }
       const deductions = computeDeductions(order);
       for (const deduction of deductions) {
         addMovement({
@@ -228,6 +300,13 @@ export function reconcileOrders(actor = "Bud Guardian (auto)"): void {
       }
       setOrderStockLink({ orderId: order.id, status: "applied", deductions, updatedAt: new Date().toISOString() });
     } else if (!desiredCommitted && currentlyCommitted && link) {
+      // Guard: restore a cancelled/reversed order's stock exactly once —
+      // skip if the movement log shows no outstanding deduction left to
+      // restore for this order (i.e. it was already returned).
+      if (!hasOutstandingDeduction(order.id)) {
+        setOrderStockLink({ orderId: order.id, status: "reversed", deductions: link.deductions, updatedAt: new Date().toISOString() });
+        continue;
+      }
       for (const deduction of link.deductions) {
         addMovement({
           productId: deduction.productId,

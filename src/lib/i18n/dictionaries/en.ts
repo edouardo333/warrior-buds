@@ -49,6 +49,7 @@ const en: Dictionary = {
       concentrates: { name: "Concentrates", description: "Full-spectrum, high-potency." },
       cbd: { name: "CBD", description: "Balanced wellness, no compromise." },
       accessories: { name: "Accessories", description: "Gear built for the ritual." },
+      mushrooms: { name: "Mushrooms", description: "Functional fungi, no THC, no compromise." },
     },
   },
   whyWarriorBuds: {
@@ -95,6 +96,8 @@ const en: Dictionary = {
     ctaTitleHighlight: "Warrior Buds",
     ctaSubtitle: "Get directions and discover one of Kanesatake's most trusted dispensaries.",
     callNow: "Call Now",
+    paymentMethodsHeading: "Payment Methods",
+    paymentMethodsNote: "Secure payment options available at checkout.",
     copyright: (year: number) => `© ${year} Warrior Buds. All Rights Reserved.`,
     credit: "Website designed & developed by Brochu Digital.",
     privacyPolicy: "Privacy Policy",
@@ -294,7 +297,7 @@ const en: Dictionary = {
     },
     products: {
       title: "Products",
-      description: "Our full catalog of flower, edibles, vapes, concentrates, CBD, and accessories is on its way.",
+      description: "Our full catalog of flower, edibles, vapes, concentrates, CBD, accessories, and mushrooms is on its way.",
     },
   },
   gallery: {
@@ -366,7 +369,7 @@ const en: Dictionary = {
       metaTitle: "Sign Up | Warrior Buds",
       metaDescription: "Create a Warrior Buds account for faster checkout, order tracking, and a saved wishlist.",
       title: "Create Your Account",
-      subtitle: "Join Warrior Buds for faster checkout and order tracking.",
+      subtitle: "Create an account for faster checkout, order tracking, member bonuses and exclusive promotions.",
       firstName: "First Name",
       lastName: "Last Name",
       email: "Email",
@@ -486,7 +489,7 @@ const en: Dictionary = {
       delete: "Delete",
       save: "Save",
       cancel: "Cancel",
-      interacHint: "Saved as a reminder for future Interac e-Transfers — no financial details are stored.",
+      interacHint: "Save your preferred payment method for faster checkout. No sensitive financial information is stored.",
     },
     orders: {
       title: "Order History",
@@ -548,9 +551,32 @@ const en: Dictionary = {
       review: "Review",
       payment: "Payment",
     },
+    identity: {
+      subtitle: "Account not required — check out as a guest, or create an account for member perks.",
+      guestTitle: "Continue as Guest",
+      guestSubtitle: "No account required. Complete your order in just a few steps.",
+      guestEmailLabel: "Email",
+      guestCta: "Continue as Guest",
+      accountTitle: "Create an Account",
+      accountSubtitle: "Recommended — unlock member-only bonuses, exclusive promotions and future rewards.",
+      accountCta: "Create an Account",
+      haveAccount: "Already have an account?",
+      loginLink: "Log in",
+      benefitsTitle: "Why create a Warrior Buds account?",
+      benefits: [
+        "Exclusive promotional offers",
+        "Member-only bonuses",
+        "Frequent special promotions",
+        "Faster checkout",
+        "Order history",
+        "Future loyalty rewards",
+      ],
+      benefitsFooter: "No account? No problem. You can always checkout as a guest.",
+    },
     shipping: {
       title: "Shipping Information",
       addNew: "Add a New Address",
+      useAddress: "Use This Address",
       method: "Shipping Method",
       standard: "Standard (3–5 business days)",
       expedited: "Expedited (1–2 business days)",
@@ -572,6 +598,7 @@ const en: Dictionary = {
     payment: {
       title: "Payment",
       choose: "Choose a payment method",
+      demoBadge: "Demo",
       placeOrder: "Place Order",
       placing: "Placing order…",
     },
@@ -620,7 +647,7 @@ const en: Dictionary = {
   },
   productCatalog: {
     metaTitle: "Products | Warrior Buds",
-    metaDescription: "Browse the full Warrior Buds catalog — flower, edibles, vapes, concentrates, CBD, and accessories.",
+    metaDescription: "Browse the full Warrior Buds catalog — flower, edibles, vapes, concentrates, CBD, accessories, and mushrooms.",
     filters: {
       allCategories: "All Categories",
       category: "Category",
@@ -673,6 +700,513 @@ const en: Dictionary = {
       subtitle: "Get directions and discover one of Kanesatake's most trusted dispensaries.",
       getDirections: "Get Directions",
       callNow: "Call Now",
+    },
+  },
+  legal: {
+    onThisPage: "On This Page",
+    backToTopLabel: "Back to top",
+    lastUpdatedLabel: "Last updated",
+    contactEyebrow: "Still Have Questions?",
+    contactTitle: "Get In Touch",
+    contactSubtitle: "Our team is happy to help with anything that isn't covered here.",
+    contactCta: "Contact Us",
+    todoLabel: "Pending confirmation",
+    privacy: {
+      metaTitle: "Privacy Policy | Warrior Buds",
+      metaDescription:
+        "Learn what information Warrior Buds collects through this website, why we collect it, and how it's stored and used.",
+      eyebrow: "Legal",
+      title: "Privacy Policy",
+      intro:
+        "This Privacy Policy explains what information Warrior Buds collects through this website, why we collect it, and how it's stored and used. By using this site, you agree to the practices described here.",
+      lastUpdated: "August 8, 2026",
+      sections: [
+        {
+          id: "scope",
+          title: "Scope of This Policy",
+          blocks: [
+            {
+              type: "p",
+              text: "This Policy covers the Warrior Buds website, including our product catalog, cart and checkout, customer accounts, order tracking, contact form, and the Bud Guardian assistant. It does not cover third-party sites we link to, such as Instagram, Linktree, or Google Maps.",
+            },
+          ],
+        },
+        {
+          id: "information-we-collect",
+          title: "Information We Collect",
+          blocks: [
+            { type: "p", text: "We collect information in a few different ways, depending on how you use the site:" },
+            {
+              type: "list",
+              items: [
+                "Account information — first and last name, email address, phone number, and a password, when you create a Warrior Buds account.",
+                "Guest checkout information — the shipping and billing details and contact email you enter for a single order, when you check out as a guest instead of creating an account.",
+                "Cart, wishlist and order information — the products you add to your cart or wishlist, and your order history, shipping address, shipping method and order total.",
+                "Payment metadata — which payment method you choose (e.g., Interac e-Transfer, card, or a cryptocurrency option) and any label you give it in your saved payment preferences. We do not collect or store card numbers, bank account numbers, or crypto wallet credentials on this site.",
+                "Contact form submissions — your name, email, phone number, subject and message, when you write to us through the Contact page.",
+                "Bud Guardian conversations — the messages you type into our Bud Guardian chat assistant, used to answer your question in the moment.",
+                "Marketing preference — whether you opted in to marketing communications when creating an account.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "how-we-store-data",
+          title: "How We Store Your Information",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds' online store currently runs without a remote customer database: your account details, cart, wishlist, order history and saved addresses are stored locally in your own browser (using its built-in storage), not on a Warrior Buds server. That data stays on the device and browser you used to create it, and clearing your browser's site data will remove it.",
+            },
+            {
+              type: "todo",
+              text: "As the platform grows, some or all of this information may move to a secure, server-side database. This Policy will be updated before that happens.",
+            },
+            {
+              type: "p",
+              text: "Bud Guardian chat messages are only kept in memory for the duration of your visit — they are not saved to your device and are cleared when you close or refresh the chat.",
+            },
+          ],
+        },
+        {
+          id: "cookies-and-storage",
+          title: "Cookies & Browser Storage",
+          blocks: [
+            {
+              type: "p",
+              text: "We use browser local and session storage rather than traditional tracking cookies to run the site. See our Cookie Policy for the full list of what's stored and why.",
+            },
+          ],
+        },
+        {
+          id: "how-we-use-info",
+          title: "How We Use Your Information",
+          blocks: [
+            {
+              type: "list",
+              items: [
+                "To create and manage your account and process your orders.",
+                "To communicate with you about your order, account, or a question you've submitted.",
+                "To remember your language preference (French/English) and cart between visits.",
+                "To help our team respond to customer support and store-related inquiries.",
+                "To help identify and prevent suspicious or fraudulent orders.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "third-parties",
+          title: "Third Parties",
+          blocks: [
+            { type: "p", text: "We do not sell your personal information. A limited number of third-party services are embedded in the site:" },
+            {
+              type: "list",
+              items: [
+                "Google Maps — embedded on our Contact page to show our location and provide directions. Google may set its own cookies when the map loads; see Google's own privacy policy.",
+                "Instagram and Linktree — external links in our footer and Contact page take you to those platforms, which have their own privacy practices.",
+              ],
+            },
+            {
+              type: "todo",
+              text: "We do not currently use third-party analytics or advertising tools. If that changes, this Policy will be updated first.",
+            },
+          ],
+        },
+        {
+          id: "security",
+          title: "Security",
+          blocks: [
+            {
+              type: "p",
+              text: "Because most customer data is stored in your own browser rather than on a central server, we recommend not saving your password on a shared or public device, and signing out of your account when you're done — your session otherwise stays signed in until you sign out.",
+            },
+            {
+              type: "todo",
+              text: "Formal security practices (encryption standards, breach notification process) for a future server-side backend are still being finalized and will be documented here before launch.",
+            },
+          ],
+        },
+        {
+          id: "data-retention",
+          title: "Data Retention",
+          blocks: [
+            {
+              type: "p",
+              text: "Information stored in your browser remains there until you clear your browser's site data, sign out and clear storage, or, where available, remove the relevant item yourself — for example, deleting a saved address or payment preference in Your Account.",
+            },
+          ],
+        },
+        {
+          id: "your-rights",
+          title: "Your Privacy Rights",
+          blocks: [
+            {
+              type: "p",
+              text: "You can view and update most of your information directly in Your Account — profile details, addresses, payment preferences and marketing opt-in. You can also clear your browser's local storage at any time to remove locally stored data.",
+            },
+            {
+              type: "p",
+              text: "To request a copy of your information, ask us to correct it, or ask us to delete your account and associated data, contact us using the details below. In line with Canadian privacy law (PIPEDA), we will respond to reasonable requests within a reasonable timeframe.",
+            },
+            {
+              type: "todo",
+              text: "Self-serve account deletion inside Your Account is planned for a future update; deletion requests are handled manually by our team in the meantime.",
+            },
+          ],
+        },
+        {
+          id: "minors",
+          title: "Minors",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds sells cannabis products and is intended for legal-age adults only (see our Terms & Conditions). We do not knowingly collect personal information from minors, and any account found to belong to a minor will be closed.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Changes to This Policy",
+          blocks: [
+            {
+              type: "p",
+              text: "We may update this Privacy Policy from time to time as the site and our practices evolve. The \"Last updated\" date at the top of this page reflects the most recent revision. Material changes will be reflected here before they take effect.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Contact Us",
+          blocks: [{ type: "p", text: "Questions about this Privacy Policy or your information? Reach out to our team." }],
+        },
+      ],
+    },
+    terms: {
+      metaTitle: "Terms & Conditions | Warrior Buds",
+      metaDescription: "The terms that govern your use of the Warrior Buds website and any order you place with us.",
+      eyebrow: "Legal",
+      title: "Terms & Conditions",
+      intro:
+        "These Terms & Conditions govern your use of the Warrior Buds website and any order you place with us. Please read them before placing an order.",
+      lastUpdated: "August 8, 2026",
+      sections: [
+        {
+          id: "acceptance",
+          title: "Acceptance of These Terms",
+          blocks: [
+            {
+              type: "p",
+              text: "By accessing this website, creating an account, or placing an order, you agree to be bound by these Terms & Conditions. If you do not agree, please do not use the site or place an order.",
+            },
+          ],
+        },
+        {
+          id: "eligibility",
+          title: "Eligibility & Age Requirement",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds sells cannabis and cannabis-related products. You must be at least 18 years old and of the legal age to purchase cannabis in your jurisdiction to use this site or place an order. By placing an order, you confirm that you meet this requirement, and we may ask for valid government-issued photo ID to verify your age at checkout, on delivery, or on pickup.",
+            },
+            {
+              type: "p",
+              text: "All sales are made in accordance with the cannabis laws and regulations of Québec, Canada, and the Mohawk Territory of Kanesatake. We reserve the right to refuse or cancel any order where age or identity cannot be verified.",
+            },
+          ],
+        },
+        {
+          id: "accounts",
+          title: "Accounts & Guest Checkout",
+          blocks: [
+            {
+              type: "p",
+              text: "You can create a Warrior Buds account or check out as a guest. If you create an account, you're responsible for keeping your password confidential and for all activity under your account. Please keep your name, email, phone number and address information accurate and up to date.",
+            },
+            { type: "p", text: "Guest checkout information is used only to complete and ship that order; it is not saved to an account." },
+          ],
+        },
+        {
+          id: "products-availability",
+          title: "Products & Availability",
+          blocks: [
+            {
+              type: "p",
+              text: "We do our best to accurately describe and photograph our products, including THC/CBD content, strain, weight and pricing. Product images are for illustration; actual packaging and appearance may vary by batch.",
+            },
+            {
+              type: "p",
+              text: "All products are subject to availability. We may limit quantities per order or per customer, and may discontinue or substitute products without notice.",
+            },
+          ],
+        },
+        {
+          id: "orders-pricing",
+          title: "Orders & Pricing",
+          blocks: [
+            {
+              type: "p",
+              text: "Prices are shown in Canadian dollars (CAD) and do not include applicable taxes or shipping unless stated otherwise; taxes and any shipping fee are calculated automatically at checkout. We reserve the right to correct pricing or listing errors, even after an order has been placed, and to cancel affected orders with notice to you.",
+            },
+            {
+              type: "p",
+              text: "Placing an order is an offer to purchase, which we may accept or decline at our discretion — for example, where a product is out of stock, an age/ID check fails, or we suspect fraud.",
+            },
+          ],
+        },
+        {
+          id: "cancellations",
+          title: "Cancellations",
+          blocks: [
+            {
+              type: "p",
+              text: "You may ask us to cancel an order that hasn't yet shipped or been prepared for pickup by contacting us as soon as possible. We may also cancel an order — for example, for stock, payment, or age-verification reasons — and will let you know if that happens.",
+            },
+          ],
+        },
+        {
+          id: "payments",
+          title: "Payments",
+          blocks: [
+            {
+              type: "p",
+              text: "At checkout, we offer a selection of payment methods, which may include Interac e-Transfer, Visa, Mastercard, American Express, Bitcoin, Ethereum and Shakepay. The instructions shown at checkout for your chosen method are the ones that apply to your order.",
+            },
+            {
+              type: "p",
+              text: "We do not store your card number, bank account details, or cryptocurrency wallet credentials on this site. Interac e-Transfer payments are sent directly through your own banking app; other electronic payment methods are processed through the provider shown at checkout.",
+            },
+            {
+              type: "todo",
+              text: "Not every payment method listed may be fully live at all times while our platform is finalized; the checkout screen always shows the current, accurate instructions for each active method.",
+            },
+          ],
+        },
+        {
+          id: "fulfillment",
+          title: "Fulfillment & Pickup",
+          blocks: [
+            {
+              type: "p",
+              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $100 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
+            },
+            {
+              type: "todo",
+              text: "Specific delivery areas, cut-off times, and pickup-readiness windows are being finalized and will be confirmed at checkout or by our team.",
+            },
+          ],
+        },
+        {
+          id: "tracking",
+          title: "Order Tracking",
+          blocks: [
+            {
+              type: "p",
+              text: "You can track an order's status from Your Account or on our Track Order page using your order number and email. Shipped orders receive a Canada Post tracking number once available.",
+            },
+          ],
+        },
+        {
+          id: "refunds-disputes",
+          title: "Refunds & Disputes",
+          blocks: [
+            {
+              type: "todo",
+              text: "Our detailed return, exchange and refund policy is being finalized. In the meantime, if there's a problem with your order — a damaged product, a missing item, or a payment dispute — contact us directly with your order number and we'll work with you to resolve it.",
+            },
+          ],
+        },
+        {
+          id: "acceptable-use",
+          title: "Acceptable Use",
+          blocks: [
+            { type: "p", text: "You agree not to:" },
+            {
+              type: "list",
+              items: [
+                "Use this site for any unlawful purpose, or attempt to purchase cannabis for a minor or on behalf of someone who is not of legal age.",
+                "Attempt to bypass age or identity verification.",
+                "Attempt to access another customer's account, or any staff/administrative area of the site, without authorization.",
+                "Use Bud Guardian or the contact form to request anything illegal, or to attempt to extract data you're not authorized to see.",
+                "Interfere with or disrupt the site, introduce malware, or attempt to scrape or reverse-engineer it.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "intellectual-property",
+          title: "Intellectual Property",
+          blocks: [
+            {
+              type: "p",
+              text: "The Warrior Buds name, logo, and the content on this site — text, graphics, photos and design — belong to Warrior Buds or its licensors and are protected by copyright and trademark law. You may not copy, reproduce or use them without our written permission, other than for your own personal, non-commercial use of the site.",
+            },
+          ],
+        },
+        {
+          id: "bud-guardian",
+          title: "Bud Guardian AI Assistant Disclaimer",
+          blocks: [
+            {
+              type: "p",
+              text: "Bud Guardian is an automated assistant that answers general questions about our products, store policies, and your orders. Its responses are informational only, are not medical, legal or professional advice, and may occasionally be incomplete or inaccurate.",
+            },
+            {
+              type: "p",
+              text: "Bud Guardian will not help bypass age or identity verification, provide information about illegal products or activity, or act as a substitute for emergency or crisis services. For anything requiring a definitive answer, please contact our team directly.",
+            },
+          ],
+        },
+        {
+          id: "accuracy",
+          title: "Accuracy of Information",
+          blocks: [
+            {
+              type: "p",
+              text: "We make reasonable efforts to keep product, pricing, and store information accurate and current, but errors can happen. We are not liable for typographical, pricing, or listing errors, and reserve the right to correct them and, where necessary, cancel affected orders.",
+            },
+          ],
+        },
+        {
+          id: "liability",
+          title: "Limitation of Liability",
+          blocks: [
+            {
+              type: "p",
+              text: "To the extent permitted by law, Warrior Buds is not liable for indirect, incidental or consequential damages arising from your use of this site or your order, beyond the value of that order. Nothing in these Terms limits any liability that cannot be excluded under applicable law.",
+            },
+          ],
+        },
+        {
+          id: "governing-law",
+          title: "Governing Law",
+          blocks: [
+            {
+              type: "p",
+              text: "These Terms are governed by the laws of the Province of Québec and the laws of Canada applicable in Québec, without regard to conflict-of-law principles.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Changes to These Terms",
+          blocks: [
+            {
+              type: "p",
+              text: "We may update these Terms from time to time. The \"Last updated\" date above reflects the most recent revision, and continuing to use the site or placing an order after changes take effect means you accept the updated Terms.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Contact Us",
+          blocks: [{ type: "p", text: "Questions about these Terms? Reach out to our team." }],
+        },
+      ],
+    },
+    cookies: {
+      metaTitle: "Cookie Policy | Warrior Buds",
+      metaDescription: "How Warrior Buds uses browser local storage, session storage, and third-party embeds — and how to control them.",
+      eyebrow: "Legal",
+      title: "Cookie Policy",
+      intro:
+        "This page explains the browser storage technologies Warrior Buds uses — including local storage, session storage, and any cookies set by embedded third-party content — and how you can control them.",
+      lastUpdated: "August 8, 2026",
+      sections: [
+        {
+          id: "how-we-use-storage",
+          title: "How We Use Browser Storage",
+          blocks: [
+            {
+              type: "p",
+              text: "Warrior Buds' website does not use traditional tracking cookies. Instead, it uses your browser's built-in local storage and session storage to remember your cart, your account, and your preferences between visits, entirely within your own browser.",
+            },
+          ],
+        },
+        {
+          id: "essential-storage",
+          title: "Essential Storage",
+          blocks: [
+            { type: "p", text: "These items are necessary for core site features to work, such as shopping and checking out:" },
+            {
+              type: "list",
+              items: [
+                "Language preference — remembers whether you're browsing in French or English.",
+                "Shopping cart & wishlist — remembers the products you've added so they're there when you come back.",
+                "Product catalog cache — a local copy of our product listing used to render the shop quickly.",
+              ],
+            },
+          ],
+        },
+        {
+          id: "account-auth-storage",
+          title: "Account & Authentication Storage",
+          blocks: [
+            {
+              type: "p",
+              text: "If you create an account or sign in, we use local storage to keep you signed in between visits (a \"persistent session\"), and to store your account details, saved addresses, payment preferences and order history, as described in our Privacy Policy.",
+            },
+            {
+              type: "p",
+              text: "Staff members signing in to internal Warrior Buds tools use session storage for their sign-in, which clears automatically when the browser tab is closed.",
+            },
+          ],
+        },
+        {
+          id: "bud-guardian-storage",
+          title: "Bud Guardian Storage",
+          blocks: [
+            {
+              type: "p",
+              text: "We store one small flag in local storage to remember that you've seen Bud Guardian's welcome animation, so it doesn't replay on every visit. Your actual chat messages are not saved — they exist only in memory while the chat window is open and are cleared when you close or refresh it.",
+            },
+          ],
+        },
+        {
+          id: "third-party-embeds",
+          title: "Third-Party Embeds",
+          blocks: [
+            {
+              type: "p",
+              text: "Our Contact page embeds a Google Maps view of our location. Loading that map may allow Google to set its own cookies in your browser, governed by Google's own cookie and privacy policies, not ours.",
+            },
+          ],
+        },
+        {
+          id: "analytics",
+          title: "Analytics & Advertising",
+          blocks: [
+            {
+              type: "todo",
+              text: "We do not currently use third-party analytics or advertising cookies on this site. If that changes, this Cookie Policy will be updated before any such tool is added.",
+            },
+          ],
+        },
+        {
+          id: "managing-storage",
+          title: "Managing & Clearing Storage",
+          blocks: [
+            {
+              type: "p",
+              text: "You can clear cookies and site data for this website at any time through your browser's settings (usually under Privacy / Site Settings). Doing so will sign you out, empty your cart and wishlist, and reset your saved language preference.",
+            },
+          ],
+        },
+        {
+          id: "changes",
+          title: "Changes to This Policy",
+          blocks: [
+            {
+              type: "p",
+              text: "We may update this Cookie Policy as the storage technologies we use change. The \"Last updated\" date above reflects the most recent revision.",
+            },
+          ],
+        },
+        {
+          id: "contact",
+          title: "Contact Us",
+          blocks: [{ type: "p", text: "Questions about this Cookie Policy? Reach out to our team." }],
+        },
+      ],
     },
   },
 };

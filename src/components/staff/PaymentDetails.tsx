@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { getStatusLabel, maskName } from "@/lib/bud-guardian/order-engine";
-import { confirmPayment, declinePayment, getPaymentStatusLabel } from "@/lib/bud-guardian/payment-engine";
+import { getPaymentStatusLabel } from "@/lib/bud-guardian/payment-engine";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { maskEmailPartial, maskPhonePartial } from "@/lib/staff/order-actions";
-import type { StaffPaymentView } from "@/lib/staff/payment-actions";
+import { staffConfirmPayment, staffDeclinePayment, type StaffPaymentView } from "@/lib/staff/payment-actions";
+import { hasPermission, minRoleFor } from "@/lib/staff/permissions";
+import { getRoleLabel, type StaffSession } from "@/lib/staff/staff-auth";
 import { PAYMENT_STATUS_COLORS, PROVIDER_LABELS } from "./PaymentsTable";
 
 const TEXT = {
@@ -25,6 +27,7 @@ const TEXT = {
     alreadyResolved: "Ce paiement est déjà résolu — aucune action requise.",
     history: "Historique",
     close: "Fermer",
+    restricted: (role: string) => `Réservé aux rôles ${role} et plus.`,
   },
   en: {
     order: "Order",
@@ -41,6 +44,7 @@ const TEXT = {
     alreadyResolved: "This payment is already resolved — no action needed.",
     history: "History",
     close: "Close",
+    restricted: (role: string) => `Reserved for ${role} and above.`,
   },
 } as const;
 
@@ -54,11 +58,11 @@ function formatDateTime(iso: string, locale: "fr" | "en"): string {
 
 export default function PaymentDetails({
   payment,
-  actor,
+  session,
   onClose,
 }: {
   payment: StaffPaymentView;
-  actor: string;
+  session: StaffSession;
   onClose?: () => void;
 }) {
   const { locale } = useLanguage();
@@ -67,16 +71,18 @@ export default function PaymentDetails({
 
   const isResolved = payment.effectiveStatus !== "pending";
   const history = [...payment.history].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  const canConfirm = hasPermission(session.role, "payment.confirm");
+  const canDecline = hasPermission(session.role, "payment.decline");
 
   function handleConfirm() {
     setBusy(true);
-    confirmPayment(payment.id, actor);
+    staffConfirmPayment(payment.id, session);
     setBusy(false);
   }
 
   function handleDecline() {
     setBusy(true);
-    declinePayment(payment.id, actor);
+    staffDeclinePayment(payment.id, session);
     setBusy(false);
   }
 
@@ -141,23 +147,30 @@ export default function PaymentDetails({
         {isResolved ? (
           <p className="text-sm text-white/45">{t.alreadyResolved}</p>
         ) : (
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              disabled={busy}
-              onClick={handleConfirm}
-              className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3.5 py-2 text-sm font-medium text-wb-guardian-green disabled:opacity-50"
-            >
-              {t.confirm}
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={handleDecline}
-              className="rounded-xl border border-wb-red/50 bg-wb-red/10 px-3.5 py-2 text-sm font-medium text-wb-red disabled:opacity-50"
-            >
-              {t.decline}
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={busy || !canConfirm}
+                title={!canConfirm ? t.restricted(getRoleLabel(minRoleFor("payment.confirm"), locale)) : undefined}
+                onClick={handleConfirm}
+                className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3.5 py-2 text-sm font-medium text-wb-guardian-green disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t.confirm}
+              </button>
+              <button
+                type="button"
+                disabled={busy || !canDecline}
+                title={!canDecline ? t.restricted(getRoleLabel(minRoleFor("payment.decline"), locale)) : undefined}
+                onClick={handleDecline}
+                className="rounded-xl border border-wb-red/50 bg-wb-red/10 px-3.5 py-2 text-sm font-medium text-wb-red disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t.decline}
+              </button>
+            </div>
+            {(!canConfirm || !canDecline) && (
+              <p className="text-xs text-white/35">{t.restricted(getRoleLabel(minRoleFor("payment.confirm"), locale))}</p>
+            )}
           </div>
         )}
       </div>

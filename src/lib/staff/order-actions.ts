@@ -8,20 +8,31 @@
 // the chatbot's order tracking on the very next lookup, with no risk of the
 // two disagreeing.
 //
-// Everything internal-only — timeline, notes, audit log, reminder log,
-// manual "abandoned" flag — lives in a separate meta store, keyed by order
-// id, that the chatbot never imports. That keeps staff notes and names out
-// of anything a customer could ever see.
+// Everything internal-only — timeline, notes, reminder log, manual
+// "abandoned" flag — lives in a separate meta store, keyed by order id, that
+// the chatbot never imports. That keeps staff notes and names out of
+// anything a customer could ever see.
+//
+// Bud Guardian V6 — Permissions & Operations Hardening. Every mutation here
+// now takes the caller's full StaffSession (not just an actor name string)
+// so it can both label who did it AND check whether their role is allowed
+// to. Sensitive actions (cancel, restore-abandoned, backward status moves,
+// manual payment-status override) are checked against the centralized
+// model in permissions.ts and reject — as a safe no-op, not a UI-only
+// hide — when the role doesn't qualify. The audit log itself moved to a
+// module shared with every other domain (data/bud-guardian/audit-log.ts);
+// this file's own pre-V6 log is gone, its history migrated in automatically.
 
 import { useSyncExternalStore } from "react";
 import type { Order, OrderConfirmationFlags, OrderStatus, PaymentMethod, PaymentStatus } from "@/types/order";
-import type { AuditLogEntry, InternalNote, OrderStaffMeta, ReminderKind } from "@/types/staff-order";
+import type { InternalNote, OrderStaffMeta, ReminderKind } from "@/types/staff-order";
+import type { StaffSession } from "./staff-auth";
 import { findOrderById, getOrders, replaceOrder, subscribeOrders } from "@/data/bud-guardian/orders-store";
-import { isOrderAbandoned } from "@/lib/bud-guardian/order-engine";
+import { isOrderAbandoned, isForwardOrSameStatus } from "@/lib/bud-guardian/order-engine";
+import { hasPermission } from "./permissions";
+import { logAuditEntry, useAuditLog as useModuleAuditLog } from "./audit-log";
 
 const META_STORAGE_KEY = "wb-staff-order-meta-v1";
-const AUDIT_STORAGE_KEY = "wb-staff-audit-log-v1";
-const AUDIT_LOG_LIMIT = 200;
 
 function uid(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -50,20 +61,7 @@ function loadMeta(): Record<string, OrderStaffMeta> {
   return seeded;
 }
 
-function loadAudit(): AuditLogEntry[] {
-  if (typeof window !== "undefined") {
-    try {
-      const raw = window.localStorage.getItem(AUDIT_STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as AuditLogEntry[];
-    } catch {
-      // Fall through to an empty log below.
-    }
-  }
-  return [];
-}
-
 let meta: Record<string, OrderStaffMeta> = loadMeta();
-let auditLog: AuditLogEntry[] = loadAudit();
 const listeners = new Set<() => void>();
 let snapshotCache: StaffOrderView[] | null = null;
 
@@ -71,7 +69,6 @@ function persist(): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(META_STORAGE_KEY, JSON.stringify(meta));
-    window.localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
   } catch {
     // Storage unavailable — in-memory state still works for this tab.
   }
@@ -88,9 +85,8 @@ subscribeOrders(() => emit());
 
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (event) => {
-    if (event.key !== META_STORAGE_KEY && event.key !== AUDIT_STORAGE_KEY) return;
+    if (event.key !== META_STORAGE_KEY) return;
     meta = loadMeta();
-    auditLog = loadAudit();
     emit();
   });
 }
@@ -102,10 +98,6 @@ function getMetaFor(orderId: string): OrderStaffMeta {
   const created = order ? emptyMeta(order) : { timeline: [], notes: [], reminders: [], manuallyAbandoned: false };
   meta = { ...meta, [orderId]: created };
   return created;
-}
-
-function logAudit(by: string, orderId: string | null, action: string): void {
-  auditLog = [{ id: uid("audit"), at: new Date().toISOString(), by, orderId, action }, ...auditLog].slice(0, AUDIT_LOG_LIMIT);
 }
 
 export type StaffOrderView = Order & { staffMeta: OrderStaffMeta; isAbandoned: boolean };
@@ -141,85 +133,174 @@ export function useStaffOrder(orderId: string | null): StaffOrderView | null {
 // Mutations
 // ---------------------------------------------------------------------------
 
-export function changeOrderStatus(orderId: string, status: OrderStatus, actor: string): void {
+// Shared "denied" path: log it (so a blocked attempt is traceable, not just
+// silently nothing) and return without touching the store. Every gated
+// mutation below funnels through this instead of duplicating the pattern.
+function denyOrder(session: StaffSession, action: string, orderId: string, description: string): void {
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action,
+    entityId: orderId,
+    description,
+    outcome: "denied",
+  });
+}
+
+export function changeOrderStatus(orderId: string, status: OrderStatus, session: StaffSession): void {
+  const current = findOrderById(orderId);
+  if (!current) return;
+
+  if (status === "cancelled") {
+    if (!hasPermission(session.role, "order.cancel")) {
+      denyOrder(session, "order.cancel", orderId, `Annulation refusée — rôle "${session.role}" insuffisant.`);
+      return;
+    }
+  } else if (!isForwardOrSameStatus(current.status, status)) {
+    if (!hasPermission(session.role, "order.statusRegress")) {
+      denyOrder(session, "order.statusRegress", orderId, `Retour de statut refusé (${current.status} → ${status}) — rôle "${session.role}" insuffisant.`);
+      return;
+    }
+  }
+
   const updated = replaceOrder(orderId, (order) => ({ ...order, status, updatedAt: new Date().toISOString() }));
   if (!updated) return;
   const orderMeta = getMetaFor(orderId);
   meta = {
     ...meta,
-    [orderId]: { ...orderMeta, timeline: [...orderMeta.timeline, { id: uid("tl"), status, at: updated.updatedAt, by: actor }] },
+    [orderId]: { ...orderMeta, timeline: [...orderMeta.timeline, { id: uid("tl"), status, at: updated.updatedAt, by: session.name }] },
   };
-  logAudit(actor, orderId, `Statut changé : ${status}`);
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: status === "cancelled" ? "order.cancel" : "order.status.changed",
+    entityId: orderId,
+    description: `Statut changé : ${status}`,
+    metadata: { from: current.status, to: status },
+  });
   persist();
   emit();
 }
 
-export function setConfirmationFlag(orderId: string, flag: keyof OrderConfirmationFlags, value: boolean, actor: string): void {
+export function setConfirmationFlag(orderId: string, flag: keyof OrderConfirmationFlags, value: boolean, session: StaffSession): void {
   const updated = replaceOrder(orderId, (order) => ({
     ...order,
     confirmation: { ...order.confirmation, [flag]: value },
     updatedAt: new Date().toISOString(),
   }));
   if (!updated) return;
-  logAudit(actor, orderId, `Confirmation "${flag}" ${value ? "cochée" : "décochée"}`);
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.confirmationFlag",
+    entityId: orderId,
+    description: `Confirmation "${flag}" ${value ? "cochée" : "décochée"}`,
+    metadata: { flag, value },
+  });
   persist();
   emit();
 }
 
-export function setPaymentStatus(orderId: string, status: PaymentStatus, method: PaymentMethod | null, actor: string): void {
+export function setPaymentStatus(orderId: string, status: PaymentStatus, method: PaymentMethod | null, session: StaffSession): void {
+  if (!hasPermission(session.role, "order.overridePaymentStatus")) {
+    denyOrder(session, "order.overridePaymentStatus", orderId, `Modification manuelle du paiement refusée — rôle "${session.role}" insuffisant.`);
+    return;
+  }
   const updated = replaceOrder(orderId, (order) => ({
     ...order,
     payment: { status, method },
     updatedAt: new Date().toISOString(),
   }));
   if (!updated) return;
-  logAudit(actor, orderId, `Paiement mis à jour : ${status}`);
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.overridePaymentStatus",
+    entityId: orderId,
+    description: `Paiement mis à jour : ${status}`,
+    metadata: { status, method },
+  });
   persist();
   emit();
 }
 
-export function addInternalNote(orderId: string, text: string, actor: string): void {
+export function addInternalNote(orderId: string, text: string, session: StaffSession): void {
   const trimmed = text.trim();
   if (!trimmed) return;
   const orderMeta = getMetaFor(orderId);
-  const note: InternalNote = { id: uid("note"), text: trimmed, at: new Date().toISOString(), by: actor };
+  const note: InternalNote = { id: uid("note"), text: trimmed, at: new Date().toISOString(), by: session.name };
   meta = { ...meta, [orderId]: { ...orderMeta, notes: [...orderMeta.notes, note] } };
-  logAudit(actor, orderId, "Note interne ajoutée");
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.note.added",
+    entityId: orderId,
+    description: "Note interne ajoutée",
+  });
   persist();
   emit();
 }
 
-export function markOrderAbandoned(orderId: string, actor: string): void {
+export function markOrderAbandoned(orderId: string, session: StaffSession): void {
   const orderMeta = getMetaFor(orderId);
   meta = { ...meta, [orderId]: { ...orderMeta, manuallyAbandoned: true } };
-  logAudit(actor, orderId, "Commande marquée comme abandonnée");
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.markAbandoned",
+    entityId: orderId,
+    description: "Commande marquée comme abandonnée",
+  });
   persist();
   emit();
 }
 
-export function restoreAbandonedOrder(orderId: string, actor: string): void {
+export function restoreAbandonedOrder(orderId: string, session: StaffSession): void {
+  if (!hasPermission(session.role, "order.restoreAbandoned")) {
+    denyOrder(session, "order.restoreAbandoned", orderId, `Restauration refusée — rôle "${session.role}" insuffisant.`);
+    return;
+  }
   const orderMeta = getMetaFor(orderId);
   meta = { ...meta, [orderId]: { ...orderMeta, manuallyAbandoned: false } };
-  logAudit(actor, orderId, "Commande restaurée");
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.restoreAbandoned",
+    entityId: orderId,
+    description: "Commande restaurée",
+  });
   persist();
   emit();
 }
 
-export function sendReminder(orderId: string, kind: ReminderKind, actor: string): void {
+export function sendReminder(orderId: string, kind: ReminderKind, session: StaffSession): void {
   const orderMeta = getMetaFor(orderId);
-  const reminder = { id: uid("rem"), kind, at: new Date().toISOString(), by: actor };
+  const reminder = { id: uid("rem"), kind, at: new Date().toISOString(), by: session.name };
   meta = { ...meta, [orderId]: { ...orderMeta, reminders: [...orderMeta.reminders, reminder] } };
-  logAudit(actor, orderId, `Rappel simulé envoyé : ${kind}`);
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "orders",
+    action: "order.reminder.sent",
+    entityId: orderId,
+    description: `Rappel simulé envoyé : ${kind}`,
+    metadata: { kind },
+  });
   persist();
   emit();
 }
 
-export function useAuditLog(): AuditLogEntry[] {
-  return useSyncExternalStore(
-    subscribeStaffOrders,
-    () => auditLog,
-    () => auditLog
-  );
+// Orders-scoped view over the shared audit log — same import name as before
+// V6 so OrdersDashboard.tsx needs no changes beyond the entry shape it reads.
+export function useAuditLog() {
+  return useModuleAuditLog("orders");
 }
 
 // ---------------------------------------------------------------------------

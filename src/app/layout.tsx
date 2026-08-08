@@ -37,7 +37,12 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+      {/* overflow-x-hidden: decorative absolutely-positioned glow elements
+          (w-[36rem] blur circles in Footer, AboutValues, AuthShell, etc.)
+          are wider than narrow mobile viewports; without this the page
+          gains real horizontal scroll at ~320–375px. Purely a safety net —
+          doesn't affect any component's own horizontal-scroll regions. */}
+      <body className="min-h-full flex flex-col overflow-x-hidden bg-background text-foreground font-sans">
         <LanguageProvider>
           {children}
           <BudGuardian />

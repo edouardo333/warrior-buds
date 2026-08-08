@@ -6,18 +6,18 @@ import type { RiskFactor, RiskFactorId } from "@/types/risk";
 import { maskName } from "@/lib/bud-guardian/order-engine";
 import { getPaymentStatusLabel } from "@/lib/bud-guardian/payment-engine";
 import {
-  approveRiskAssessment,
   getRiskActionLabel,
   getRiskFactorDetail,
   getRiskFactorImpact,
   getRiskFactorLabel,
   getRiskFactorStateLabel,
   getRiskValidationLabel,
-  rejectRiskAssessment,
 } from "@/lib/bud-guardian/risk-engine";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { maskEmailPartial, maskPhonePartial } from "@/lib/staff/order-actions";
-import type { StaffRiskView } from "@/lib/staff/risk-actions";
+import { staffApproveRiskAssessment, staffRejectRiskAssessment, type StaffRiskView } from "@/lib/staff/risk-actions";
+import { hasPermission, minRoleFor } from "@/lib/staff/permissions";
+import { getRoleLabel, type StaffSession } from "@/lib/staff/staff-auth";
 import { RISK_LEVEL_COLORS } from "./RiskTable";
 import TrustGauge from "./TrustGauge";
 import RiskMeter from "./RiskMeter";
@@ -41,6 +41,7 @@ const TEXT = {
     alreadyResolved: "Cette analyse a déjà été validée par le personnel",
     history: "Historique des analyses",
     close: "Fermer",
+    restricted: (role: string) => `Réservé aux rôles ${role} et plus.`,
   },
   en: {
     order: "Order",
@@ -60,6 +61,7 @@ const TEXT = {
     alreadyResolved: "This assessment has already been validated by staff",
     history: "Analysis history",
     close: "Close",
+    restricted: (role: string) => `Reserved for ${role} and above.`,
   },
 } as const;
 
@@ -121,11 +123,11 @@ function FactorCard({ factor, locale, impactLabel }: { factor: RiskFactor; local
 
 export default function RiskDetails({
   assessment,
-  actor,
+  session,
   onClose,
 }: {
   assessment: StaffRiskView;
-  actor: string;
+  session: StaffSession;
   onClose?: () => void;
 }) {
   const { locale } = useLanguage();
@@ -142,19 +144,23 @@ export default function RiskDetails({
 
   const isResolved = assessment.validation !== "pending";
   const history = [...assessment.history].sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  const canApprove = hasPermission(session.role, "risk.approve");
+  const canReject = hasPermission(session.role, "risk.reject");
 
   function handleApprove() {
     setBusy(true);
-    approveRiskAssessment(assessment.id, actor);
+    const updated = staffApproveRiskAssessment(assessment.id, session);
     setBusy(false);
+    if (!updated) return; // denied (buttons are disabled for this role already — defense in depth)
     setResolution("approved");
     closeTimeoutRef.current = setTimeout(() => onClose?.(), 800);
   }
 
   function handleReject() {
     setBusy(true);
-    rejectRiskAssessment(assessment.id, actor);
+    const updated = staffRejectRiskAssessment(assessment.id, session);
     setBusy(false);
+    if (!updated) return;
     setResolution("rejected");
     closeTimeoutRef.current = setTimeout(() => onClose?.(), 800);
   }
@@ -249,23 +255,30 @@ export default function RiskDetails({
             {t.alreadyResolved} — {getRiskValidationLabel(assessment.validation, locale)}
           </p>
         ) : (
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              disabled={busy}
-              onClick={handleApprove}
-              className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3.5 py-2 text-sm font-medium text-wb-guardian-green disabled:opacity-50"
-            >
-              {t.approve}
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={handleReject}
-              className="rounded-xl border border-wb-red/50 bg-wb-red/10 px-3.5 py-2 text-sm font-medium text-wb-red disabled:opacity-50"
-            >
-              {t.reject}
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={busy || !canApprove}
+                title={!canApprove ? t.restricted(getRoleLabel(minRoleFor("risk.approve"), locale)) : undefined}
+                onClick={handleApprove}
+                className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3.5 py-2 text-sm font-medium text-wb-guardian-green disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t.approve}
+              </button>
+              <button
+                type="button"
+                disabled={busy || !canReject}
+                title={!canReject ? t.restricted(getRoleLabel(minRoleFor("risk.reject"), locale)) : undefined}
+                onClick={handleReject}
+                className="rounded-xl border border-wb-red/50 bg-wb-red/10 px-3.5 py-2 text-sm font-medium text-wb-red disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t.reject}
+              </button>
+            </div>
+            {(!canApprove || !canReject) && (
+              <p className="text-xs text-white/35">{t.restricted(getRoleLabel(minRoleFor("risk.approve"), locale))}</p>
+            )}
           </div>
         )}
       </div>

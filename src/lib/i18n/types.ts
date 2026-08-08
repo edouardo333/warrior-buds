@@ -8,6 +8,34 @@ export type NavLink = {
   href: string;
 };
 
+// Legal pages (/privacy-policy, /terms-and-conditions, /cookie-policy) —
+// content blocks kept generic (paragraph / list / todo) so LegalPageContent
+// can render any of the three docs from the same layout. "todo" blocks
+// render as a visibly-flagged callout for provisions that depend on a real
+// business practice not yet confirmed (see AGENTS.md instruction: never
+// invent refunds/shipping/data practices) — replace with real copy once
+// confirmed, then delete the block type usage if no longer needed.
+export type LegalParagraphBlock = { type: "p"; text: string };
+export type LegalListBlock = { type: "list"; items: string[] };
+export type LegalTodoBlock = { type: "todo"; text: string };
+export type LegalBlock = LegalParagraphBlock | LegalListBlock | LegalTodoBlock;
+
+export type LegalSection = {
+  id: string;
+  title: string;
+  blocks: LegalBlock[];
+};
+
+export type LegalDocument = {
+  metaTitle: string;
+  metaDescription: string;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  lastUpdated: string;
+  sections: LegalSection[];
+};
+
 export type Dictionary = {
   nav: {
     links: {
@@ -57,6 +85,7 @@ export type Dictionary = {
       concentrates: { name: string; description: string };
       cbd: { name: string; description: string };
       accessories: { name: string; description: string };
+      mushrooms: { name: string; description: string };
     };
   };
   whyWarriorBuds: {
@@ -94,6 +123,8 @@ export type Dictionary = {
     ctaTitleHighlight: string;
     ctaSubtitle: string;
     callNow: string;
+    paymentMethodsHeading: string;
+    paymentMethodsNote: string;
     copyright: (year: number) => string;
     credit: string;
     privacyPolicy: string;
@@ -507,9 +538,25 @@ export type Dictionary = {
       review: string;
       payment: string;
     };
+    identity: {
+      subtitle: string;
+      guestTitle: string;
+      guestSubtitle: string;
+      guestEmailLabel: string;
+      guestCta: string;
+      accountTitle: string;
+      accountSubtitle: string;
+      accountCta: string;
+      haveAccount: string;
+      loginLink: string;
+      benefitsTitle: string;
+      benefits: string[];
+      benefitsFooter: string;
+    };
     shipping: {
       title: string;
       addNew: string;
+      useAddress: string;
       method: string;
       standard: string;
       expedited: string;
@@ -531,6 +578,7 @@ export type Dictionary = {
     payment: {
       title: string;
       choose: string;
+      demoBadge: string;
       placeOrder: string;
       placing: string;
     };
@@ -633,5 +681,18 @@ export type Dictionary = {
       getDirections: string;
       callNow: string;
     };
+  };
+  legal: {
+    onThisPage: string;
+    backToTopLabel: string;
+    lastUpdatedLabel: string;
+    contactEyebrow: string;
+    contactTitle: string;
+    contactSubtitle: string;
+    contactCta: string;
+    todoLabel: string;
+    privacy: LegalDocument;
+    terms: LegalDocument;
+    cookies: LegalDocument;
   };
 };

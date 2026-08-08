@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEMO_ACCOUNTS, findDemoAccount, getRoleLabel, startSession } from "@/lib/staff/staff-auth";
+import { findStaffMemberByCode } from "@/data/bud-guardian/staff-directory";
 
 const TEXT = {
   fr: {
@@ -14,6 +15,7 @@ const TEXT = {
     submit: "Se connecter",
     error: "Code d'accès invalide. Vérifiez auprès de votre gestionnaire.",
     demoTitle: "Comptes de démonstration",
+    suspended: "suspendu",
     notice: "Aucune donnée bancaire ou mot de passe client n'est traitée ici. Toutes les données sont fictives et locales.",
     backToSite: "Retour au site",
   },
@@ -25,6 +27,7 @@ const TEXT = {
     submit: "Sign in",
     error: "Invalid access code. Check with your manager.",
     demoTitle: "Demo accounts",
+    suspended: "suspended",
     notice: "No banking data or customer passwords are handled here. All data is fictional and local.",
     backToSite: "Back to website",
   },
@@ -43,8 +46,19 @@ export default function StaffLogin() {
       setError(true);
       return;
     }
+    // Bud Guardian V7 — Staff Management can suspend a demo account or
+    // change its role from /staff/team. The access code itself never
+    // changes (DEMO_ACCOUNTS stays the fixed login gate), but a suspended
+    // member can no longer sign in, and a role change here takes effect on
+    // the next login — the directory record is the live source for both,
+    // the account list is just "which codes exist".
+    const member = findStaffMemberByCode(account.code);
+    if (member?.status === "suspended") {
+      setError(true);
+      return;
+    }
     setError(false);
-    startSession(account.name, account.role);
+    startSession(account.name, member?.role ?? account.role);
   }
 
   return (
@@ -96,14 +110,22 @@ export default function StaffLogin() {
         <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/50">{t.demoTitle}</p>
           <ul className="mt-2 flex flex-col gap-1.5 text-xs text-white/60">
-            {DEMO_ACCOUNTS.map((account) => (
-              <li key={account.code} className="flex items-center justify-between gap-3">
-                <span>
-                  {getRoleLabel(account.role, locale)} — {account.name}
-                </span>
-                <span className="font-mono text-white/80">{account.code}</span>
-              </li>
-            ))}
+            {DEMO_ACCOUNTS.map((account) => {
+              // Reflects live Staff Management edits (role/status), not just
+              // the fixed account list — see the note in handleSubmit above.
+              const member = findStaffMemberByCode(account.code);
+              const role = member?.role ?? account.role;
+              const suspended = member?.status === "suspended";
+              return (
+                <li key={account.code} className="flex items-center justify-between gap-3">
+                  <span className={suspended ? "text-white/35 line-through" : undefined}>
+                    {getRoleLabel(role, locale)} — {account.name}
+                    {suspended && <span className="ml-1.5 no-underline">({t.suspended})</span>}
+                  </span>
+                  <span className="font-mono text-white/80">{account.code}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

@@ -8,7 +8,8 @@ export type BudGuardianCategoryId =
   | "vapes"
   | "concentrates"
   | "cbd"
-  | "accessories";
+  | "accessories"
+  | "mushrooms";
 
 export type BudGuardianCategory = {
   id: BudGuardianCategoryId;
@@ -39,5 +40,12 @@ export const BUD_GUARDIAN_CATEGORIES: BudGuardianCategory[] = [
   {
     id: "accessories",
     keywords: ["accessoire", "accessoires", "accessory", "accessories", "papier", "papers", "grinder", "pipe", "bong"],
+  },
+  {
+    id: "mushrooms",
+    keywords: [
+      "champignon", "champignons", "mushroom", "mushrooms", "fongique", "fungi", "lion's mane", "lions mane",
+      "crinniere de lion", "reishi", "chaga", "cordyceps", "adaptogene", "adaptogenic", "fonctionnel",
+    ],
   },
 ];

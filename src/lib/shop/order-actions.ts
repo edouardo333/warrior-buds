@@ -41,12 +41,19 @@ export function useOrderActions() {
 }
 
 // Public order lookup (order number + email) for the unauthenticated
-// /track-order page — deliberately does not require a session.
+// /track-order page — deliberately does not require a session. Guest orders
+// (accountId === "guest") are matched against `guestEmail` directly since no
+// CustomerAccount exists for them; account orders still resolve the email
+// through accountLookup as before.
 export function findOrderForTracking(orderId: string, email: string, accountLookup: (accountId: string) => { email: string } | undefined) {
   const orders = getOrders();
   const order = orders.find((o) => o.id.toLowerCase() === orderId.trim().toLowerCase());
   if (!order) return undefined;
+  const normalizedEmail = email.trim().toLowerCase();
+  if (order.guestEmail) {
+    return order.guestEmail.toLowerCase() === normalizedEmail ? order : undefined;
+  }
   const account = accountLookup(order.accountId);
-  if (!account || account.email.toLowerCase() !== email.trim().toLowerCase()) return undefined;
+  if (!account || account.email.toLowerCase() !== normalizedEmail) return undefined;
   return order;
 }

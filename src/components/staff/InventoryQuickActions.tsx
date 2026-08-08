@@ -3,8 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { ArrowLeftRight, Eye, History, PackagePlus, SlidersHorizontal } from "lucide-react";
 import type { InventoryLocation, MovementReason } from "@/types/inventory";
+import type { StaffRole } from "@/types/staff-order";
 import { getLocationLabel } from "@/lib/bud-guardian/inventory-engine";
 import { manualAdjustment, receiveInventory, transferInventory, type StaffInventoryProductView } from "@/lib/staff/inventory-actions";
+import { canWriteInventory } from "@/lib/staff/permissions";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type Mode = "receive" | "adjustment" | "transfer" | "view-product" | "view-history" | null;
@@ -33,6 +35,7 @@ const TEXT = {
     delta: "Écart (+/-)",
     destination: "Destination",
     go: "Ouvrir",
+    viewOnly: "Accès en lecture seule — les ajustements de stock sont réservés aux gestionnaires, superviseurs et administrateurs.",
     reasons: {
       "manual-count": "Comptage manuel",
       damaged: "Endommagé",
@@ -55,6 +58,7 @@ const TEXT = {
     delta: "Delta (+/-)",
     destination: "Destination",
     go: "Open",
+    viewOnly: "Read-only access — stock adjustments are limited to managers, supervisors, and admins.",
     reasons: {
       "manual-count": "Manual count",
       damaged: "Damaged",
@@ -71,12 +75,14 @@ function fieldClass() {
 export default function InventoryQuickActions({
   products,
   actor,
+  role,
   defaultProductId,
   onViewProduct,
   onViewHistory,
 }: {
   products: StaffInventoryProductView[];
   actor: string;
+  role: StaffRole;
   defaultProductId: string | null;
   onViewProduct: (productId: string) => void;
   onViewHistory: () => void;
@@ -85,16 +91,23 @@ export default function InventoryQuickActions({
   const t = TEXT[locale];
   const [mode, setMode] = useState<Mode>(null);
   const [productId, setProductId] = useState(defaultProductId ?? products[0]?.id ?? "");
+  const canAdjust = canWriteInventory(role);
 
   function toggle(next: Mode) {
     setMode((current) => (current === next ? null : next));
     if (defaultProductId) setProductId(defaultProductId);
   }
 
+  // Regular employees may still view products and history — the write
+  // actions (receive / adjustment / transfer) are simply not offered.
   const buttons: { key: Exclude<Mode, null>; label: string; icon: typeof PackagePlus }[] = [
-    { key: "receive", label: t.receive, icon: PackagePlus },
-    { key: "adjustment", label: t.adjustment, icon: SlidersHorizontal },
-    { key: "transfer", label: t.transfer, icon: ArrowLeftRight },
+    ...(canAdjust
+      ? ([
+          { key: "receive", label: t.receive, icon: PackagePlus },
+          { key: "adjustment", label: t.adjustment, icon: SlidersHorizontal },
+          { key: "transfer", label: t.transfer, icon: ArrowLeftRight },
+        ] as const)
+      : []),
     { key: "view-product", label: t.viewProduct, icon: Eye },
     { key: "view-history", label: t.viewHistory, icon: History },
   ];
@@ -125,37 +138,41 @@ export default function InventoryQuickActions({
         ))}
       </div>
 
-      {mode === "receive" && (
+      {canAdjust && mode === "receive" && (
         <ReceiveForm
           products={products}
           productId={productId}
           setProductId={setProductId}
           actor={actor}
+          role={role}
           t={t}
           onDone={() => setMode(null)}
         />
       )}
-      {mode === "adjustment" && (
+      {canAdjust && mode === "adjustment" && (
         <AdjustmentForm
           products={products}
           productId={productId}
           setProductId={setProductId}
           actor={actor}
+          role={role}
           t={t}
           onDone={() => setMode(null)}
         />
       )}
-      {mode === "transfer" && (
+      {canAdjust && mode === "transfer" && (
         <TransferForm
           products={products}
           productId={productId}
           setProductId={setProductId}
           actor={actor}
+          role={role}
           locale={locale}
           t={t}
           onDone={() => setMode(null)}
         />
       )}
+      {!canAdjust && <p className="text-xs text-white/40">{t.viewOnly}</p>}
       {mode === "view-product" && (
         <ViewProductForm
           products={products}
@@ -195,7 +212,15 @@ function ProductSelect({ products, productId, setProductId }: Omit<SharedProps, 
   );
 }
 
-function ReceiveForm({ products, productId, setProductId, actor, t, onDone }: SharedProps & { actor: string; onDone: () => void }) {
+function ReceiveForm({
+  products,
+  productId,
+  setProductId,
+  actor,
+  role,
+  t,
+  onDone,
+}: SharedProps & { actor: string; role: StaffRole; onDone: () => void }) {
   const [quantity, setQuantity] = useState("10");
   const [note, setNote] = useState("");
 
@@ -203,7 +228,7 @@ function ReceiveForm({ products, productId, setProductId, actor, t, onDone }: Sh
     event.preventDefault();
     const qty = Number(quantity);
     if (!productId || !Number.isFinite(qty) || qty <= 0) return;
-    receiveInventory(productId, qty, actor, note || undefined);
+    receiveInventory(productId, qty, actor, role, note || undefined);
     onDone();
   }
 
@@ -226,7 +251,15 @@ function ReceiveForm({ products, productId, setProductId, actor, t, onDone }: Sh
   );
 }
 
-function AdjustmentForm({ products, productId, setProductId, actor, t, onDone }: SharedProps & { actor: string; onDone: () => void }) {
+function AdjustmentForm({
+  products,
+  productId,
+  setProductId,
+  actor,
+  role,
+  t,
+  onDone,
+}: SharedProps & { actor: string; role: StaffRole; onDone: () => void }) {
   const [delta, setDelta] = useState("-1");
   const [reason, setReason] = useState<(typeof ADJUSTMENT_REASONS)[number]>("manual-count");
   const [note, setNote] = useState("");
@@ -235,7 +268,7 @@ function AdjustmentForm({ products, productId, setProductId, actor, t, onDone }:
     event.preventDefault();
     const value = Number(delta);
     if (!productId || !Number.isFinite(value) || value === 0) return;
-    manualAdjustment(productId, value, reason, actor, note || undefined);
+    manualAdjustment(productId, value, reason, actor, role, note || undefined);
     onDone();
   }
 
@@ -267,10 +300,11 @@ function TransferForm({
   productId,
   setProductId,
   actor,
+  role,
   locale,
   t,
   onDone,
-}: SharedProps & { actor: string; locale: "fr" | "en"; onDone: () => void }) {
+}: SharedProps & { actor: string; role: StaffRole; locale: "fr" | "en"; onDone: () => void }) {
   const current = products.find((p) => p.id === productId);
   const [destination, setDestination] = useState<InventoryLocation>(
     LOCATIONS.find((l) => l !== current?.location) ?? "warehouse"
@@ -280,7 +314,7 @@ function TransferForm({
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!productId) return;
-    transferInventory(productId, destination, actor, note || undefined);
+    transferInventory(productId, destination, actor, role, note || undefined);
     onDone();
   }
 

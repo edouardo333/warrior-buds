@@ -15,7 +15,8 @@ export type ProductCategory =
   | "vapes"
   | "cbd"
   | "accessories"
-  | "topicals";
+  | "topicals"
+  | "mushrooms";
 
 export type ProductBadge = "new" | "best-seller" | "sale" | "staff-pick" | "limited" | "low-stock";
 

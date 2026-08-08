@@ -4,11 +4,17 @@ import type { OrderConfirmationFlags, PaymentMethod, PaymentStatus } from "@/typ
 import { getPaymentStatusLabel } from "@/lib/bud-guardian/order-engine";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { setConfirmationFlag, setPaymentStatus, type StaffOrderView } from "@/lib/staff/order-actions";
+import { hasPermission, minRoleFor } from "@/lib/staff/permissions";
+import { getRoleLabel, type StaffSession } from "@/lib/staff/staff-auth";
 
 const TITLE = { fr: "Confirmations client", en: "Customer confirmations" } as const;
 const PAYMENT_TITLE = { fr: "Paiement", en: "Payment" } as const;
 const METHOD_LABEL = { fr: "Méthode", en: "Method" } as const;
 const NO_METHOD = { fr: "Aucune", en: "None" } as const;
+const RESTRICTED = {
+  fr: (role: string) => `Modification manuelle réservée aux rôles ${role} et plus.`,
+  en: (role: string) => `Manual edit reserved for ${role} and above.`,
+} as const;
 
 const FLAGS: { key: keyof OrderConfirmationFlags; label: { fr: string; en: string } }[] = [
   { key: "nameConfirmed", label: { fr: "Identité confirmée", en: "Identity confirmed" } },
@@ -26,8 +32,9 @@ const METHOD_LABELS: Record<PaymentMethod, { fr: string; en: string }> = {
   in_store_card: { fr: "Carte en boutique", en: "In-store card" },
 };
 
-export default function CustomerConfirmation({ order, actor }: { order: StaffOrderView; actor: string }) {
+export default function CustomerConfirmation({ order, session }: { order: StaffOrderView; session: StaffSession }) {
   const { locale } = useLanguage();
+  const canOverridePayment = hasPermission(session.role, "order.overridePaymentStatus");
 
   return (
     <div className="flex flex-col gap-5">
@@ -41,7 +48,7 @@ export default function CustomerConfirmation({ order, actor }: { order: StaffOrd
                 <input
                   type="checkbox"
                   checked={checked}
-                  onChange={(e) => setConfirmationFlag(order.id, key, e.target.checked, actor)}
+                  onChange={(e) => setConfirmationFlag(order.id, key, e.target.checked, session)}
                   className="h-4 w-4 rounded border-white/20 bg-white/5 accent-wb-orange"
                 />
                 {label[locale]}
@@ -56,8 +63,9 @@ export default function CustomerConfirmation({ order, actor }: { order: StaffOrd
         <div className="mt-2 flex flex-wrap gap-3">
           <select
             value={order.payment.status}
-            onChange={(e) => setPaymentStatus(order.id, e.target.value as PaymentStatus, order.payment.method, actor)}
-            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-foreground outline-none focus:border-wb-orange/60"
+            disabled={!canOverridePayment}
+            onChange={(e) => setPaymentStatus(order.id, e.target.value as PaymentStatus, order.payment.method, session)}
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-foreground outline-none focus:border-wb-orange/60 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {PAYMENT_STATUSES.map((status) => (
               <option key={status} value={status} className="bg-wb-charcoal">
@@ -70,10 +78,11 @@ export default function CustomerConfirmation({ order, actor }: { order: StaffOrd
             {METHOD_LABEL[locale]}
             <select
               value={order.payment.method ?? ""}
+              disabled={!canOverridePayment}
               onChange={(e) =>
-                setPaymentStatus(order.id, order.payment.status, (e.target.value || null) as PaymentMethod | null, actor)
+                setPaymentStatus(order.id, order.payment.status, (e.target.value || null) as PaymentMethod | null, session)
               }
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-foreground outline-none focus:border-wb-orange/60"
+              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-foreground outline-none focus:border-wb-orange/60 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <option value="" className="bg-wb-charcoal">
                 {NO_METHOD[locale]}
@@ -86,6 +95,9 @@ export default function CustomerConfirmation({ order, actor }: { order: StaffOrd
             </select>
           </label>
         </div>
+        {!canOverridePayment && (
+          <p className="mt-2 text-xs text-white/35">{RESTRICTED[locale](getRoleLabel(minRoleFor("order.overridePaymentStatus"), locale))}</p>
+        )}
       </div>
     </div>
   );

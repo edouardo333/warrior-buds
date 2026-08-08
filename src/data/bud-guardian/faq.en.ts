@@ -170,7 +170,7 @@ const faqEn: FaqEntry[] = [
     question: "What products do you sell?",
     keywords: ["what products", "what do you sell", "products", "catalog"],
     answer:
-      "We carry flower, edibles, vapes, concentrates, CBD and accessories — all curated for quality and consistency.",
+      "We carry flower, edibles, vapes, concentrates, CBD, accessories and mushrooms — all curated for quality and consistency.",
     suggestions: ["categories", "directions"],
   },
   {
@@ -222,6 +222,15 @@ const faqEn: FaqEntry[] = [
     suggestions: ["categories", "products"],
   },
   {
+    id: "products-mushrooms",
+    topic: "products",
+    question: "Do you sell mushrooms?",
+    keywords: ["mushroom", "mushrooms", "fungi", "lion's mane", "lions mane", "reishi", "chaga", "cordyceps", "functional mushroom", "adaptogen"],
+    answer:
+      "Yes — our Mushrooms category carries functional mushroom wellness products like Lion's Mane, Reishi and Chaga. These are non-intoxicating and contain no THC. We don't sell psilocybin (\"magic\") mushrooms; those aren't a legal product we carry.",
+    suggestions: ["categories", "products"],
+  },
+  {
     id: "products-prerolls",
     topic: "products",
     question: "Do you sell pre-rolls?",
@@ -260,7 +269,7 @@ const faqEn: FaqEntry[] = [
     topic: "products",
     question: "What are your product categories?",
     keywords: ["category", "categories", "product types", "product lines"],
-    answer: "Our categories are: Flower, Edibles, Vapes, Concentrates, CBD and Accessories.",
+    answer: "Our categories are: Flower, Edibles, Vapes, Concentrates, CBD, Accessories and Mushrooms.",
     suggestions: ["products", "directions"],
   },
   {

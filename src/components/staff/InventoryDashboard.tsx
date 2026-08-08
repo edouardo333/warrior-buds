@@ -27,6 +27,11 @@ const TEXT = {
     statusAll: "Tous les statuts",
     clearFilters: "Réinitialiser",
     selectHint: "Sélectionnez un produit pour voir les détails.",
+    quickFilters: {
+      lowStock: "Stock faible",
+      outOfStock: "Rupture de stock",
+      expiringSoon: "Expire bientôt",
+    },
     kpis: {
       total: "Produits",
       value: "Valeur d'inventaire",
@@ -45,6 +50,11 @@ const TEXT = {
     searchPlaceholder: "Name, SKU or supplier…",
     categoryAll: "All categories",
     statusAll: "All statuses",
+    quickFilters: {
+      lowStock: "Low Stock",
+      outOfStock: "Out of Stock",
+      expiringSoon: "Expiring Soon",
+    },
     clearFilters: "Reset",
     selectHint: "Select a product to see its details.",
     kpis: {
@@ -114,6 +124,10 @@ export default function InventoryDashboard({ session }: { session: StaffSession 
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<InventoryCategory | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StockStatus | "all">("all");
+  // Quick filter chips — Low Stock / Out of Stock reuse the same
+  // statusFilter as the dropdown above; Expiring Soon is its own toggle
+  // since it isn't a StockStatus value.
+  const [expiringOnly, setExpiringOnly] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filtered = useMemo(
@@ -128,9 +142,10 @@ export default function InventoryDashboard({ session }: { session: StaffSession 
           (digitsOnly(q).length >= 2 && product.batchId.toLowerCase().includes(q));
         const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
         const matchesStatus = statusFilter === "all" || product.stockStatus === statusFilter;
-        return matchesSearch && matchesCategory && matchesStatus;
+        const matchesExpiring = !expiringOnly || product.isExpiringSoon;
+        return matchesSearch && matchesCategory && matchesStatus && matchesExpiring;
       }),
-    [products, search, categoryFilter, statusFilter]
+    [products, search, categoryFilter, statusFilter, expiringOnly]
   );
 
   const selectedProduct = selectedId ? products.find((p) => p.id === selectedId) ?? null : null;
@@ -169,10 +184,31 @@ export default function InventoryDashboard({ session }: { session: StaffSession 
         <InventoryQuickActions
           products={products}
           actor={session.name}
+          role={session.role}
           defaultProductId={selectedId}
           onViewProduct={goToProduct}
           onViewHistory={scrollToTimeline}
         />
+
+        <div className="flex flex-wrap items-center gap-2">
+          {([
+            { key: "low-stock", label: t.quickFilters.lowStock, active: statusFilter === "low-stock", onClick: () => setStatusFilter((s) => (s === "low-stock" ? "all" : "low-stock")) },
+            { key: "out-of-stock", label: t.quickFilters.outOfStock, active: statusFilter === "out-of-stock", onClick: () => setStatusFilter((s) => (s === "out-of-stock" ? "all" : "out-of-stock")) },
+            { key: "expiring-soon", label: t.quickFilters.expiringSoon, active: expiringOnly, onClick: () => setExpiringOnly((v) => !v) },
+          ] as const).map(({ key, label, active, onClick }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={onClick}
+              aria-pressed={active}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors duration-200 ${
+                active ? "border-wb-orange/60 bg-wb-orange/10 text-wb-orange" : "border-white/15 text-white/60 hover:border-wb-orange/50 hover:text-white"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <input
@@ -210,13 +246,14 @@ export default function InventoryDashboard({ session }: { session: StaffSession 
               </option>
             ))}
           </select>
-          {(search || categoryFilter !== "all" || statusFilter !== "all") && (
+          {(search || categoryFilter !== "all" || statusFilter !== "all" || expiringOnly) && (
             <button
               type="button"
               onClick={() => {
                 setSearch("");
                 setCategoryFilter("all");
                 setStatusFilter("all");
+                setExpiringOnly(false);
               }}
               className="text-sm text-white/50 underline-offset-2 hover:text-white/80 hover:underline"
             >
@@ -264,7 +301,8 @@ export default function InventoryDashboard({ session }: { session: StaffSession 
                     {new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "medium" }).format(
                       new Date(entry.at)
                     )}{" "}
-                    — {entry.by} — {entry.action}
+                    — {entry.actor} — {entry.description}
+                    {entry.outcome === "denied" ? " ⛔" : entry.outcome === "warning" ? " ⚠️" : ""}
                   </li>
                 ))}
               </ul>

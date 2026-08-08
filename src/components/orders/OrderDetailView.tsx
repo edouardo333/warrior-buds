@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import InteracPaymentCard from "@/components/checkout/InteracPaymentCard";
+import PaymentInstructionsCard from "@/components/checkout/PaymentInstructionsCard";
 import OrderTrackingTimeline from "./OrderTrackingTimeline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount } from "@/lib/shop/auth-actions";
@@ -66,8 +66,8 @@ export default function OrderDetailView({ orderId }: { orderId: string }) {
           )}
           {order.status === "delivered" && <p className="text-sm text-wb-guardian-green">{t.orderDetail.orderComplete}</p>}
 
-          {order.status === "pending_payment" && order.paymentProviderId === "interac" && (
-            <InteracPaymentCard orderId={order.id} total={order.total} />
+          {order.status === "pending_payment" && (
+            <PaymentInstructionsCard providerId={order.paymentProviderId} orderId={order.id} total={order.total} />
           )}
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">

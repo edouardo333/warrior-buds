@@ -186,7 +186,7 @@ export default function SecurityDashboard({ session }: { session: StaffSession }
           </div>
           <div className="lg:col-span-5">
             {selectedAssessment ? (
-              <RiskDetails key={selectedAssessment.id} assessment={selectedAssessment} actor={session.name} onClose={() => setSelectedId(null)} />
+              <RiskDetails key={selectedAssessment.id} assessment={selectedAssessment} session={session} onClose={() => setSelectedId(null)} />
             ) : (
               <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center text-sm text-white/40">
                 {t.selectHint}

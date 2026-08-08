@@ -172,6 +172,25 @@ export function getStatusLabel(status: OrderStatus, locale: Locale): string {
   return STATUS_LABELS[status][locale];
 }
 
+// Bud Guardian V6 — canonical forward progression, shared by the staff
+// status editor (components/staff/OrderStatusEditor.tsx, which re-exports
+// this as STATUS_FLOW alongside "cancelled") and the permission model's
+// regression check (lib/staff/order-actions.ts). "cancelled" is a terminal
+// state reachable from any step, not part of the linear rank below.
+export const ORDER_STATUS_FLOW: OrderStatus[] = ["received", "verifying", "confirmed", "preparing", "ready", "completed"];
+
+// True for a normal forward (or same-step, i.e. a no-op re-click) status
+// change; false for cancelling or for moving backward along the flow —
+// those are the two cases lib/staff/order-actions.ts treats as sensitive
+// and gates on role.
+export function isForwardOrSameStatus(from: OrderStatus, to: OrderStatus): boolean {
+  if (to === "cancelled" || from === "cancelled") return false;
+  const fromIndex = ORDER_STATUS_FLOW.indexOf(from);
+  const toIndex = ORDER_STATUS_FLOW.indexOf(to);
+  if (fromIndex === -1 || toIndex === -1) return false;
+  return toIndex >= fromIndex;
+}
+
 const FULFILLMENT_LABELS: Record<FulfillmentMethod, Record<Locale, string>> = {
   pickup: { fr: "Ramassage en boutique", en: "In-store pickup" },
   curbside: { fr: "Ramassage à l'auto", en: "Curbside pickup" },

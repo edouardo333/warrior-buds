@@ -76,6 +76,7 @@ const CATEGORY_LABELS: Record<ProductCategory, Record<Locale, string>> = {
   cbd: { fr: "CBD", en: "CBD" },
   accessories: { fr: "Accessoires", en: "Accessories" },
   topicals: { fr: "Topiques", en: "Topicals" },
+  mushrooms: { fr: "Champignons", en: "Mushrooms" },
 };
 
 export function getCategoryLabel(category: ProductCategory, locale: Locale): string {

@@ -173,7 +173,7 @@ export default function CustomersDashboard({ session }: { session: StaffSession 
           </div>
           <div className="lg:col-span-5">
             {selectedCustomer ? (
-              <CustomerDetails key={selectedCustomer.id} customer={selectedCustomer} actor={session.name} onClose={() => setSelectedId(null)} />
+              <CustomerDetails key={selectedCustomer.id} customer={selectedCustomer} session={session} onClose={() => setSelectedId(null)} />
             ) : (
               <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center text-sm text-white/40">
                 {t.selectHint}

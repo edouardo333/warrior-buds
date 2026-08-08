@@ -9,6 +9,7 @@ import { getRiskLevelLabel } from "@/lib/bud-guardian/risk-engine";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { maskEmailPartial, maskPhonePartial } from "@/lib/staff/order-actions";
 import { addCustomerFollowUp, addCustomerNote, setCustomerFollowUpStatus, type StaffCustomerView } from "@/lib/staff/customer-actions";
+import type { StaffSession } from "@/lib/staff/staff-auth";
 import { findOrderById } from "@/data/bud-guardian/orders-store";
 import { RISK_LEVEL_COLORS } from "./RiskTable";
 import { PAYMENT_STATUS_COLORS } from "./PaymentsTable";
@@ -100,11 +101,11 @@ function formatDateShort(iso: string, locale: "fr" | "en"): string {
 
 export default function CustomerDetails({
   customer,
-  actor,
+  session,
   onClose,
 }: {
   customer: StaffCustomerView;
-  actor: string;
+  session: StaffSession;
   onClose?: () => void;
 }) {
   const { locale } = useLanguage();
@@ -129,14 +130,14 @@ export default function CustomerDetails({
   function handleAddNote(event: FormEvent) {
     event.preventDefault();
     if (!noteText.trim()) return;
-    addCustomerNote(customer.id, noteText, actor);
+    addCustomerNote(customer.id, noteText, session);
     setNoteText("");
   }
 
   function handleAddFollowUp(event: FormEvent) {
     event.preventDefault();
     if (!followUpText.trim() || !followUpDue) return;
-    addCustomerFollowUp(customer.id, followUpText, new Date(followUpDue).toISOString(), actor);
+    addCustomerFollowUp(customer.id, followUpText, new Date(followUpDue).toISOString(), session);
     setFollowUpText("");
     setFollowUpDue("");
   }
@@ -354,14 +355,14 @@ export default function CustomerDetails({
                   <div className="flex shrink-0 gap-1.5">
                     <button
                       type="button"
-                      onClick={() => setCustomerFollowUpStatus(customer.id, followUp.id, "done")}
+                      onClick={() => setCustomerFollowUpStatus(customer.id, followUp.id, "done", session)}
                       className="rounded-lg border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-2.5 py-1 text-xs font-medium text-wb-guardian-green"
                     >
                       {t.markDone}
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCustomerFollowUpStatus(customer.id, followUp.id, "dismissed")}
+                      onClick={() => setCustomerFollowUpStatus(customer.id, followUp.id, "dismissed", session)}
                       className="rounded-lg border border-white/15 px-2.5 py-1 text-xs font-medium text-white/60 hover:text-white"
                     >
                       {t.dismiss}

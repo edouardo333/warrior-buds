@@ -7,7 +7,9 @@ import ContactForm from "./ContactForm";
 import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const MAP_QUERY = encodeURIComponent(`${SITE.addressLine1}, ${SITE.addressLine2}`);
+const MAP_QUERY = encodeURIComponent(
+  `Warrior Buds Dispensary - 24/7 Wholesale, ${SITE.addressLine1}, ${SITE.addressLine2}`
+);
 // Centered east of Oka (ll) so Saint-Eustache, Laval, Montréal and Longueuil
 // are visible alongside the Warrior Buds marker (q), zoomed out for context.
 const MAP_EMBED_SRC = `https://www.google.com/maps?q=${MAP_QUERY}&ll=45.55,-73.8&z=9&output=embed`;

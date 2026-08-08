@@ -172,7 +172,7 @@ const faqFr: FaqEntry[] = [
     question: "Quels produits vendez-vous ?",
     keywords: ["quels produits", "vendez vous", "produits", "catalogue", "what do you sell"],
     answer:
-      "Nous offrons de la fleur, des comestibles, des vapoteuses, des concentrés, du CBD et des accessoires — tous sélectionnés pour leur qualité et leur constance.",
+      "Nous offrons de la fleur, des comestibles, des vapoteuses, des concentrés, du CBD, des accessoires et des champignons — tous sélectionnés pour leur qualité et leur constance.",
     suggestions: ["categories", "directions"],
   },
   {
@@ -224,6 +224,15 @@ const faqFr: FaqEntry[] = [
     suggestions: ["categories", "products"],
   },
   {
+    id: "products-mushrooms",
+    topic: "products",
+    question: "Vendez-vous des champignons ?",
+    keywords: ["champignon", "champignons", "mushroom", "mushrooms", "reishi", "chaga", "cordyceps", "champignon fonctionnel", "adaptogene"],
+    answer:
+      "Oui — notre catégorie Champignons propose des champignons fonctionnels comme la Crinière de lion, le Reishi et le Chaga, pour le bien-être. Ce sont des produits non intoxicants, sans THC. Nous ne vendons pas de champignons magiques (psilocybine) ; ce n'est pas un produit légal que nous offrons.",
+    suggestions: ["categories", "products"],
+  },
+  {
     id: "products-prerolls",
     topic: "products",
     question: "Vendez-vous des préroulés ?",
@@ -263,7 +272,7 @@ const faqFr: FaqEntry[] = [
     topic: "products",
     question: "Quelles sont vos catégories de produits ?",
     keywords: ["categorie", "categories", "types de produits", "gammes"],
-    answer: "Nos catégories sont : Fleur, Comestibles, Vapoteuses, Concentrés, CBD et Accessoires.",
+    answer: "Nos catégories sont : Fleur, Comestibles, Vapoteuses, Concentrés, CBD, Accessoires et Champignons.",
     suggestions: ["products", "directions"],
   },
   {

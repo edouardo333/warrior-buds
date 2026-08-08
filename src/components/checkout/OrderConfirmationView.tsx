@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import InteracPaymentCard from "./InteracPaymentCard";
+import PaymentInstructionsCard from "./PaymentInstructionsCard";
 import { PrimaryButton, SecondaryButton } from "@/components/forms/FormField";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount } from "@/lib/shop/auth-actions";
@@ -16,10 +16,13 @@ export default function OrderConfirmationView({ orderId }: { orderId: string }) 
   const emailSent = useRef(false);
 
   useEffect(() => {
-    if (order && account && !emailSent.current) {
-      emailSent.current = true;
-      sendMockEmail(account.email, "order-confirmation", { orderId: order.id, total: order.total.toFixed(2) }, locale);
-    }
+    if (!order || emailSent.current) return;
+    // Signed-in accounts use their account email; guest orders carry their
+    // own contact email (no CustomerAccount exists for them).
+    const recipient = account?.email ?? order.guestEmail;
+    if (!recipient) return;
+    emailSent.current = true;
+    sendMockEmail(recipient, "order-confirmation", { orderId: order.id, total: order.total.toFixed(2) }, locale);
   }, [order, account, locale]);
 
   if (!order) return null;
@@ -30,14 +33,12 @@ export default function OrderConfirmationView({ orderId }: { orderId: string }) 
       <p className="mt-4 text-foreground/70">{t.checkout.confirmation.thankYou(order.id)}</p>
       <p className="mt-2 text-sm text-foreground/50">{t.checkout.confirmation.whatNext}</p>
 
-      {order.paymentProviderId === "interac" && (
-        <div className="mt-8 text-left">
-          <InteracPaymentCard orderId={order.id} total={order.total} />
-        </div>
-      )}
+      <div className="mt-8 text-left">
+        <PaymentInstructionsCard providerId={order.paymentProviderId} orderId={order.id} total={order.total} />
+      </div>
 
       <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-        <Link href={`/account/orders/${order.id}`}>
+        <Link href={account ? `/account/orders/${order.id}` : "/track-order"}>
           <PrimaryButton type="button" className="w-full sm:w-auto">
             {t.checkout.confirmation.viewOrder}
           </PrimaryButton>

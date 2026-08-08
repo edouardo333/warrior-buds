@@ -13,6 +13,8 @@ import {
   sendReminder,
   type StaffOrderView,
 } from "@/lib/staff/order-actions";
+import { hasPermission, minRoleFor } from "@/lib/staff/permissions";
+import { getRoleLabel, type StaffSession } from "@/lib/staff/staff-auth";
 import type { ReminderKind } from "@/types/staff-order";
 import OrderStatusEditor from "./OrderStatusEditor";
 import CustomerConfirmation from "./CustomerConfirmation";
@@ -35,6 +37,7 @@ const TEXT = {
     remindersSent: "Rappels envoyés",
     noReminders: "Aucun rappel envoyé.",
     close: "Fermer",
+    restoreRestricted: (role: string) => `Réservé aux rôles ${role} et plus.`,
   },
   en: {
     items: "Items",
@@ -52,6 +55,7 @@ const TEXT = {
     remindersSent: "Reminders sent",
     noReminders: "No reminders sent.",
     close: "Close",
+    restoreRestricted: (role: string) => `Reserved for ${role} and above.`,
   },
 } as const;
 
@@ -74,21 +78,22 @@ function formatDateTime(iso: string, locale: "fr" | "en"): string {
 
 export default function OrderDetails({
   order,
-  actor,
+  session,
   onClose,
 }: {
   order: StaffOrderView;
-  actor: string;
+  session: StaffSession;
   onClose?: () => void;
 }) {
   const { locale } = useLanguage();
   const t = TEXT[locale];
   const [noteText, setNoteText] = useState("");
+  const canRestore = hasPermission(session.role, "order.restoreAbandoned");
 
   function handleAddNote(event: FormEvent) {
     event.preventDefault();
     if (!noteText.trim()) return;
-    addInternalNote(order.id, noteText, actor);
+    addInternalNote(order.id, noteText, session);
     setNoteText("");
   }
 
@@ -138,28 +143,33 @@ export default function OrderDetails({
         </p>
       </div>
 
-      <OrderStatusEditor order={order} actor={actor} />
-      <CustomerConfirmation order={order} actor={actor} />
+      <OrderStatusEditor order={order} session={session} />
+      <CustomerConfirmation order={order} session={session} />
 
       <div className="flex flex-wrap items-center gap-3">
         {order.staffMeta.manuallyAbandoned ? (
           <button
             type="button"
-            onClick={() => restoreAbandonedOrder(order.id, actor)}
-            className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3 py-2 text-sm font-medium text-wb-guardian-green"
+            disabled={!canRestore}
+            title={!canRestore ? t.restoreRestricted(getRoleLabel(minRoleFor("order.restoreAbandoned"), locale)) : undefined}
+            onClick={() => restoreAbandonedOrder(order.id, session)}
+            className="rounded-xl border border-wb-guardian-green/50 bg-wb-guardian-green/10 px-3 py-2 text-sm font-medium text-wb-guardian-green disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t.restore}
           </button>
         ) : (
           <button
             type="button"
-            onClick={() => markOrderAbandoned(order.id, actor)}
+            onClick={() => markOrderAbandoned(order.id, session)}
             className="rounded-xl border border-white/15 px-3 py-2 text-sm font-medium text-white/70 hover:text-white"
           >
             {t.abandon}
           </button>
         )}
         {order.isAbandoned && <span className="text-xs text-white/40">{t.abandonedHint}</span>}
+        {order.staffMeta.manuallyAbandoned && !canRestore && (
+          <span className="text-xs text-white/35">{t.restoreRestricted(getRoleLabel(minRoleFor("order.restoreAbandoned"), locale))}</span>
+        )}
       </div>
 
       <div>
@@ -169,7 +179,7 @@ export default function OrderDetails({
             <button
               key={kind}
               type="button"
-              onClick={() => sendReminder(order.id, kind, actor)}
+              onClick={() => sendReminder(order.id, kind, session)}
               className="rounded-full border border-wb-orange/30 bg-wb-orange/10 px-3 py-1.5 text-xs font-medium text-wb-orange hover:bg-wb-orange/20"
             >
               {REMINDER_LABELS[kind][locale]}

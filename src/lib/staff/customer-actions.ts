@@ -9,13 +9,22 @@
 // customer id. Kept out of data/bud-guardian, exactly like order-actions.ts
 // keeps its meta store out of the chatbot-readable layer, so staff notes can
 // never leak into anything a customer could see.
+//
+// Bud Guardian V6 — Permissions & Operations Hardening. Notes and follow-ups
+// stay deliberately ungated (collaborative, not destructive or financially
+// sensitive — every role could already do this, and V6 doesn't change that)
+// but now take the full StaffSession and log to the shared audit log, same
+// as every other module, so "who added this note" is answerable the same
+// way everywhere.
 
 import { useSyncExternalStore } from "react";
 import type { CustomerFollowUp, CustomerFollowUpStatus, CustomerMeta, CustomerNote, CustomerProfile } from "@/types/customer";
+import type { StaffSession } from "./staff-auth";
 import { getCustomerProfiles } from "@/lib/bud-guardian/customer-engine";
 import { subscribeOrders } from "@/data/bud-guardian/orders-store";
 import { subscribePayments } from "@/data/bud-guardian/payments";
 import { subscribeRiskAssessments } from "@/data/bud-guardian/risk";
+import { logAuditEntry } from "./audit-log";
 
 const META_STORAGE_KEY = "wb-staff-customer-meta-v1";
 
@@ -106,17 +115,25 @@ export function useStaffCustomer(customerId: string | null): StaffCustomerView |
 // Mutations
 // ---------------------------------------------------------------------------
 
-export function addCustomerNote(customerId: string, text: string, actor: string): void {
+export function addCustomerNote(customerId: string, text: string, session: StaffSession): void {
   const trimmed = text.trim();
   if (!trimmed) return;
   const current = getMetaFor(customerId);
-  const note: CustomerNote = { id: uid("cnote"), text: trimmed, at: new Date().toISOString(), by: actor };
+  const note: CustomerNote = { id: uid("cnote"), text: trimmed, at: new Date().toISOString(), by: session.name };
   meta = { ...meta, [customerId]: { ...current, notes: [...current.notes, note] } };
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "customers",
+    action: "customer.note.added",
+    entityId: customerId,
+    description: "Note client ajoutée",
+  });
   persist();
   emit();
 }
 
-export function addCustomerFollowUp(customerId: string, note: string, dueAt: string, actor: string): void {
+export function addCustomerFollowUp(customerId: string, note: string, dueAt: string, session: StaffSession): void {
   const trimmed = note.trim();
   if (!trimmed || !dueAt) return;
   const current = getMetaFor(customerId);
@@ -126,14 +143,23 @@ export function addCustomerFollowUp(customerId: string, note: string, dueAt: str
     dueAt,
     status: "pending",
     createdAt: new Date().toISOString(),
-    createdBy: actor,
+    createdBy: session.name,
   };
   meta = { ...meta, [customerId]: { ...current, followUps: [...current.followUps, followUp] } };
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "customers",
+    action: "customer.followUp.added",
+    entityId: customerId,
+    description: "Rappel de suivi programmé",
+    metadata: { dueAt },
+  });
   persist();
   emit();
 }
 
-export function setCustomerFollowUpStatus(customerId: string, followUpId: string, status: CustomerFollowUpStatus): void {
+export function setCustomerFollowUpStatus(customerId: string, followUpId: string, status: CustomerFollowUpStatus, session: StaffSession): void {
   const current = getMetaFor(customerId);
   meta = {
     ...meta,
@@ -142,6 +168,15 @@ export function setCustomerFollowUpStatus(customerId: string, followUpId: string
       followUps: current.followUps.map((followUp) => (followUp.id === followUpId ? { ...followUp, status } : followUp)),
     },
   };
+  logAuditEntry({
+    actor: session.name,
+    role: session.role,
+    module: "customers",
+    action: "customer.followUp.statusChanged",
+    entityId: customerId,
+    description: `Suivi marqué : ${status}`,
+    metadata: { followUpId, status },
+  });
   persist();
   emit();
 }

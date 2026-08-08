@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import BillingStep from "./BillingStep";
+import CheckoutIdentityStep from "./CheckoutIdentityStep";
 import CheckoutShell from "./CheckoutShell";
 import PaymentStep from "./PaymentStep";
 import ReviewStep from "./ReviewStep";
@@ -23,9 +24,12 @@ export default function CheckoutView() {
   const { t } = useLanguage();
   const router = useRouter();
   const account = useAccount();
-  const { lines, totals } = useCart();
+  const { ownerId, lines, totals } = useCart();
   const { createOrder } = useOrderActions();
 
+  // Guest Checkout — set once a signed-out shopper picks "Continue as
+  // Guest" on the identity step below. Never forces /login or /signup.
+  const [guestEmail, setGuestEmail] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("shipping");
   const [shippingAddress, setShippingAddress] = useState<Address | null>(account?.addresses.find((a) => a.isDefault) ?? null);
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(true);
@@ -33,18 +37,6 @@ export default function CheckoutView() {
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   const [paymentProviderId, setPaymentProviderId] = useState<PaymentProviderId>("interac");
   const [placing, setPlacing] = useState(false);
-
-  if (!account) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-6 py-28 text-center">
-        <p className="font-display text-3xl tracking-wide text-foreground">{t.account.guardTitle}</p>
-        <p className="text-sm text-foreground/60">{t.account.guardMessage}</p>
-        <Link href="/login">
-          <PrimaryButton type="button">{t.account.guardCta}</PrimaryButton>
-        </Link>
-      </div>
-    );
-  }
 
   if (lines.length === 0) {
     return (
@@ -58,13 +50,21 @@ export default function CheckoutView() {
     );
   }
 
+  // Neither signed in nor guest-checkout chosen yet — offer the choice
+  // instead of redirecting to /login.
+  if (!account && !guestEmail) {
+    return <CheckoutIdentityStep onGuestContinue={setGuestEmail} />;
+  }
+
   const effectiveBilling = billingSameAsShipping ? shippingAddress : billingAddress;
 
   function handlePlaceOrder() {
-    if (!shippingAddress || !effectiveBilling || !account) return;
+    if (!shippingAddress || !effectiveBilling) return;
+    if (!account && !guestEmail) return;
     setPlacing(true);
     const order = createOrder({
-      accountId: account.id,
+      accountId: ownerId,
+      guestEmail: account ? null : guestEmail,
       shippingAddress,
       billingAddress: effectiveBilling,
       shippingMethod,

@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import OrderTrackingTimeline from "./OrderTrackingTimeline";
+import PaymentInstructionsCard from "@/components/checkout/PaymentInstructionsCard";
 import { FormField, PrimaryButton, fieldClass } from "@/components/forms/FormField";
 import { findAccountById } from "@/data/shop/account-store";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -59,6 +60,11 @@ export default function TrackOrderView() {
           <div className="mt-6">
             <OrderTrackingTimeline order={result} />
           </div>
+          {result.status === "pending_payment" && (
+            <div className="mt-6">
+              <PaymentInstructionsCard providerId={result.paymentProviderId} orderId={result.id} total={result.total} />
+            </div>
+          )}
         </div>
       )}
     </div>

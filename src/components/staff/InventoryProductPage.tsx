@@ -171,6 +171,7 @@ export default function InventoryProductPage({ session, productId }: { session: 
         <InventoryQuickActions
           products={allProducts}
           actor={session.name}
+          role={session.role}
           defaultProductId={product.id}
           onViewProduct={(id) => router.push(`/staff/inventory/${id}`)}
           onViewHistory={() => historyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}

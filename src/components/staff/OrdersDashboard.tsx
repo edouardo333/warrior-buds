@@ -181,7 +181,7 @@ export default function OrdersDashboard({ session }: { session: StaffSession }) 
           </div>
           <div className="lg:col-span-5">
             {selectedOrder ? (
-              <OrderDetails order={selectedOrder} actor={session.name} onClose={() => setSelectedId(null)} />
+              <OrderDetails order={selectedOrder} session={session} onClose={() => setSelectedId(null)} />
             ) : (
               <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center text-sm text-white/40">
                 {t.selectHint}
@@ -202,8 +202,9 @@ export default function OrdersDashboard({ session }: { session: StaffSession }) 
                     {new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "medium" }).format(
                       new Date(entry.at)
                     )}{" "}
-                    — {entry.by} — {entry.action}
-                    {entry.orderId ? ` (${entry.orderId})` : ""}
+                    — {entry.actor} — {entry.description}
+                    {entry.entityId ? ` (${entry.entityId})` : ""}
+                    {entry.outcome === "denied" ? " ⛔" : ""}
                   </li>
                 ))}
               </ul>

@@ -6,17 +6,19 @@ import ChatBubble from "./ChatBubble";
 import ChatWindow from "./ChatWindow";
 import type { ChatMessage } from "./Message";
 import { CATEGORY_SUGGESTIONS, getCategoryIntro, type QuickActionConfig } from "./QuickActions";
-import { respondToFaqId, respondToQuery, type GuardianResponse } from "@/lib/bud-guardian/engine";
+import { respondToFaqId, type GuardianResponse } from "@/lib/bud-guardian/engine";
 import { checkAccessControl } from "@/lib/bud-guardian/access-control";
+import { checkGuardianPolicy } from "@/lib/bud-guardian/guardian-policy";
 import { detectEscalation } from "@/lib/bud-guardian/escalation";
 import { detectOrderIntent } from "@/lib/bud-guardian/order-intent";
+import { resolveReplyLocale } from "@/lib/bud-guardian/language-detect";
+import { resolveGuardianProvider, type ConversationTurn } from "@/lib/bud-guardian/ai-provider";
 import { useGuardianState } from "@/lib/bud-guardian/useGuardianState";
 import { useOrderSession } from "@/lib/bud-guardian/useOrderSession";
 import { usePaymentSession } from "@/lib/bud-guardian/usePaymentSession";
 import type { OrderActionId, OrderIntent } from "@/lib/bud-guardian/order-engine";
 import {
   answerGenericPaymentFaq,
-  matchGenericPaymentFaq,
   type PaymentActionId,
   type PaymentIntent,
 } from "@/lib/bud-guardian/payment-engine";
@@ -71,6 +73,19 @@ const WELCOME = {
 
 const BUBBLE_LABEL = { fr: "Ouvrir Bud Guardian", en: "Open Bud Guardian" } as const;
 
+// Storefront — mobile-only compact FAB: on checkout/cart/order pages the
+// floating bubble sits closer to totals, CTAs, and form fields than
+// anywhere else in the app, so it drops to a smaller footprint with a bit
+// more clearance from the bottom edge (see ChatBubble's `compact` prop).
+// Desktop sizing/position is untouched. Never removes the widget — it stays
+// reachable everywhere.
+const COMPACT_PATH_PREFIXES = ["/cart", "/checkout", "/track-order", "/account/orders"];
+
+function isCompactPath(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return COMPACT_PATH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
 function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -83,6 +98,13 @@ export default function BudGuardian() {
   // Conversation memory: the topic of the last successfully-answered FAQ,
   // used only as a tie-breaker for follow-up questions (see engine.ts).
   const [lastTopic, setLastTopic] = useState<FaqTopic | null>(null);
+  // V9 — the last product Guardian discussed, so a bare follow-up ("and the
+  // price?", "is it in stock?") resolves without repeating the product name
+  // (see product-intent.ts).
+  const [lastProductId, setLastProductId] = useState<string | null>(null);
+  // V9 — one conversational provider per mount (see ai-provider.ts). Local
+  // by default; never recreated mid-conversation.
+  const guardianProvider = useRef(resolveGuardianProvider()).current;
   // UI-only: which category pill is highlighted/centered in the persistent
   // bar (desktop). Purely presentational, does not affect chatbot logic.
   const [activeCategory, setActiveCategory] = useState<QuickActionId | null>(null);
@@ -96,6 +118,8 @@ export default function BudGuardian() {
   // float over authenticated staff routes.
   if (pathname?.startsWith("/staff")) return null;
 
+  const compact = isCompactPath(pathname);
+
   function handleOpen() {
     setIsOpen(true);
     if (!hasOpenedOnce.current) {
@@ -108,16 +132,35 @@ export default function BudGuardian() {
     setMessages((prev) => [...prev, { id: createId(), role: "user", text }]);
   }
 
-  function pushBotMessage(text: string, suggestions: ChatMessage["suggestions"] = []) {
-    setMessages((prev) => [...prev, { id: createId(), role: "bot", text, suggestions, animate: true }]);
+  function pushBotMessage(text: string, suggestions: ChatMessage["suggestions"] = [], found = true) {
+    setMessages((prev) => [...prev, { id: createId(), role: "bot", text, suggestions, animate: true, found }]);
   }
 
-  function handleSend(text: string) {
+  async function handleSend(text: string) {
     pushUserMessage(text);
+
+    // V9 — Guardian's free-text replies follow the language the customer
+    // just used (see language-detect.ts), independent of the site's own
+    // FR/EN toggle. Applies to every check below except the order/payment
+    // two-factor sessions, which stay in the site's UI locale — switching
+    // languages mid multi-step form is more likely to confuse than help.
+    const replyLocale = resolveReplyLocale(text, locale);
+
+    // V9 — centralized safety/refusal layer. Runs before everything else,
+    // including mid order/payment session, same guarantee access-control
+    // below already gives staff-data topics (see guardian-policy.ts).
+    const policyBlock = checkGuardianPolicy(text, replyLocale);
+    if (policyBlock) {
+      runThinkingSequence(
+        () => policyBlock,
+        (response) => pushBotMessage(response.answer, response.suggestions)
+      );
+      return;
+    }
 
     // Public access-control layer: blocked topics are refused even mid-
     // session, before any order/payment identifier text is consumed.
-    const blocked = checkAccessControl(text, locale);
+    const blocked = checkAccessControl(text, replyLocale);
     if (blocked) {
       runThinkingSequence(
         () => blocked,
@@ -142,7 +185,7 @@ export default function BudGuardian() {
       return;
     }
 
-    const escalation = detectEscalation(text, locale);
+    const escalation = detectEscalation(text, replyLocale);
     if (escalation) {
       runThinkingSequence(
         () => escalation,
@@ -162,20 +205,19 @@ export default function BudGuardian() {
       return;
     }
 
-    const genericPayment = matchGenericPaymentFaq(text, locale);
-    if (genericPayment) {
-      runThinkingSequence(
-        () => genericPayment,
-        (response) => pushBotMessage(response.text, response.suggestions)
-      );
-      return;
-    }
+    // V9 — everything past this point is the open-ended conversational
+    // step: live product grounding, generic payment FAQ, then the
+    // keyword/typo-tolerant FAQ engine, all behind the provider
+    // abstraction (see ai-provider.ts).
+    const history: ConversationTurn[] = messages.map((m) => ({ role: m.role, text: m.text, found: m.found }));
+    const result = await guardianProvider.respond({ message: text, replyLocale, history, lastTopic, lastProductId });
 
-    runThinkingSequence<GuardianResponse>(
-      () => respondToQuery(text, locale, lastTopic),
+    runThinkingSequence(
+      () => result,
       (response) => {
-        pushBotMessage(response.answer, response.suggestions);
+        pushBotMessage(response.answer, response.suggestions, response.found);
         setLastTopic(response.topic ?? null);
+        if (response.productId) setLastProductId(response.productId);
       }
     );
   }
@@ -254,7 +296,9 @@ export default function BudGuardian() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-[60] sm:bottom-6 sm:right-6">
+    <div
+      className={`fixed z-[60] sm:bottom-6 sm:right-6 ${compact ? "bottom-6 right-4" : "bottom-5 right-5"}`}
+    >
       {isOpen ? (
         <ChatWindow
           messages={messages}
@@ -267,7 +311,7 @@ export default function BudGuardian() {
           onQuickAction={handleQuickAction}
         />
       ) : (
-        <ChatBubble state={guardianState} nodding={nodding} onClick={handleOpen} label={BUBBLE_LABEL[locale]} />
+        <ChatBubble state={guardianState} nodding={nodding} onClick={handleOpen} label={BUBBLE_LABEL[locale]} compact={compact} />
       )}
     </div>
   );

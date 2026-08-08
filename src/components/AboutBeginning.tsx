@@ -13,10 +13,10 @@ export default function AboutBeginning() {
 
       <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
         <Reveal>
-          <div className="relative h-80 overflow-hidden rounded-3xl border border-white/10 bg-black sm:h-[28rem] lg:h-[34rem]">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/10 bg-black">
             <SmartImage
-              src="/images/hero/comment-tout-a-commencer.webp"
-              alt="Inside the Warrior Buds dispensary"
+              src="/images/hero/how-it-start.webp"
+              alt="The original Warrior Buds dispensary storefront"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover object-center"

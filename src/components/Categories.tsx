@@ -1,6 +1,6 @@
 "use client";
 
-import { Cannabis, Candy, Wind, Gem, Scale, Settings2 } from "lucide-react";
+import { Cannabis, Candy, Wind, Gem, Scale, Settings2, Sparkles } from "lucide-react";
 import CategoryCard from "./CategoryCard";
 import Reveal from "./Reveal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -60,6 +60,15 @@ const CATEGORY_META = [
       glow: "var(--wb-yellow)",
       glowSecondary: "var(--wb-orange)",
       gradient: "from-wb-yellow/20 via-black to-wb-orange/10",
+    },
+  },
+  {
+    key: "mushrooms",
+    icon: <Sparkles className={iconClass} strokeWidth={1.75} />,
+    theme: {
+      glow: "var(--wb-gold)",
+      glowSecondary: "var(--wb-green)",
+      gradient: "from-wb-gold/25 via-black to-wb-green/10",
     },
   },
 ] as const;

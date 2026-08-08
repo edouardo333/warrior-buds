@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import PaymentProviderSelect from "@/components/checkout/PaymentProviderSelect";
 import { FormField, PrimaryButton, SecondaryButton, fieldClass } from "@/components/forms/FormField";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount, usePaymentPreferenceActions } from "@/lib/shop/auth-actions";
@@ -8,7 +9,7 @@ import { getEnabledProviders } from "@/lib/shop/payment-providers/registry";
 import type { PaymentProviderId } from "@/types/shop-payment";
 
 export default function PaymentPreferences() {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
   const account = useAccount();
   const { addPaymentPreference, removePaymentPreference, setDefaultPaymentPreference } = usePaymentPreferenceActions();
   const providers = getEnabledProviders();
@@ -40,18 +41,7 @@ export default function PaymentPreferences() {
       {showForm && (
         <form onSubmit={handleSubmit} noValidate className="mt-6 flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
           <FormField label={t.account.paymentMethods.provider} htmlFor="pref-provider">
-            <select
-              id="pref-provider"
-              value={providerId}
-              onChange={(e) => setProviderId(e.target.value as PaymentProviderId)}
-              className={fieldClass()}
-            >
-              {providers.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.getDisplayName(locale)}
-                </option>
-              ))}
-            </select>
+            <PaymentProviderSelect id="pref-provider" providers={providers} value={providerId} onChange={setProviderId} />
           </FormField>
           <FormField label={t.account.paymentMethods.label} htmlFor="pref-label">
             <input

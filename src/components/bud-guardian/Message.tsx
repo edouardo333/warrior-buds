@@ -13,6 +13,10 @@ export type ChatMessage = {
   text: string;
   suggestions?: QuickActionId[];
   animate?: boolean;
+  // V9 — was this bot turn an actual answer, or the generic fallback? Not
+  // rendered; only read back out as conversation-history context for the
+  // next turn (see ai-provider.ts's repeated-fallback nudge).
+  found?: boolean;
 };
 
 type MessageProps = {

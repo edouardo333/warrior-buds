@@ -58,24 +58,26 @@ export type DemoAccount = {
 
 // Fixed demo accounts — each access code logs the person in as that exact
 // name + role, no free-form name/role entry. Deliberately fictional and
-// local only; grants access to both /staff/orders and /staff/payments,
-// since neither page gates on role, only on having a session at all.
+// local only; grants access to every /staff/* page, since routing only
+// gates on having a session at all — what a role can actually DO once
+// inside is governed by lib/staff/permissions.ts, not by which pages it can
+// reach.
+//
+// Bud Guardian V6 — one working demo login per role (Employee, Manager,
+// Supervisor, Admin). Before V6 the account labelled "Admin" actually held
+// the "manager" role and no account could reach "admin" at all; both are
+// fixed here — WB2026 keeps its original code but is now honestly labelled
+// "Manager", and a real ADM2026 admin account was added.
 export const DEMO_ACCOUNTS: DemoAccount[] = [
-  { name: "Admin", role: "manager", code: "WB2026" },
   { name: "Camille", role: "employee", code: "EMP2026" },
+  { name: "Manager", role: "manager", code: "WB2026" },
   { name: "Supervisor", role: "supervisor", code: "SUP2026" },
+  { name: "Admin", role: "admin", code: "ADM2026" },
 ];
 
 export function findDemoAccount(code: string): DemoAccount | null {
   const normalized = code.trim().toUpperCase();
   return DEMO_ACCOUNTS.find((account) => account.code === normalized) ?? null;
-}
-
-// Managers, supervisors, and admins can cancel orders; plain employees
-// cannot — a small, forward-looking taste of the role separation the spec
-// asks to plan for.
-export function canCancelOrder(role: StaffRole): boolean {
-  return role === "manager" || role === "supervisor" || role === "admin";
 }
 
 export function readSession(): StaffSession | null {
