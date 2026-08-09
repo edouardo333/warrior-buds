@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEMO_ACCOUNTS, findDemoAccount, getRoleLabel, startSession } from "@/lib/staff/staff-auth";
 import { findStaffMemberByCode } from "@/data/bud-guardian/staff-directory";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const TEXT = {
   fr: {
@@ -70,6 +71,8 @@ export default function StaffLogin() {
         <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
         {t.backToSite}
       </a>
+
+      <LanguageSwitcher className="absolute right-4 top-4 sm:right-6 sm:top-6" />
 
       <form
         onSubmit={handleSubmit}

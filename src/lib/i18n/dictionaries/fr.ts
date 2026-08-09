@@ -9,6 +9,7 @@ const fr: Dictionary = {
       about: "À propos",
       gallery: "Galerie",
       reviews: "Avis",
+      faq: "FAQ",
       contact: "Contact",
     },
     visitStore: "Visiter la boutique",
@@ -20,6 +21,9 @@ const fr: Dictionary = {
     wishlist: "Liste de souhaits",
     trackOrder: "Suivre ma commande",
     cartItemsAria: (count) => `Panier, ${count} article${count === 1 ? "" : "s"}`,
+  },
+  announcementBar: {
+    message: "PREMIÈRE COMMANDE? BUDS5 = 5% DE RABAIS • LIVRAISON GRATUITE DÈS 150$ • SOUTIEN IA BUD GUARDIAN 24/7 • 18+ SEULEMENT",
   },
   hero: {
     kicker: "Kanesatake · Oka · Québec",
@@ -253,10 +257,18 @@ const fr: Dictionary = {
     map: {
       title: "Carte de l'emplacement de Warrior Buds",
     },
+    support: {
+      eyebrow: "Assistance",
+      title: "Besoin d'aide ?",
+      description:
+        "Bud Guardian, notre assistant IA avancé, est disponible 24/7 pour répondre à vos questions sur les produits, commandes, paiements, informations du magasin et plus encore. Vous pouvez également contacter l'équipe Warrior Buds par courriel.",
+      chatCta: "Discuter avec Bud Guardian",
+      emailCta: "Nous écrire",
+    },
     form: {
-      eyebrow: "Des questions?",
+      eyebrow: "Des questions ?",
       title: "Envoyez-nous un message",
-      subtitle: "Une question sur nos produits ou nos heures? Écrivez-nous et nous vous répondrons rapidement.",
+      subtitle: "Une question sur nos produits ou nos heures ? Écrivez-nous et nous vous répondrons rapidement.",
       firstName: "Prénom",
       lastName: "Nom de famille",
       email: "Courriel",
@@ -351,6 +363,7 @@ const fr: Dictionary = {
     },
   },
   auth: {
+    backToWebsite: "Retour au site",
     login: {
       metaTitle: "Connexion | Warrior Buds",
       metaDescription: "Connectez-vous à votre compte Warrior Buds pour voir vos commandes, gérer vos adresses et payer plus rapidement.",
@@ -360,8 +373,8 @@ const fr: Dictionary = {
       password: "Mot de passe",
       submit: "Connexion",
       submitting: "Connexion en cours…",
-      forgotPassword: "Mot de passe oublié?",
-      noAccount: "Pas encore de compte?",
+      forgotPassword: "Mot de passe oublié ?",
+      noAccount: "Pas encore de compte ?",
       signUpLink: "S'inscrire",
       errorInvalidCredentials: "Courriel ou mot de passe incorrect.",
     },
@@ -378,14 +391,14 @@ const fr: Dictionary = {
       marketingOptIn: "M'envoyer des offres exclusives et les nouveautés produits",
       submit: "Créer le compte",
       submitting: "Création du compte…",
-      haveAccount: "Vous avez déjà un compte?",
+      haveAccount: "Vous avez déjà un compte ?",
       loginLink: "Connexion",
       errorEmailTaken: "Un compte existe déjà avec ce courriel.",
     },
     forgotPassword: {
       metaTitle: "Mot de passe oublié | Warrior Buds",
       metaDescription: "Réinitialisez le mot de passe de votre compte Warrior Buds.",
-      title: "Mot de passe oublié?",
+      title: "Mot de passe oublié ?",
       subtitle: "Entrez votre courriel et nous vous enverrons un code de réinitialisation.",
       email: "Courriel",
       submit: "Envoyer le code",
@@ -419,7 +432,7 @@ const fr: Dictionary = {
       token: "Code de vérification",
       submit: "Vérifier le courriel",
       successTitle: "Courriel vérifié",
-      successMessage: "Votre courriel a été vérifié. Bienvenue chez Warrior Buds!",
+      successMessage: "Votre courriel a été vérifié. Bienvenue chez Warrior Buds !",
       resend: "Renvoyer le code",
       resent: "Un nouveau code a été envoyé.",
       alreadyVerified: "Votre courriel est déjà vérifié.",
@@ -511,6 +524,19 @@ const fr: Dictionary = {
       saved: "Paramètres enregistrés.",
       errorCurrentPassword: "Le mot de passe actuel est incorrect.",
     },
+  },
+  promo: {
+    label: "Code promo",
+    placeholder: "Entrez le code",
+    apply: "Appliquer",
+    applying: "Application…",
+    remove: "Retirer",
+    appliedMessage: (code, amount) => `Code ${code} appliqué — vous économisez ${amount} $.`,
+    freeShippingMessage: (threshold) => `Livraison gratuite débloquée — votre commande est admissible dès ${threshold} $.`,
+    errorInvalid: "Ce code n'est pas valide.",
+    errorNotFirstOrder: "BUDS5 est réservé à la première commande sur ce compte.",
+    errorEmpty: "Entrez un code à appliquer.",
+    discountLabel: (code) => `Promo (${code})`,
   },
   cart: {
     metaTitle: "Panier | Warrior Buds",
@@ -605,7 +631,7 @@ const fr: Dictionary = {
     confirmation: {
       metaTitle: "Commande confirmée | Warrior Buds",
       title: "Commande confirmée",
-      thankYou: (orderId) => `Merci! Votre commande ${orderId} a été passée.`,
+      thankYou: (orderId) => `Merci ! Votre commande ${orderId} a été passée.`,
       whatNext: "Nous vous avons envoyé un courriel de confirmation avec les instructions de paiement.",
       viewOrder: "Voir la commande",
       continueShopping: "Continuer mes achats",
@@ -644,6 +670,7 @@ const fr: Dictionary = {
     subtotal: "Sous-total",
     shippingCost: "Livraison",
     tax: "Taxes",
+    discount: (code) => `Promo (${code})`,
   },
   productCatalog: {
     metaTitle: "Produits | Warrior Buds",
@@ -651,6 +678,11 @@ const fr: Dictionary = {
     filters: {
       allCategories: "Toutes les catégories",
       category: "Catégorie",
+      categoryMenu: {
+        showSubcategories: (name) => `Afficher les sous-catégories de ${name}`,
+        hideSubcategories: (name) => `Masquer les sous-catégories de ${name}`,
+        hoverHint: "Survolez ou sélectionnez une catégorie pour voir ses sous-catégories.",
+      },
       strain: "Variété",
       allStrains: "Toutes les variétés",
       onSaleOnly: "En promotion",
@@ -990,7 +1022,7 @@ const fr: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 100 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
+              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 150 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
             },
             {
               type: "todo",
@@ -1210,6 +1242,33 @@ const fr: Dictionary = {
           blocks: [{ type: "p", text: "Des questions sur cette Politique relative aux témoins ? Contactez notre équipe." }],
         },
       ],
+    },
+  },
+  faq: {
+    metaTitle: "FAQ | Warrior Buds",
+    metaDescription:
+      "Réponses aux questions les plus fréquentes du service à la clientèle Warrior Buds — commandes, paiements, promotions, cueillette, suivi, Bud Guardian, votre compte et les produits.",
+    hero: {
+      eyebrow: "Service à la clientèle",
+      title: "Foire aux questions",
+      subtitle: "Des réponses claires sur la commande, le paiement, le suivi et votre compte. Vous ne trouvez pas ? Bud Guardian est à un clic.",
+    },
+    search: {
+      placeholder: "Rechercher une question…",
+      ariaLabel: "Rechercher dans la FAQ",
+      resultsCount: (count) => `${count} résultat${count === 1 ? "" : "s"}`,
+      noResultsTitle: "Aucune question correspondante",
+      noResultsSubtitle: "Essayez un autre mot, ou demandez directement à Bud Guardian — il peut habituellement vous aider.",
+      clear: "Effacer la recherche",
+    },
+    jumpToLabel: "Aller à",
+    itemsCountLabel: (count) => `${count} question${count === 1 ? "" : "s"}`,
+    cta: {
+      label: "Besoin d'aide ?",
+      title: "Demandez à Bud Guardian",
+      subtitle: "Notre assistant virtuel est disponible 24 h/24, 7 j/7 pour vos questions sur les commandes, les paiements et les produits — et peut vous mettre en contact avec l'équipe au besoin.",
+      askButton: "Demander à Bud Guardian",
+      contactButton: "Nous contacter",
     },
   },
 };

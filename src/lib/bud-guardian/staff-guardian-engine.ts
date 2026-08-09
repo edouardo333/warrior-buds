@@ -18,6 +18,7 @@
 // staff session is not an exemption.
 
 import type { Locale } from "@/lib/i18n/types";
+import type { StaffRole } from "@/types/staff-order";
 import type { AnalyticsSnapshot } from "./analytics-engine";
 import { getRangeLabel, getWeekdayLabel, getHourLabel } from "./analytics-engine";
 import { getCategoryLabel } from "./inventory-engine";
@@ -26,7 +27,10 @@ import { getPaymentStatusLabel } from "./payment-engine";
 import { getCustomerSegmentLabel } from "./customer-engine";
 import { getStaffMembers } from "@/data/bud-guardian/staff-directory";
 import { checkGuardianPolicy } from "./guardian-policy";
+import { detectSevereViolation, logStaffSevereViolation } from "./moderation-engine";
 import { findBestMatch, type SearchableEntry } from "./search";
+import { runGuardianAiConversation, type GuardianAiTurn } from "./guardian-ai-client";
+import { readSession as readStaffSession } from "@/lib/staff/staff-auth";
 
 export type StaffGuardianResponse = { answer: string; found: boolean };
 
@@ -234,6 +238,19 @@ const FALLBACK: Record<Locale, string> = {
   en: "I can talk through revenue, payments, risk, inventory, customers, top products, busiest times, or staff — or give you a full priorities summary.",
 };
 
+// V12.2 — Autonomous Abuse Defense. Staff are NEVER auto-banned (they need
+// their tools to keep working), but severe language is still detected and
+// audit-logged for review — Warrior Buds Rule #1 applies internally too.
+const STAFF_SEVERE_NOTICE: Record<Locale, string> = {
+  fr: "Ce message contient un langage grave (menace, propos haineux, etc.). Il a été consigné pour révision — la Règle no 1 de Warrior Buds (le respect) s'applique à tous, y compris à l'interne.",
+  en: "This message contains severe language (threat, hate speech, etc.). It has been logged for review — Warrior Buds Rule #1 (respect) applies to everyone, including internally.",
+};
+
+function flagStaffSevereViolation(violation: NonNullable<ReturnType<typeof detectSevereViolation>>): void {
+  const session = readStaffSession();
+  logStaffSevereViolation(session?.name ?? "Unknown staff", session?.role ?? "employee", violation);
+}
+
 // paymentStatusBreakdown / getPaymentStatusLabel and getCustomerSegmentLabel
 // are kept available for a future finer-grained breakdown without another
 // import pass — referenced here so a follow-up intent can format them the
@@ -253,6 +270,15 @@ export function describeCustomerSegments(snapshot: AnalyticsSnapshot, locale: Lo
 }
 
 export function respondToStaffQuery(text: string, locale: Locale, snapshot: AnalyticsSnapshot): StaffGuardianResponse {
+  // V12.2 — checked first, same "always runs before anything else"
+  // guarantee as the public surface (see BudGuardian.tsx) — just without
+  // the ban consequence for staff (see STAFF_SEVERE_NOTICE above).
+  const severeViolation = detectSevereViolation(text);
+  if (severeViolation) {
+    flagStaffSevereViolation(severeViolation);
+    return { answer: STAFF_SEVERE_NOTICE[locale], found: true };
+  }
+
   const policyBlock = checkGuardianPolicy(text, locale);
   if (policyBlock) return { answer: policyBlock.answer, found: true };
 
@@ -281,4 +307,47 @@ export function respondToStaffQuery(text: string, locale: Locale, snapshot: Anal
     default:
       return { answer: FALLBACK[locale], found: false };
   }
+}
+
+// V10 — real hosted-model version of the staff copilot, mirroring
+// ai-provider.ts's ExternalAIProvider/FallbackAIProvider split for the
+// public chat. Only ever called by GuardianAssistant.tsx when
+// isExternalGuardianAiEnabled() (see ai-provider.ts) — otherwise the staff
+// panel keeps calling respondToStaffQuery() directly, exactly as before,
+// with zero network calls. On any failure (unconfigured/unreachable
+// provider, timeout) this falls back to the same deterministic
+// respondToStaffQuery() this file has always had, so the copilot never
+// breaks — it just stops sounding as conversational.
+export async function respondToStaffQueryAI(
+  text: string,
+  locale: Locale,
+  snapshot: AnalyticsSnapshot,
+  history: GuardianAiTurn[],
+  role?: StaffRole
+): Promise<StaffGuardianResponse> {
+  // V12.2 — checked first, same as respondToStaffQuery above.
+  const severeViolation = detectSevereViolation(text);
+  if (severeViolation) {
+    flagStaffSevereViolation(severeViolation);
+    return { answer: STAFF_SEVERE_NOTICE[locale], found: true };
+  }
+
+  // Same authoritative, AI-independent refusal gate as the public surface —
+  // checked here too since this function is a separate entry point from
+  // route.ts's own (redundant, defense-in-depth) server-side check.
+  const policyBlock = checkGuardianPolicy(text, locale);
+  if (policyBlock) return { answer: policyBlock.answer, found: true };
+
+  const result = await runGuardianAiConversation({
+    message: text,
+    locale,
+    history,
+    mode: "staff",
+    analyticsSnapshot: snapshot,
+    staffRole: role,
+  });
+
+  if (result.ok) return { answer: result.answer, found: true };
+
+  return respondToStaffQuery(text, locale, snapshot);
 }

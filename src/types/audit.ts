@@ -5,7 +5,7 @@
 
 import type { StaffRole } from "./staff-order";
 
-export type AuditModule = "orders" | "payments" | "risk" | "inventory" | "customers" | "staff";
+export type AuditModule = "orders" | "payments" | "risk" | "inventory" | "customers" | "staff" | "moderation";
 
 // StaffRole for a real staff-driven action; "system" for automatic,
 // non-staff entries (e.g. the inventory engine's own unmatched-item

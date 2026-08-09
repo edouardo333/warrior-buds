@@ -148,6 +148,7 @@ export default function Footer({ hideCta = false }: FooterProps = {}) {
     { label: t.nav.links.home, href: "/" },
     { label: t.nav.links.products, href: "/products" },
     { label: t.nav.links.learningCenter, href: "/learning-center" },
+    { label: t.nav.links.faq, href: "/faq" },
     { label: t.nav.links.about, href: "/about" },
     { label: t.nav.links.gallery, href: "/gallery" },
     { label: t.nav.links.contact, href: "/contact" },

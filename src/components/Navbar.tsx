@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, PackageSearch, ShoppingCart, User } from "lucide-react";
+import AnnouncementBar from "./AnnouncementBar";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
 import MiniCart from "./cart/MiniCart";
@@ -16,11 +17,22 @@ const STAFF_ACCESS_WINDOW_MS = 3000;
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  // French nav labels ("Centre d'apprentissage", "À propos") run noticeably
+  // longer than their English counterparts, so the desktop nav needs tighter
+  // gaps to fit on one line at the same widths EN already fits comfortably.
+  const isFr = locale === "fr";
   const router = useRouter();
   const account = useAccount();
   const accountHref = account ? "/account" : "/login";
   const logoClickTimestamps = useRef<number[]>([]);
+  const headerRef = useRef<HTMLElement | null>(null);
+  // AnnouncementBar sits above the nav row inside this same fixed header,
+  // and its text can wrap to 2–3 lines on narrow viewports (longer in FR),
+  // so the header's real height isn't a fixed constant — measure it so the
+  // mobile menu overlay below can start exactly where the header ends
+  // instead of a hardcoded offset that would gap or overlap.
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const now = Date.now();
@@ -45,6 +57,7 @@ export default function Navbar() {
     { label: t.nav.links.home, href: "/" },
     { label: t.nav.links.products, href: "/products" },
     { label: t.nav.links.learningCenter, href: "/learning-center" },
+    { label: t.nav.links.faq, href: "/faq" },
     { label: t.nav.links.about, href: "/about" },
     { label: t.nav.links.gallery, href: "/gallery" },
     { label: t.nav.links.reviews, href: "/reviews" },
@@ -65,25 +78,37 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () => setHeaderHeight(el.offsetHeight);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [t]);
+
   return (
     <header
+      ref={headerRef}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         isScrolled
           ? "bg-background/80 backdrop-blur-md border-b border-white/10"
           : "bg-transparent border-b border-transparent"
       }`}
     >
+      <AnnouncementBar />
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" onClick={handleLogoClick}>
           <Logo imageClassName="h-9 sm:h-11" />
         </Link>
 
-        <ul className="hidden items-center gap-6 lg:flex">
+        <ul className={`hidden items-center gap-4 xl:flex ${isFr ? "xl:gap-3" : "xl:gap-6"}`}>
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="text-sm font-medium uppercase tracking-wide text-foreground/80 transition-colors hover:text-wb-orange"
+                className="whitespace-nowrap text-sm font-medium uppercase tracking-wide text-foreground/80 transition-colors hover:text-wb-orange"
               >
                 {link.label}
               </Link>
@@ -91,7 +116,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className={`hidden items-center gap-2.5 xl:flex ${isFr ? "xl:gap-1.5" : "xl:gap-3"}`}>
           <Link
             href="/track-order"
             aria-label={t.nav.trackOrder}
@@ -121,7 +146,9 @@ export default function Navbar() {
           <LanguageSwitcher />
           <Link
             href="/contact"
-            className="rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-5 py-2 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
+            className={`whitespace-nowrap rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow py-2 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105 ${
+              isFr ? "px-4" : "px-5"
+            }`}
           >
             {t.nav.visitStore}
           </Link>
@@ -132,7 +159,7 @@ export default function Navbar() {
           aria-label={isOpen ? t.nav.closeMenu : t.nav.openMenu}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((v) => !v)}
-          className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
+          className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 xl:hidden"
         >
           <span
             className={`h-0.5 w-6 bg-foreground transition-transform duration-300 ${
@@ -153,7 +180,8 @@ export default function Navbar() {
       </nav>
 
       <div
-        className={`fixed inset-0 top-16 z-40 bg-background/98 backdrop-blur-lg transition-all duration-300 lg:hidden ${
+        style={{ top: headerHeight || undefined }}
+        className={`fixed inset-x-0 bottom-0 top-16 z-40 bg-background/98 backdrop-blur-lg transition-all duration-300 xl:hidden ${
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"

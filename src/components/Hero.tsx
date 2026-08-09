@@ -100,7 +100,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/5 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 sm:px-10 sm:pb-20 lg:px-16 lg:pb-28">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-32 sm:px-10 sm:pt-24 sm:pb-20 lg:px-16 lg:pb-28">
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center lg:mx-0 lg:ml-[4%] lg:items-start lg:text-left">
           <Logo
             className="wb-hero-reveal mb-6"

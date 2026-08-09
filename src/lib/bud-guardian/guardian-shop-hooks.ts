@@ -48,11 +48,47 @@ export function getOrderTrackingSummary(orderId: string, locale: Locale): string
     : `${statusLabel} — Canada Post tracking number ${order.canadaPostTrackingNumber}`;
 }
 
+// V11 — Smart Product Advisor filter/sort options. `minPrice` is an
+// EXCLUSIVE lower bound (used for "more expensive than $X" / "pricier than
+// product Y"), `maxPrice` is inclusive ("under/at most $X").
+export type ProductAdviceFilters = {
+  category?: ProductCategory;
+  maxPrice?: number;
+  minPrice?: number;
+  excludeId?: string; // e.g. the anchor product in "cheaper than X"/"similar to X"
+};
+
+export type ProductAdviceSort = "rating" | "price-asc";
+
+// V11 — the single place Guardian's product-advice paths (product-intent.ts)
+// filter/sort the live catalog, so category/budget/exclude-id logic exists
+// exactly once no matter which intent (recommend, cheaper/pricier-than,
+// no-result fallback, ...) needs it. Never returns out-of-stock products —
+// Guardian should never recommend something a customer can't actually buy.
+export function findGuardianProducts(filters: ProductAdviceFilters, sort: ProductAdviceSort = "rating", limit = 3): StorefrontProduct[] {
+  const matches = getProducts().filter((p) => {
+    if (p.stock <= 0) return false;
+    if (filters.excludeId && p.id === filters.excludeId) return false;
+    if (filters.category && p.category !== filters.category) return false;
+    const price = getEffectivePrice(p);
+    if (filters.maxPrice != null && price > filters.maxPrice) return false;
+    if (filters.minPrice != null && price <= filters.minPrice) return false;
+    return true;
+  });
+
+  const sorted = [...matches].sort((a, b) =>
+    sort === "price-asc"
+      ? getEffectivePrice(a) - getEffectivePrice(b)
+      : (getAverageRating(b) ?? 0) - (getAverageRating(a) ?? 0) || getEffectivePrice(a) - getEffectivePrice(b)
+  );
+
+  return sorted.slice(0, limit);
+}
+
 // Simple, explainable recommendation: highest-rated in-stock products,
-// optionally scoped to a category — e.g. for "what do you recommend?".
+// optionally scoped to a category — e.g. for "what do you recommend?". Kept
+// as a thin wrapper over findGuardianProducts for callers that only need the
+// category-only case.
 export function recommendProductsForGuardian(category?: ProductCategory, limit = 3): StorefrontProduct[] {
-  return getProducts()
-    .filter((p) => p.stock > 0 && (!category || p.category === category))
-    .sort((a, b) => (getAverageRating(b) ?? 0) - (getAverageRating(a) ?? 0) || getEffectivePrice(a) - getEffectivePrice(b))
-    .slice(0, limit);
+  return findGuardianProducts({ category }, "rating", limit);
 }

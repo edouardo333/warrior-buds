@@ -22,18 +22,20 @@ const LED_PALETTE: Record<LedColor, StatusPalette> = {
   red: { solid: "#ff453a", rgb: "255, 69, 58" },
 };
 
-// Store is open 10:00 -> 02:00 (next day) every day, so the same clock-time
-// window means two different things depending on which edge it's near: the
-// 00:00-02:00 orange/yellow band is the pre-closing countdown, while the
-// 08:00-10:00 orange/yellow band is the pre-opening countdown. Driven purely
-// by clock time so it stays correct across the midnight rollover.
-function getLedColor(minutesSinceMidnight: number): LedColor {
-  if (minutesSinceMidnight < 60) return "yellow"; // 00:00-00:59 — closes in <=2h
-  if (minutesSinceMidnight < 120) return "orange"; // 01:00-01:59 — closes in <=1h
+// The pre-closing side (open / closing-soon / last-30) mirrors `state` 1:1 so
+// the LED dot can never disagree with the badge's border/glow color — it used
+// to run its own clock-time thresholds and drift out of sync with the real
+// 30-minute "last-30" cutoff. Only the pre-opening ramp (closed -> opening
+// soon -> open) still needs clock time, since `state` has no equivalent for
+// that side and stays "closed" throughout.
+function getLedColor(state: StoreStatus["state"], minutesSinceMidnight: number): LedColor {
+  if (state === "open") return "green";
+  if (state === "closing-soon") return "yellow";
+  if (state === "last-30") return "orange";
   if (minutesSinceMidnight < 480) return "red"; // 02:00-07:59 — closed
   if (minutesSinceMidnight < 540) return "orange"; // 08:00-08:59 — opening soon
   if (minutesSinceMidnight < 600) return "yellow"; // 09:00-09:59 — opens soon
-  return "green"; // 10:00-23:59 — open
+  return "red"; // fallback, unreachable while state === "closed"
 }
 
 type ClockParts = { hours: number; minutes: number; seconds: number };
@@ -195,8 +197,9 @@ export default function OpeningStatus({ size = "md" }: { size?: "md" | "sm" | "h
     const update = () => {
       const now = new Date();
       const clock = getTorontoClockParts(now);
-      setStatus(getStoreStatus(now, locale));
-      setLedColor(getLedColor(clock.hours * 60 + clock.minutes));
+      const nextStatus = getStoreStatus(now, locale);
+      setStatus(nextStatus);
+      setLedColor(getLedColor(nextStatus.state, clock.hours * 60 + clock.minutes));
       setAngles((previous) => nextHandAngles(previous, clock));
     };
     update();

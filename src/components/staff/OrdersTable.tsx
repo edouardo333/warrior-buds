@@ -2,8 +2,10 @@
 
 import { getFulfillmentLabel, getOrderTotal, getStatusLabel, maskName } from "@/lib/bud-guardian/order-engine";
 import { maskEmailPartial, maskPhonePartial, type StaffOrderView } from "@/lib/staff/order-actions";
+import { formatStaffDateTime } from "@/lib/staff/table-format";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { STATUS_COLORS } from "./OrderStatusEditor";
+import StaffTableScroll from "./StaffTableScroll";
 
 const TEXT = {
   fr: {
@@ -32,10 +34,6 @@ const TEXT = {
 
 function formatCurrency(amount: number, locale: "fr" | "en"): string {
   return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(amount);
-}
-
-function formatDate(iso: string, locale: "fr" | "en"): string {
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
 }
 
 function StatusBadge({ order, locale }: { order: StaffOrderView; locale: "fr" | "en" }) {
@@ -70,8 +68,8 @@ export default function OrdersTable({
   return (
     <>
       {/* Desktop / tablet */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
-        <table className="w-full min-w-[720px] border-collapse text-sm">
+      <StaffTableScroll>
+        <table className="w-full min-w-[800px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs uppercase tracking-wide text-white/45">
               <th className="px-4 py-3 font-medium">{t.order}</th>
@@ -80,7 +78,7 @@ export default function OrdersTable({
               <th className="px-4 py-3 font-medium">{t.status}</th>
               <th className="px-4 py-3 font-medium">{t.total}</th>
               <th className="px-4 py-3 font-medium">{t.pickup}</th>
-              <th className="px-4 py-3 font-medium">{t.updated}</th>
+              <th className="min-w-[190px] whitespace-nowrap px-4 py-3 font-medium">{t.updated}</th>
             </tr>
           </thead>
           <tbody>
@@ -112,13 +110,13 @@ export default function OrdersTable({
                   </td>
                   <td className="px-4 py-3 text-white/80">{formatCurrency(getOrderTotal(order), locale)}</td>
                   <td className="px-4 py-3 text-white/60">{getFulfillmentLabel(order.fulfillmentMethod, locale)}</td>
-                  <td className="px-4 py-3 text-white/45">{formatDate(order.updatedAt, locale)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-white/45">{formatStaffDateTime(order.updatedAt, locale)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </StaffTableScroll>
 
       {/* Mobile */}
       <div className="flex flex-col gap-3 sm:hidden">

@@ -5,6 +5,7 @@
 
 import type { Locale } from "@/lib/i18n/types";
 import type { ProductBadge, ProductCategory, ProductStrain, StorefrontProduct } from "@/types/product";
+import { findCategoryNode } from "./category-tree";
 
 export function getEffectivePrice(product: StorefrontProduct): number {
   return product.salePrice ?? product.price;
@@ -29,7 +30,10 @@ export function getStockStatus(product: StorefrontProduct): StockStatus {
 }
 
 export type ProductFilters = {
-  category?: ProductCategory;
+  // Selected node id from the Products page category mega-dropdown
+  // (lib/shop/category-tree.ts) — may be a top-level parent (e.g.
+  // "cannabis") or a 2nd-level subcategory (e.g. "cannabis-indica").
+  categoryNode?: string;
   strain?: ProductStrain;
   search?: string;
   onSaleOnly?: boolean;
@@ -38,8 +42,9 @@ export type ProductFilters = {
 export type ProductSort = "featured" | "price-asc" | "price-desc" | "newest" | "rating";
 
 export function filterProducts(products: StorefrontProduct[], filters: ProductFilters): StorefrontProduct[] {
+  const categoryNode = filters.categoryNode ? findCategoryNode(filters.categoryNode) : undefined;
   return products.filter((p) => {
-    if (filters.category && p.category !== filters.category) return false;
+    if (categoryNode && !categoryNode.match(p)) return false;
     if (filters.strain && p.strain !== filters.strain) return false;
     if (filters.onSaleOnly && !isOnSale(p)) return false;
     if (filters.search) {

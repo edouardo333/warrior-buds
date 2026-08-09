@@ -24,8 +24,16 @@ export function useProducts(filters: productEngine.ProductFilters = {}, sort: pr
   return useMemo(
     () => productEngine.sortProducts(productEngine.filterProducts(products, filters), sort),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [products, sort, filters.category, filters.strain, filters.search, filters.onSaleOnly]
+    [products, sort, filters.categoryNode, filters.strain, filters.search, filters.onSaleOnly]
   );
+}
+
+// Unfiltered catalog snapshot — used by the Products page category
+// mega-dropdown (components/shop/ProductCategoryMenu.tsx) to show live
+// per-node product counts against the whole catalog, independent of
+// whatever other filters are currently active.
+export function useAllProducts(): StorefrontProduct[] {
+  return useRawProducts();
 }
 
 export function useProduct(slug: string): StorefrontProduct | undefined {

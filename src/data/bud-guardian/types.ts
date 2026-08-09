@@ -59,7 +59,19 @@ export type QuickActionId =
   | "policy-returns"
   | "policy-general"
   | "contact-message"
-  | "human-callback";
+  | "human-callback"
+  // Bud Guardian V13 — Checkout & Order Assistant quick actions (see
+  // checkout-intent.ts). Contextual-only (message suggestions), not shown in
+  // the persistent bar.
+  | "checkout-go"
+  | "checkout-cart"
+  | "checkout-orders"
+  // Bud Guardian V14 — Customer Support & Problem Resolution quick actions
+  // (see support-intent.ts). Contextual-only (message suggestions), link out
+  // to the real storefront auth pages — never a simulated login/reset.
+  | "support-login"
+  | "support-forgot-password"
+  | "support-verify-email";
 
 export type FaqTopic =
   | "hours"

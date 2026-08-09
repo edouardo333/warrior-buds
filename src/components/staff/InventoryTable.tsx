@@ -2,8 +2,10 @@
 
 import type { StockStatus } from "@/types/inventory";
 import { getCategoryLabel, getStockStatusLabel } from "@/lib/bud-guardian/inventory-engine";
+import { formatStaffDateTime } from "@/lib/staff/table-format";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { StaffInventoryProductView } from "@/lib/staff/inventory-actions";
+import StaffTableScroll from "./StaffTableScroll";
 
 export const STOCK_STATUS_COLORS: Record<StockStatus, { solid: string; rgb: string }> = {
   "in-stock": { solid: "#3ce27a", rgb: "60, 226, 122" },
@@ -40,10 +42,6 @@ function formatCurrency(amount: number, locale: "fr" | "en"): string {
   return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(amount);
 }
 
-function formatDate(iso: string, locale: "fr" | "en"): string {
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
-}
-
 function StockBadge({ product, locale }: { product: StaffInventoryProductView; locale: "fr" | "en" }) {
   const color = STOCK_STATUS_COLORS[product.stockStatus];
   return (
@@ -76,8 +74,8 @@ export default function InventoryTable({
   return (
     <>
       {/* Desktop / tablet */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
-        <table className="w-full min-w-[820px] border-collapse text-sm">
+      <StaffTableScroll>
+        <table className="w-full min-w-[900px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs uppercase tracking-wide text-white/45">
               <th className="px-4 py-3 font-medium">{t.product}</th>
@@ -86,7 +84,7 @@ export default function InventoryTable({
               <th className="px-4 py-3 font-medium">{t.supplier}</th>
               <th className="px-4 py-3 font-medium">{t.price}</th>
               <th className="px-4 py-3 font-medium">{t.margin}</th>
-              <th className="px-4 py-3 font-medium">{t.updated}</th>
+              <th className="min-w-[190px] whitespace-nowrap px-4 py-3 font-medium">{t.updated}</th>
             </tr>
           </thead>
           <tbody>
@@ -117,13 +115,13 @@ export default function InventoryTable({
                   <td className="px-4 py-3 text-white/60">{product.supplier}</td>
                   <td className="px-4 py-3 text-white/80">{formatCurrency(product.sellingPrice, locale)}</td>
                   <td className="px-4 py-3 text-white/60">{Math.round(product.profitMargin * 100)}%</td>
-                  <td className="px-4 py-3 text-white/45">{formatDate(product.updatedAt, locale)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-white/45">{formatStaffDateTime(product.updatedAt, locale)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </StaffTableScroll>
 
       {/* Mobile */}
       <div className="flex flex-col gap-3 sm:hidden">

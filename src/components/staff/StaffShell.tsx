@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, BarChart3, CreditCard, LayoutDashboard, LogOut, Menu, Package, Shield, User, UserCog, Users, Warehouse, X } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getRoleLabel, endSession, type StaffSession } from "@/lib/staff/staff-auth";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const TEXT = {
   fr: {
@@ -68,9 +69,12 @@ export default function StaffShell({
     <div className="min-h-dvh bg-background bg-grain lg:flex">
       {/* Desktop sidebar */}
       <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-white/10 lg:bg-white/[0.02] lg:px-4 lg:py-6">
-        <div className="flex items-center gap-2 px-2">
-          <span className="text-lg leading-none">🛡</span>
-          <span className="font-display text-lg tracking-wide text-white/90">{t.brand}</span>
+        <div className="flex items-center justify-between gap-2 px-2">
+          <div className="flex items-center gap-2">
+            <span className="text-lg leading-none">🛡</span>
+            <span className="font-display text-lg tracking-wide text-white/90">{t.brand}</span>
+          </div>
+          <LanguageSwitcher className="text-xs" />
         </div>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
@@ -129,15 +133,18 @@ export default function StaffShell({
             <span className="text-base leading-none">🛡</span>
             <span className="font-display text-base tracking-wide text-white/90">{t.brand}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setMobileOpen((open) => !open)}
-            aria-label={t.menu}
-            aria-expanded={mobileOpen}
-            className="rounded-lg border border-white/15 p-2 text-white/75 transition-colors duration-200 hover:border-white/30"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher className="text-xs" />
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-label={t.menu}
+              aria-expanded={mobileOpen}
+              className="rounded-lg border border-white/15 p-2 text-white/75 transition-colors duration-200 hover:border-white/30"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </header>
 
         {mobileOpen && (

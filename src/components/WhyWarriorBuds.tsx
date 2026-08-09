@@ -80,7 +80,7 @@ export default function WhyWarriorBuds() {
             <p className="relative text-xs font-semibold uppercase tracking-[0.35em] text-wb-orange">
               {t.whyWarriorBuds.eyebrow}
             </p>
-            <h2 className="relative mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl lg:text-6xl">
+            <h2 className="relative mt-3 whitespace-nowrap font-display text-4xl tracking-wide text-foreground sm:text-5xl lg:text-6xl">
               {t.whyWarriorBuds.title}
             </h2>
             <p className="relative mt-5 max-w-md text-foreground/60">{t.whyWarriorBuds.lead}</p>

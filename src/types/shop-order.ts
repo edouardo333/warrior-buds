@@ -41,6 +41,10 @@ export type ShopOrder = {
   subtotal: number;
   shippingCost: number;
   tax: number;
+  // BUDS5 first-order discount actually applied at order creation (see
+  // lib/shop/promo-engine.ts) — 0 / null when no code was applied.
+  discount: number;
+  promoCode: string | null;
   total: number;
   status: ShopOrderStatus;
   timeline: ShopOrderTimelineEntry[];

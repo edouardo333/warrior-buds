@@ -2,6 +2,7 @@
 
 import OrderSummary from "@/components/cart/OrderSummary";
 import { PrimaryButton, SecondaryButton } from "@/components/forms/FormField";
+import PromoCodeField, { type PromoFeedback } from "./PromoCodeField";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { CartLine, CartTotals } from "@/lib/shop/cart-engine";
 import type { Address } from "@/types/account";
@@ -10,6 +11,11 @@ import type { ShippingMethod } from "@/types/shop-order";
 export default function ReviewStep({
   lines,
   totals,
+  discount,
+  promoCode,
+  promoFeedback,
+  onApplyPromo,
+  onRemovePromo,
   shippingAddress,
   billingAddress,
   shippingMethod,
@@ -19,6 +25,11 @@ export default function ReviewStep({
 }: {
   lines: CartLine[];
   totals: CartTotals;
+  discount: number;
+  promoCode: string | null;
+  promoFeedback: PromoFeedback | null;
+  onApplyPromo: (code: string) => void;
+  onRemovePromo: () => void;
   shippingAddress: Address;
   billingAddress: Address;
   shippingMethod: ShippingMethod;
@@ -80,7 +91,9 @@ export default function ReviewStep({
         </div>
       </div>
 
-      <OrderSummary totals={totals} />
+      <PromoCodeField appliedCode={promoCode} feedback={promoFeedback} onApply={onApplyPromo} onRemove={onRemovePromo} />
+
+      <OrderSummary totals={totals} discount={discount} promoCode={promoCode} />
 
       <div className="flex gap-3">
         <SecondaryButton type="button" onClick={onBack} className="px-6 py-2.5 text-xs">

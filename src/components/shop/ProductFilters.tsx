@@ -1,16 +1,17 @@
 "use client";
 
-import { ChevronDown, RotateCcw, Search } from "lucide-react";
+import { RotateCcw, Search } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { getAllCategories, getCategoryLabel, getStrainLabel, type ProductFilters as Filters, type ProductSort } from "@/lib/shop/product-engine";
+import { getStrainLabel, type ProductFilters as Filters, type ProductSort } from "@/lib/shop/product-engine";
 import type { ProductStrain } from "@/types/product";
+import ProductCategoryMenu from "./ProductCategoryMenu";
+import ProductSelectMenu from "./ProductSelectMenu";
 
 const STRAINS: ProductStrain[] = ["sativa", "indica", "hybrid"];
+const SORTS: ProductSort[] = ["featured", "price-asc", "price-desc", "newest", "rating"];
 
 const inputClass =
   "wb-select w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-foreground placeholder-foreground/35 outline-none transition-all duration-250 focus:border-wb-orange/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(244,103,15,0.15)] hover:border-white/20";
-
-const selectClass = `${inputClass} appearance-none pr-10`;
 
 const labelClass = "text-xs font-semibold uppercase tracking-widest text-foreground/50";
 
@@ -26,11 +27,29 @@ export default function ProductFilters({
   onSortChange: (sort: ProductSort) => void;
 }) {
   const { t, locale } = useLanguage();
-  const categories = getAllCategories();
+
+  const sortLabels: Record<ProductSort, string> = {
+    featured: t.productCatalog.filters.sortFeatured,
+    "price-asc": t.productCatalog.filters.sortPriceAsc,
+    "price-desc": t.productCatalog.filters.sortPriceDesc,
+    newest: t.productCatalog.filters.sortNewest,
+    rating: t.productCatalog.filters.sortRating,
+  };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm">
-      <div className="pointer-events-none absolute -top-16 right-[10%] h-40 w-40 rounded-full bg-wb-orange/10 blur-[80px]" />
+    // relative + isolate + z-20: makes this its own, explicitly-ordered
+    // stacking context. Without an explicit z-index here, this whole panel
+    // (backdrop-blur already forces a local stacking context) is compared
+    // against product cards using DOM order, and — since ProductGrid renders
+    // after these filters and each .wb-product-card sets isolation:isolate —
+    // the cards would win and paint over any dropdown opened from here,
+    // however high its own internal z-index. z-20 only has to clear the
+    // cards' own z-10 badge/wishlist layers, which are isolated inside each
+    // card and never escape to compete beyond it.
+    <div className="relative isolate z-20 rounded-2xl border border-white/10 bg-white/[0.03] p-5 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.8)] backdrop-blur-sm">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+        <div className="absolute -top-16 right-[10%] h-40 w-40 rounded-full bg-wb-orange/10 blur-[80px]" />
+      </div>
       <div className="relative flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-end">
         <div className="min-w-[200px] flex-1">
           <label className={labelClass}>{t.productCatalog.filters.search}</label>
@@ -45,69 +64,29 @@ export default function ProductFilters({
             />
           </div>
         </div>
-        <div className="min-w-[170px]">
-          <label className={labelClass}>{t.productCatalog.filters.category}</label>
-          <div className="relative mt-2">
-            <select
-              value={filters.category ?? ""}
-              onChange={(e) => onFiltersChange({ ...filters, category: (e.target.value || undefined) as Filters["category"] })}
-              className={selectClass}
-            >
-              <option value="" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.allCategories}
-              </option>
-              {categories.map((c) => (
-                <option key={c} value={c} className="bg-wb-charcoal text-foreground">
-                  {getCategoryLabel(c, locale)}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="wb-select-chevron pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" strokeWidth={2} />
-          </div>
-        </div>
-        <div className="min-w-[160px]">
-          <label className={labelClass}>{t.productCatalog.filters.strain}</label>
-          <div className="relative mt-2">
-            <select
-              value={filters.strain ?? ""}
-              onChange={(e) => onFiltersChange({ ...filters, strain: (e.target.value || undefined) as ProductStrain | undefined })}
-              className={selectClass}
-            >
-              <option value="" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.allStrains}
-              </option>
-              {STRAINS.map((s) => (
-                <option key={s} value={s} className="bg-wb-charcoal text-foreground">
-                  {getStrainLabel(s, locale)}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="wb-select-chevron pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" strokeWidth={2} />
-          </div>
-        </div>
-        <div className="min-w-[180px]">
-          <label className={labelClass}>{t.productCatalog.filters.sort}</label>
-          <div className="relative mt-2">
-            <select value={sort} onChange={(e) => onSortChange(e.target.value as ProductSort)} className={selectClass}>
-              <option value="featured" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.sortFeatured}
-              </option>
-              <option value="price-asc" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.sortPriceAsc}
-              </option>
-              <option value="price-desc" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.sortPriceDesc}
-              </option>
-              <option value="newest" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.sortNewest}
-              </option>
-              <option value="rating" className="bg-wb-charcoal text-foreground">
-                {t.productCatalog.filters.sortRating}
-              </option>
-            </select>
-            <ChevronDown className="wb-select-chevron pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" strokeWidth={2} />
-          </div>
-        </div>
+        <ProductCategoryMenu
+          value={filters.categoryNode}
+          onChange={(categoryNode) => onFiltersChange({ ...filters, categoryNode })}
+        />
+        <ProductSelectMenu
+          className="min-w-[160px]"
+          label={t.productCatalog.filters.strain}
+          ariaLabel={t.productCatalog.filters.strain}
+          value={filters.strain ?? ""}
+          onChange={(v) => onFiltersChange({ ...filters, strain: (v || undefined) as ProductStrain | undefined })}
+          options={[
+            { value: "", label: t.productCatalog.filters.allStrains },
+            ...STRAINS.map((s) => ({ value: s, label: getStrainLabel(s, locale) })),
+          ]}
+        />
+        <ProductSelectMenu
+          className="min-w-[180px]"
+          label={t.productCatalog.filters.sort}
+          ariaLabel={t.productCatalog.filters.sort}
+          value={sort}
+          onChange={(v) => onSortChange(v as ProductSort)}
+          options={SORTS.map((s) => ({ value: s, label: sortLabels[s] }))}
+        />
 
         <label className="group flex cursor-pointer items-center gap-3 pb-1 text-sm text-foreground/70 transition-colors duration-250 hover:text-foreground">
           <span className="relative inline-flex h-6 w-11 shrink-0 items-center">

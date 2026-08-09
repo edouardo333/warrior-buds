@@ -9,6 +9,7 @@ import type { PaymentProviderId } from "@/types/shop-payment";
 
 export default function PaymentStep({
   totals,
+  discount = 0,
   paymentProviderId,
   onPaymentProviderChange,
   placing,
@@ -16,6 +17,7 @@ export default function PaymentStep({
   onPlaceOrder,
 }: {
   totals: CartTotals;
+  discount?: number;
   paymentProviderId: PaymentProviderId;
   onPaymentProviderChange: (id: PaymentProviderId) => void;
   placing: boolean;
@@ -23,6 +25,7 @@ export default function PaymentStep({
   onPlaceOrder: () => void;
 }) {
   const { t, locale } = useLanguage();
+  const finalTotal = Math.round((totals.total - discount) * 100) / 100;
   const providers = getEnabledProviders();
   const selectedProvider = providers.find((p) => p.id === paymentProviderId);
   // Interac's note references the real order — only surface it after the
@@ -82,7 +85,7 @@ export default function PaymentStep({
 
       <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-sm">
         <span className="text-foreground/60">{t.orderDetail.total}</span>
-        <span className="font-semibold text-foreground">${totals.total.toFixed(2)}</span>
+        <span className="font-semibold text-foreground">${finalTotal.toFixed(2)}</span>
       </div>
 
       <div className="flex gap-3">

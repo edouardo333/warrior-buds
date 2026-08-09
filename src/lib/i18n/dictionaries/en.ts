@@ -9,6 +9,7 @@ const en: Dictionary = {
       about: "About",
       gallery: "Gallery",
       reviews: "Reviews",
+      faq: "FAQ",
       contact: "Contact",
     },
     visitStore: "Visit Store",
@@ -20,6 +21,9 @@ const en: Dictionary = {
     wishlist: "Wishlist",
     trackOrder: "Track Order",
     cartItemsAria: (count) => `Cart, ${count} item${count === 1 ? "" : "s"}`,
+  },
+  announcementBar: {
+    message: "FIRST ORDER? BUDS5 = 5% OFF • FREE SHIPPING $150+ • BUD GUARDIAN AI SUPPORT 24/7 • 18+ ONLY",
   },
   hero: {
     kicker: "Kanesatake · Oka · Quebec",
@@ -253,6 +257,14 @@ const en: Dictionary = {
     map: {
       title: "Warrior Buds location map",
     },
+    support: {
+      eyebrow: "Support",
+      title: "Need Help?",
+      description:
+        "Bud Guardian, our advanced AI assistant, is available 24/7 to answer questions about products, orders, payments, store information and more. You can also contact the Warrior Buds team by email.",
+      chatCta: "Chat with Bud Guardian",
+      emailCta: "Email Us",
+    },
     form: {
       eyebrow: "Questions?",
       title: "Send Us A Message",
@@ -351,6 +363,7 @@ const en: Dictionary = {
     },
   },
   auth: {
+    backToWebsite: "Back to website",
     login: {
       metaTitle: "Log In | Warrior Buds",
       metaDescription: "Log in to your Warrior Buds account to view orders, manage addresses, and check out faster.",
@@ -512,6 +525,19 @@ const en: Dictionary = {
       errorCurrentPassword: "Current password is incorrect.",
     },
   },
+  promo: {
+    label: "Promo Code",
+    placeholder: "Enter code",
+    apply: "Apply",
+    applying: "Applying…",
+    remove: "Remove",
+    appliedMessage: (code, amount) => `Code ${code} applied — you saved $${amount}.`,
+    freeShippingMessage: (threshold) => `Free shipping unlocked — your order qualifies for orders $${threshold}+.`,
+    errorInvalid: "That code isn't valid.",
+    errorNotFirstOrder: "BUDS5 is reserved for first orders on this account.",
+    errorEmpty: "Enter a code to apply.",
+    discountLabel: (code) => `Promo (${code})`,
+  },
   cart: {
     metaTitle: "Cart | Warrior Buds",
     title: "Your Cart",
@@ -644,6 +670,7 @@ const en: Dictionary = {
     subtotal: "Subtotal",
     shippingCost: "Shipping",
     tax: "Tax",
+    discount: (code) => `Promo (${code})`,
   },
   productCatalog: {
     metaTitle: "Products | Warrior Buds",
@@ -651,6 +678,11 @@ const en: Dictionary = {
     filters: {
       allCategories: "All Categories",
       category: "Category",
+      categoryMenu: {
+        showSubcategories: (name) => `Show ${name} subcategories`,
+        hideSubcategories: (name) => `Hide ${name} subcategories`,
+        hoverHint: "Hover or select a category to see its subcategories.",
+      },
       strain: "Strain",
       allStrains: "All Strains",
       onSaleOnly: "On Sale",
@@ -987,7 +1019,7 @@ const en: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $100 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
+              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $150 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
             },
             {
               type: "todo",
@@ -1207,6 +1239,33 @@ const en: Dictionary = {
           blocks: [{ type: "p", text: "Questions about this Cookie Policy? Reach out to our team." }],
         },
       ],
+    },
+  },
+  faq: {
+    metaTitle: "FAQ | Warrior Buds",
+    metaDescription:
+      "Answers to Warrior Buds' most common customer support questions — orders, payments, promotions, pickup, tracking, Bud Guardian, your account, and products.",
+    hero: {
+      eyebrow: "Customer Support",
+      title: "Frequently Asked Questions",
+      subtitle: "Straight answers about ordering, paying, tracking, and your account. Can't find it? Bud Guardian is one click away.",
+    },
+    search: {
+      placeholder: "Search a question…",
+      ariaLabel: "Search the FAQ",
+      resultsCount: (count) => `${count} result${count === 1 ? "" : "s"}`,
+      noResultsTitle: "No matching questions",
+      noResultsSubtitle: "Try a different word, or ask Bud Guardian directly — it can usually help.",
+      clear: "Clear search",
+    },
+    jumpToLabel: "Jump to",
+    itemsCountLabel: (count) => `${count} question${count === 1 ? "" : "s"}`,
+    cta: {
+      label: "Still Need Help?",
+      title: "Ask Bud Guardian",
+      subtitle: "Our virtual assistant is available 24/7 for order, payment, and product questions — and can connect you to the team when needed.",
+      askButton: "Ask Bud Guardian",
+      contactButton: "Contact Us",
     },
   },
 };

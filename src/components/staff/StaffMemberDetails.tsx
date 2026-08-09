@@ -24,6 +24,7 @@ const AUDIT_MODULE_LABELS: Record<AuditModule, { fr: string; en: string }> = {
   inventory: { fr: "Inventaire", en: "Inventory" },
   customers: { fr: "Clients", en: "Customers" },
   staff: { fr: "Personnel", en: "Staff" },
+  moderation: { fr: "Modération", en: "Moderation" },
 };
 
 const TEXT = {

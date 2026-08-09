@@ -16,7 +16,11 @@ export type CartLine = {
 };
 
 const SHIPPING_FLAT_RATE = 9.95;
-const FREE_SHIPPING_THRESHOLD = 100;
+// Announcement bar advertises "FREE SHIPPING ON ORDERS $150+" — this is the
+// single source of truth that promise resolves to; exported so promo/UI
+// copy (lib/shop/promo-engine.ts, AnnouncementBar) can reference the same
+// number instead of hardcoding it a second time.
+export const FREE_SHIPPING_THRESHOLD = 150;
 const TAX_RATE = 0.14975; // QC combined GST+QST, approximate, demo-only
 
 // Pure variant taking already-fetched store snapshots — used by
@@ -75,6 +79,13 @@ export function updateCartQuantity(ownerId: string, productId: string, quantity:
 
 export function removeFromCart(ownerId: string, productId: string): void {
   updateCartQuantity(ownerId, productId, 0);
+}
+
+// V12 — thin wrapper over the store's clearCart so callers (Bud Guardian's
+// clear_cart tool/cart-intent.ts) only ever go through this business-rules
+// module, never data/shop/cart-store.ts directly.
+export function clearCartItems(ownerId: string): void {
+  clearCart(ownerId);
 }
 
 // Returns true if the product is now in the wishlist (i.e. it was added).

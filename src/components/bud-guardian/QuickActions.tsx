@@ -122,6 +122,21 @@ export const QUICK_ACTIONS: QuickActionConfig[] = [
   // Contextual-only (message suggestions), not shown in the persistent bar.
   { id: "payment-confirm-demo", icon: Check, kind: "payment", target: "payment-confirm-demo", label: { fr: "Confirmer (démo)", en: "Confirm (demo)" }, showInBar: false },
   { id: "payment-decline-demo", icon: X, kind: "payment", target: "payment-decline-demo", label: { fr: "Refuser (démo)", en: "Decline (demo)" }, showInBar: false },
+
+  // --- Bud Guardian V13 — Checkout & Order Assistant --------------------
+  // Contextual-only (message suggestions), not shown in the persistent bar.
+  // Link out to the real storefront pages (never a simulated result).
+  { id: "checkout-go", icon: CreditCard, kind: "external", target: "/checkout", label: { fr: "Aller au paiement", en: "Go to checkout" }, showInBar: false },
+  { id: "checkout-cart", icon: ShoppingCart, kind: "external", target: "/cart", label: { fr: "Voir mon panier", en: "View my cart" }, showInBar: false },
+  { id: "checkout-orders", icon: ClipboardList, kind: "external", target: "/account/orders", label: { fr: "Mes commandes", en: "My orders" }, showInBar: false },
+
+  // --- Bud Guardian V14 — Customer Support & Problem Resolution ---------
+  // Contextual-only (message suggestions), not shown in the persistent bar.
+  // Link out to the real storefront auth pages — Guardian never performs a
+  // login/reset itself (see support-intent.ts).
+  { id: "support-login", icon: LifeBuoy, kind: "external", target: "/login", label: { fr: "Se connecter", en: "Sign in" }, showInBar: false },
+  { id: "support-forgot-password", icon: RefreshCw, kind: "external", target: "/forgot-password", label: { fr: "Mot de passe oublié", en: "Forgot password" }, showInBar: false },
+  { id: "support-verify-email", icon: BadgeCheck, kind: "external", target: "/verify-email", label: { fr: "Vérifier mon courriel", en: "Verify my email" }, showInBar: false },
 ];
 
 // Category -> 3-5 suggested questions shown as chips when a category quick

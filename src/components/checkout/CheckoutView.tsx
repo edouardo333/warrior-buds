@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import BillingStep from "./BillingStep";
 import CheckoutIdentityStep from "./CheckoutIdentityStep";
 import CheckoutShell from "./CheckoutShell";
 import PaymentStep from "./PaymentStep";
+import type { PromoFeedback } from "./PromoCodeField";
 import ReviewStep from "./ReviewStep";
 import ShippingStep from "./ShippingStep";
 import { PrimaryButton } from "@/components/forms/FormField";
@@ -14,6 +15,8 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount } from "@/lib/shop/auth-actions";
 import { useCart } from "@/lib/shop/cart-actions";
 import { useOrderActions } from "@/lib/shop/order-actions";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/shop/cart-engine";
+import { evaluatePromoCode } from "@/lib/shop/promo-engine";
 import type { Address } from "@/types/account";
 import type { ShippingMethod } from "@/types/shop-order";
 import type { PaymentProviderId } from "@/types/shop-payment";
@@ -37,6 +40,45 @@ export default function CheckoutView() {
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("standard");
   const [paymentProviderId, setPaymentProviderId] = useState<PaymentProviderId>("interac");
   const [placing, setPlacing] = useState(false);
+
+  // BUDS5 — the code the shopper successfully applied, if any. Discount is
+  // never stored as a raw number: it's recomputed from current
+  // subtotal/eligibility below (via promo-engine.ts) so it can never drift
+  // stale, and re-validated again server-side-equivalent in
+  // checkout-engine.createOrderFromCart when the order is actually placed.
+  const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
+  const [promoFeedback, setPromoFeedback] = useState<PromoFeedback | null>(null);
+
+  const identityEmail = account ? account.email : guestEmail;
+
+  const promoEvaluation = useMemo(() => {
+    if (!appliedPromoCode) return null;
+    const result = evaluatePromoCode(appliedPromoCode, { accountId: ownerId, guestEmail: identityEmail, subtotal: totals.subtotal });
+    return result.ok ? result : null;
+  }, [appliedPromoCode, ownerId, identityEmail, totals.subtotal]);
+  const discount = promoEvaluation?.discount ?? 0;
+
+  function handleApplyPromo(rawCode: string) {
+    const result = evaluatePromoCode(rawCode, { accountId: ownerId, guestEmail: identityEmail, subtotal: totals.subtotal });
+    if (result.ok) {
+      setAppliedPromoCode(result.code);
+      const message =
+        totals.shipping === 0
+          ? `${t.promo.appliedMessage(result.code, result.discount.toFixed(2))} ${t.promo.freeShippingMessage(String(FREE_SHIPPING_THRESHOLD))}`
+          : t.promo.appliedMessage(result.code, result.discount.toFixed(2));
+      setPromoFeedback({ type: "success", message });
+    } else {
+      setAppliedPromoCode(null);
+      const message =
+        result.reason === "empty" ? t.promo.errorEmpty : result.reason === "not_first_order" ? t.promo.errorNotFirstOrder : t.promo.errorInvalid;
+      setPromoFeedback({ type: "error", message });
+    }
+  }
+
+  function handleRemovePromo() {
+    setAppliedPromoCode(null);
+    setPromoFeedback(null);
+  }
 
   if (lines.length === 0) {
     return (
@@ -69,6 +111,7 @@ export default function CheckoutView() {
       billingAddress: effectiveBilling,
       shippingMethod,
       paymentProviderId,
+      promoCode: promoEvaluation?.code ?? null,
     });
     setPlacing(false);
     if (order) router.push(`/checkout/confirmation/${order.id}`);
@@ -105,6 +148,11 @@ export default function CheckoutView() {
           <ReviewStep
             lines={lines}
             totals={totals}
+            discount={discount}
+            promoCode={promoEvaluation?.code ?? null}
+            promoFeedback={promoFeedback}
+            onApplyPromo={handleApplyPromo}
+            onRemovePromo={handleRemovePromo}
             shippingAddress={shippingAddress}
             billingAddress={effectiveBilling}
             shippingMethod={shippingMethod}
@@ -116,6 +164,7 @@ export default function CheckoutView() {
         {step === "payment" && (
           <PaymentStep
             totals={totals}
+            discount={discount}
             paymentProviderId={paymentProviderId}
             onPaymentProviderChange={setPaymentProviderId}
             placing={placing}

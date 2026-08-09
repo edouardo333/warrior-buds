@@ -45,6 +45,7 @@ export type Dictionary = {
       about: string;
       gallery: string;
       reviews: string;
+      faq: string;
       contact: string;
     };
     visitStore: string;
@@ -56,6 +57,9 @@ export type Dictionary = {
     wishlist: string;
     trackOrder: string;
     cartItemsAria: (count: number) => string;
+  };
+  announcementBar: {
+    message: string;
   };
   hero: {
     kicker: string;
@@ -250,6 +254,13 @@ export type Dictionary = {
     map: {
       title: string;
     };
+    support: {
+      eyebrow: string;
+      title: string;
+      description: string;
+      chatCta: string;
+      emailCta: string;
+    };
     form: {
       eyebrow: string;
       title: string;
@@ -338,6 +349,7 @@ export type Dictionary = {
     };
   };
   auth: {
+    backToWebsite: string;
     login: {
       metaTitle: string;
       metaDescription: string;
@@ -499,6 +511,19 @@ export type Dictionary = {
       errorCurrentPassword: string;
     };
   };
+  promo: {
+    label: string;
+    placeholder: string;
+    apply: string;
+    applying: string;
+    remove: string;
+    appliedMessage: (code: string, amount: string) => string;
+    freeShippingMessage: (threshold: string) => string;
+    errorInvalid: string;
+    errorNotFirstOrder: string;
+    errorEmpty: string;
+    discountLabel: (code: string) => string;
+  };
   cart: {
     metaTitle: string;
     title: string;
@@ -624,6 +649,7 @@ export type Dictionary = {
     subtotal: string;
     shippingCost: string;
     tax: string;
+    discount: (code: string) => string;
   };
   productCatalog: {
     metaTitle: string;
@@ -631,6 +657,11 @@ export type Dictionary = {
     filters: {
       allCategories: string;
       category: string;
+      categoryMenu: {
+        showSubcategories: (name: string) => string;
+        hideSubcategories: (name: string) => string;
+        hoverHint: string;
+      };
       strain: string;
       allStrains: string;
       onSaleOnly: string;
@@ -694,5 +725,31 @@ export type Dictionary = {
     privacy: LegalDocument;
     terms: LegalDocument;
     cookies: LegalDocument;
+  };
+  faq: {
+    metaTitle: string;
+    metaDescription: string;
+    hero: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+    };
+    search: {
+      placeholder: string;
+      ariaLabel: string;
+      resultsCount: (count: number) => string;
+      noResultsTitle: string;
+      noResultsSubtitle: string;
+      clear: string;
+    };
+    jumpToLabel: string;
+    itemsCountLabel: (count: number) => string;
+    cta: {
+      label: string;
+      title: string;
+      subtitle: string;
+      askButton: string;
+      contactButton: string;
+    };
   };
 };

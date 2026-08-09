@@ -4,6 +4,11 @@ export const SITE = {
   addressLine2: "Oka, QC J0N 1E0",
   phoneDisplay: "+1 (514) 714-7959",
   phoneHref: "tel:+15147147959",
+  // TODO(warrior-buds): TEMP placeholder inbox — swap for the real Warrior
+  // Buds professional email address before launch, then update emailHref
+  // to match.
+  email: "contact@warriorbuds.ca",
+  emailHref: "mailto:contact@warriorbuds.ca",
   instagramUrl: "https://www.instagram.com/warriorbudscafe/",
   linktreeUrl: "https://linktr.ee/mohawkvibez",
   // Official Warrior Buds Dispensary Google Business listing — always link

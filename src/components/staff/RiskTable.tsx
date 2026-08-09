@@ -3,8 +3,10 @@
 import type { RiskLevel, RiskValidationStatus } from "@/types/risk";
 import { getRiskLevelLabel, getRiskValidationLabel } from "@/lib/bud-guardian/risk-engine";
 import { maskName } from "@/lib/bud-guardian/order-engine";
+import { formatStaffDateTime } from "@/lib/staff/table-format";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { StaffRiskView } from "@/lib/staff/risk-actions";
+import StaffTableScroll from "./StaffTableScroll";
 
 export const RISK_LEVEL_COLORS: Record<RiskLevel, { solid: string; rgb: string }> = {
   low: { solid: "#3ce27a", rgb: "60, 226, 122" },
@@ -43,10 +45,6 @@ const TEXT = {
     noOrder: "Order not found",
   },
 } as const;
-
-function formatDate(iso: string, locale: "fr" | "en"): string {
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
-}
 
 function RiskLevelBadge({ level, locale }: { level: RiskLevel; locale: "fr" | "en" }) {
   const color = RISK_LEVEL_COLORS[level];
@@ -94,8 +92,8 @@ export default function RiskTable({
   return (
     <>
       {/* Desktop / tablet */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
-        <table className="w-full min-w-[760px] border-collapse text-sm">
+      <StaffTableScroll>
+        <table className="w-full min-w-[840px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs uppercase tracking-wide text-white/45">
               <th className="px-4 py-3 font-medium">{t.assessment}</th>
@@ -104,7 +102,7 @@ export default function RiskTable({
               <th className="px-4 py-3 font-medium">{t.level}</th>
               <th className="px-4 py-3 font-medium">{t.score}</th>
               <th className="px-4 py-3 font-medium">{t.validation}</th>
-              <th className="px-4 py-3 font-medium">{t.updated}</th>
+              <th className="min-w-[190px] whitespace-nowrap px-4 py-3 font-medium">{t.updated}</th>
             </tr>
           </thead>
           <tbody>
@@ -133,13 +131,13 @@ export default function RiskTable({
                   <td className="px-4 py-3">
                     <ValidationBadge status={assessment.validation} locale={locale} />
                   </td>
-                  <td className="px-4 py-3 text-white/45">{formatDate(assessment.updatedAt, locale)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-white/45">{formatStaffDateTime(assessment.updatedAt, locale)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </StaffTableScroll>
 
       {/* Mobile */}
       <div className="flex flex-col gap-3 sm:hidden">

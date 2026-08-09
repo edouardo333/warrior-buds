@@ -10,6 +10,7 @@ import type { Address } from "@/types/account";
 import type { ShippingMethod, ShopOrder } from "@/types/shop-order";
 import type { PaymentProviderId } from "@/types/shop-payment";
 import { getCartLines, getCartTotals } from "./cart-engine";
+import { evaluatePromoCode } from "./promo-engine";
 
 function uid(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
@@ -26,6 +27,11 @@ export type CreateOrderInput = {
   billingAddress: Address;
   shippingMethod: ShippingMethod;
   paymentProviderId: PaymentProviderId;
+  // Promo code the shopper applied at checkout (e.g. "BUDS5"), if any.
+  // Re-validated here against fresh order history rather than trusted from
+  // the caller, so a stale UI state can never grant a discount an identity
+  // isn't actually eligible for.
+  promoCode?: string | null;
 };
 
 export function createOrderFromCart(input: CreateOrderInput): ShopOrder | null {
@@ -33,6 +39,22 @@ export function createOrderFromCart(input: CreateOrderInput): ShopOrder | null {
   if (lines.length === 0) return null;
 
   const totals = getCartTotals(input.accountId);
+
+  let discount = 0;
+  let appliedPromoCode: string | null = null;
+  if (input.promoCode) {
+    const evaluation = evaluatePromoCode(input.promoCode, {
+      accountId: input.accountId,
+      guestEmail: input.guestEmail ?? null,
+      subtotal: totals.subtotal,
+    });
+    if (evaluation.ok) {
+      discount = evaluation.discount;
+      appliedPromoCode = evaluation.code;
+    }
+  }
+  const total = Math.round((totals.subtotal + totals.shipping + totals.tax - discount) * 100) / 100;
+
   const now = new Date().toISOString();
   const order: ShopOrder = {
     id: uid("WB"),
@@ -47,7 +69,9 @@ export function createOrderFromCart(input: CreateOrderInput): ShopOrder | null {
     subtotal: totals.subtotal,
     shippingCost: totals.shipping,
     tax: totals.tax,
-    total: totals.total,
+    discount,
+    promoCode: appliedPromoCode,
+    total,
     status: "pending_payment",
     timeline: [{ status: "pending_payment", at: now }],
     shippingAddress: input.shippingAddress,

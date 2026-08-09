@@ -26,7 +26,7 @@ export default function GalleryVideo() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-black px-5 py-20 sm:px-8 lg:py-28">
+    <section className="relative overflow-hidden bg-black px-5 pb-20 pt-32 sm:px-8 sm:py-20 lg:py-28">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1a0f08_0%,_#050403_55%,_#000000_100%)]" />
       <div className="absolute inset-0 bg-noise opacity-[0.04]" />
       <div className="pointer-events-none absolute -top-32 left-1/3 h-96 w-96 rounded-full bg-wb-red/20 blur-[120px]" />

@@ -1,9 +1,10 @@
 "use client";
 
-import { MapPin, Phone, Clock, AtSign, Link2, ChevronDown, ShieldCheck } from "lucide-react";
+import { MapPin, Phone, Clock, AtSign, Link2, ChevronDown, ShieldCheck, MessageCircle, Mail } from "lucide-react";
 import Reveal from "./Reveal";
 import OpeningStatus from "./OpeningStatus";
 import ContactForm from "./ContactForm";
+import { OPEN_BUD_GUARDIAN_EVENT } from "./bud-guardian/BudGuardian";
 import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -22,6 +23,12 @@ export default function ContactPageContent() {
     { ...t.contact.infoStrip.location, icon: MapPin },
     { ...t.contact.infoStrip.ageRestriction, icon: ShieldCheck },
   ];
+
+  // Opens the existing Bud Guardian widget mounted in the root layout
+  // (see BudGuardian.tsx) — no separate chat UI is created here.
+  const handleOpenBudGuardian = () => {
+    window.dispatchEvent(new Event(OPEN_BUD_GUARDIAN_EVENT));
+  };
 
   return (
     <>
@@ -194,6 +201,49 @@ export default function ContactPageContent() {
             </div>
           </Reveal>
         </div>
+      </section>
+
+      {/* Support / Bud Guardian */}
+      <section className="relative bg-black px-5 pb-4 sm:px-8">
+        <Reveal className="relative mx-auto max-w-[1560px]">
+          <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-7 shadow-[0_30px_80px_-40px_rgba(244,103,15,0.35)] backdrop-blur-md transition-colors duration-500 hover:border-wb-orange/25 sm:p-9">
+            <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-wb-red/15 via-wb-orange/15 to-wb-yellow/10 blur-[90px]" />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+            <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-wb-orange">
+                  {t.contact.support.eyebrow}
+                </p>
+                <h2 className="mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl">
+                  {t.contact.support.title}
+                </h2>
+                <p className="mt-4 max-w-xl text-foreground/70">{t.contact.support.description}</p>
+              </div>
+
+              <div className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">
+                <button
+                  type="button"
+                  onClick={handleOpenBudGuardian}
+                  className="group/btn relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-6 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-black transition-[background-position,box-shadow,transform] duration-500 ease-out hover:scale-105 hover:bg-right hover:shadow-[0_0_28px_-4px_rgba(244,103,15,0.6)]"
+                >
+                  <MessageCircle className="h-4 w-4" strokeWidth={2} />
+                  {t.contact.support.chatCta}
+                </button>
+                {/* TODO(warrior-buds): SITE.email / SITE.emailHref are a TEMP
+                    placeholder inbox — replace with the real Warrior Buds
+                    professional email address before launch (see src/lib/site.ts). */}
+                <a
+                  href={SITE.emailHref}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
+                >
+                  <Mail className="h-4 w-4" strokeWidth={2} />
+                  {t.contact.support.emailCta}
+                </a>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* Message Form */}

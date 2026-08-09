@@ -19,6 +19,12 @@ const FR_MARKERS = new Set([
   "au", "aux", "ne", "pas", "se", "votre", "vos", "combien", "coute", "coûte", "merci", "bonjour", "salut",
   "oui", "svp", "aujourd", "demain", "commande", "boutique", "ouvert", "ferme", "achete", "acheter", "peux",
   "puis", "pourquoi", "comment", "quand", "ou", "où", "voudrais", "aimerais", "besoin",
+  // V11.1 — short, standalone French product/category words (product-intent.ts's
+  // CATEGORY_KEYWORDS normalizes the same accented forms, e.g. "préroulés" ->
+  // "preroules"). These have no English homograph, so they're safe unambiguous
+  // FR signals even alone, unlike bilingual catalog words such as "vape"/"cbd".
+  "fleur", "fleurs", "preroule", "preroules", "cartouche", "cartouches", "concentre", "concentres",
+  "comestible", "comestibles",
 ]);
 
 const EN_MARKERS = new Set([

@@ -4,8 +4,10 @@ import type { CustomerSegment, CustomerStatus } from "@/types/customer";
 import { getCustomerSegmentLabel, getCustomerStatusLabel } from "@/lib/bud-guardian/customer-engine";
 import { maskName } from "@/lib/bud-guardian/order-engine";
 import { maskEmailPartial, maskPhonePartial } from "@/lib/staff/order-actions";
+import { formatStaffDateTime } from "@/lib/staff/table-format";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { StaffCustomerView } from "@/lib/staff/customer-actions";
+import StaffTableScroll from "./StaffTableScroll";
 
 export const CUSTOMER_STATUS_COLORS: Record<CustomerStatus, { solid: string; rgb: string }> = {
   new: { solid: "#2f9bf0", rgb: "47, 155, 240" },
@@ -45,10 +47,6 @@ const TEXT = {
 
 function formatCurrency(amount: number, locale: "fr" | "en"): string {
   return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(amount);
-}
-
-function formatDate(iso: string, locale: "fr" | "en"): string {
-  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
 }
 
 function StatusBadge({ status, locale }: { status: CustomerStatus; locale: "fr" | "en" }) {
@@ -95,8 +93,8 @@ export default function CustomersTable({
   return (
     <>
       {/* Desktop / tablet */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-white/10 sm:block">
-        <table className="w-full min-w-[780px] border-collapse text-sm">
+      <StaffTableScroll>
+        <table className="w-full min-w-[860px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs uppercase tracking-wide text-white/45">
               <th className="px-4 py-3 font-medium">{t.customer}</th>
@@ -105,7 +103,7 @@ export default function CustomersTable({
               <th className="px-4 py-3 font-medium">{t.segment}</th>
               <th className="px-4 py-3 font-medium">{t.orders}</th>
               <th className="px-4 py-3 font-medium">{t.spent}</th>
-              <th className="px-4 py-3 font-medium">{t.lastVisit}</th>
+              <th className="min-w-[190px] whitespace-nowrap px-4 py-3 font-medium">{t.lastVisit}</th>
             </tr>
           </thead>
           <tbody>
@@ -135,13 +133,13 @@ export default function CustomersTable({
                   </td>
                   <td className="px-4 py-3 text-white/80">{customer.orderCount}</td>
                   <td className="px-4 py-3 text-white/80">{formatCurrency(customer.totalSpent, locale)}</td>
-                  <td className="px-4 py-3 text-white/45">{formatDate(customer.lastOrderAt, locale)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-white/45">{formatStaffDateTime(customer.lastOrderAt, locale)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
+      </StaffTableScroll>
 
       {/* Mobile */}
       <div className="flex flex-col gap-3 sm:hidden">

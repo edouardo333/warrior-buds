@@ -92,9 +92,17 @@ export default function OrderDetailView({ orderId }: { orderId: string }) {
                 <dt className="text-foreground/60">{t.orderDetail.subtotal}</dt>
                 <dd className="text-foreground">${order.subtotal.toFixed(2)}</dd>
               </div>
+              {order.discount > 0 && order.promoCode && (
+                <div className="flex justify-between text-wb-green">
+                  <dt>{t.orderDetail.discount(order.promoCode)}</dt>
+                  <dd>-${order.discount.toFixed(2)}</dd>
+                </div>
+              )}
               <div className="flex justify-between">
                 <dt className="text-foreground/60">{t.orderDetail.shippingCost}</dt>
-                <dd className="text-foreground">${order.shippingCost.toFixed(2)}</dd>
+                <dd className="text-foreground">
+                  {order.shippingCost === 0 ? t.cart.freeShipping : `$${order.shippingCost.toFixed(2)}`}
+                </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-foreground/60">{t.orderDetail.tax}</dt>

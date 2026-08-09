@@ -13,7 +13,8 @@ import { useEffect, useRef, useState } from "react";
 import { Send, Sparkles } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { AnalyticsSnapshot } from "@/lib/bud-guardian/analytics-engine";
-import { respondToStaffQuery } from "@/lib/bud-guardian/staff-guardian-engine";
+import { respondToStaffQuery, respondToStaffQueryAI } from "@/lib/bud-guardian/staff-guardian-engine";
+import { isExternalGuardianAiEnabled } from "@/lib/bud-guardian/ai-provider";
 
 type Turn = { id: string; role: "user" | "bot"; text: string };
 
@@ -45,6 +46,7 @@ export default function GuardianAssistant({ snapshot }: { snapshot: AnalyticsSna
   const t = TEXT[locale];
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,21 +55,35 @@ export default function GuardianAssistant({ snapshot }: { snapshot: AnalyticsSna
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [turns]);
 
-  function ask(question: string) {
+  async function ask(question: string) {
     const trimmed = question.trim();
-    if (!trimmed) return;
-    const response = respondToStaffQuery(trimmed, locale, snapshot);
-    setTurns((prev) => [
-      ...prev,
-      { id: createId(), role: "user", text: trimmed },
-      { id: createId(), role: "bot", text: response.answer },
-    ]);
+    if (!trimmed || isThinking) return;
     setInput("");
+    setTurns((prev) => [...prev, { id: createId(), role: "user", text: trimmed }]);
+
+    // V10 — only attempt the real hosted model when it's actually
+    // configured (see ai-provider.ts's isExternalGuardianAiEnabled); by
+    // default this stays exactly the synchronous, no-network call it always
+    // was. respondToStaffQueryAI falls back to respondToStaffQuery itself
+    // on any failure, so this branch can't leave the copilot without an
+    // answer.
+    setIsThinking(true);
+    const response = isExternalGuardianAiEnabled()
+      ? await respondToStaffQueryAI(
+          trimmed,
+          locale,
+          snapshot,
+          turns.map((t) => ({ role: t.role, text: t.text })),
+        )
+      : respondToStaffQuery(trimmed, locale, snapshot);
+    setIsThinking(false);
+
+    setTurns((prev) => [...prev, { id: createId(), role: "bot", text: response.answer }]);
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    ask(input);
+    void ask(input);
   }
 
   return (
@@ -83,7 +99,7 @@ export default function GuardianAssistant({ snapshot }: { snapshot: AnalyticsSna
           <button
             key={prompt}
             type="button"
-            onClick={() => ask(prompt)}
+            onClick={() => void ask(prompt)}
             className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 transition-colors duration-200 hover:border-wb-orange/50 hover:text-wb-orange"
           >
             {prompt}
@@ -106,6 +122,11 @@ export default function GuardianAssistant({ snapshot }: { snapshot: AnalyticsSna
               </p>
             </div>
           ))}
+          {isThinking && (
+            <div className="flex justify-start">
+              <p className="max-w-[85%] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm text-white/50">…</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -117,12 +138,13 @@ export default function GuardianAssistant({ snapshot }: { snapshot: AnalyticsSna
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={t.placeholder}
-          className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-colors duration-200 placeholder:text-white/35 focus:border-wb-orange/50"
+          disabled={isThinking}
+          className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition-colors duration-200 placeholder:text-white/35 focus:border-wb-orange/50 disabled:opacity-60"
         />
         <button
           type="submit"
           aria-label={t.send}
-          disabled={!input.trim()}
+          disabled={!input.trim() || isThinking}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow text-black transition-transform duration-200 hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
         >
           <Send className="h-4 w-4" />
