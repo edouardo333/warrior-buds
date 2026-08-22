@@ -41,15 +41,19 @@ function getLedColor(state: StoreStatus["state"], minutesSinceMidnight: number):
 type ClockParts = { hours: number; minutes: number; seconds: number };
 type HandAngles = { hour: number; minute: number; second: number };
 
+// Hoisted to module scope for the same reason as hours.ts's formatter: this
+// runs every second, on every mounted instance (hero + footer badges both
+// mount at once), and the options are always the same.
+const TORONTO_CLOCK_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: STORE_TIMEZONE,
+  hourCycle: "h23",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+});
+
 function getTorontoClockParts(date: Date): ClockParts {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: STORE_TIMEZONE,
-    hourCycle: "h23",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-  const parts = formatter.formatToParts(date);
+  const parts = TORONTO_CLOCK_FORMATTER.formatToParts(date);
   const map: Record<string, string> = {};
   for (const part of parts) map[part.type] = part.value;
   return { hours: Number(map.hour), minutes: Number(map.minute), seconds: Number(map.second) };

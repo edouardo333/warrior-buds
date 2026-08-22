@@ -90,6 +90,7 @@ export type Dictionary = {
       cbd: { name: string; description: string };
       accessories: { name: string; description: string };
       mushrooms: { name: string; description: string };
+      topicals: { name: string; description: string };
     };
   };
   whyWarriorBuds: {
@@ -102,6 +103,18 @@ export type Dictionary = {
       community: { title: string; description: string };
     };
     cta: string;
+  };
+  // Homepage SEO/information accordion, placed between "Why Warrior Buds"
+  // and the "Ready to Visit" final CTA. Just the section chrome lives here —
+  // the actual accordion questions/answers (long-form, per data file
+  // convention) live in data/homepage-seo.ts, same split as t.faq vs
+  // data/faq.ts.
+  homeSeo: {
+    eyebrow: string;
+    title: string;
+    intro: string[];
+    expand: (title: string) => string;
+    collapse: (title: string) => string;
   };
   homeFinalCta: {
     label: string;
@@ -435,6 +448,7 @@ export type Dictionary = {
       wishlist: string;
       settings: string;
       logout: string;
+      backToSite: string;
     };
     guardTitle: string;
     guardMessage: string;

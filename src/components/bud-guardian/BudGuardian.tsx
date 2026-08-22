@@ -32,6 +32,7 @@ import {
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { FaqTopic, QuickActionId } from "@/data/bud-guardian/types";
 import type { ProductCategory } from "@/types/product";
+import { OPEN_BUD_GUARDIAN_EVENT } from "./events";
 
 const ORDER_INTENT_BY_ACTION: Partial<Record<QuickActionId, OrderIntent>> = {
   "order-track": "track",
@@ -106,8 +107,11 @@ function createId(): string {
 // widget without reaching into its local state — dispatch
 // `window.dispatchEvent(new Event(OPEN_BUD_GUARDIAN_EVENT))` and this
 // component's own listener (below) opens the window, exactly as if the
-// bubble had been clicked.
-export const OPEN_BUD_GUARDIAN_EVENT = "wb:open-bud-guardian";
+// bubble had been clicked. Defined in ./events.ts (imported above), not
+// here, so pages that only need the event name don't pull in this file's
+// whole engine import graph — re-exported here so existing imports of it
+// from this module keep working.
+export { OPEN_BUD_GUARDIAN_EVENT };
 
 export default function BudGuardian() {
   const pathname = usePathname();

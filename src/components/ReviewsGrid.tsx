@@ -1,5 +1,8 @@
-"use client";
-
+// No "use client" here — nothing in this component reads state, refs, or
+// browser APIs; it only maps static data into markup and renders the
+// (separately client-side) <Reveal> as a child, which Server Components can
+// do directly. Keeping this a Server Component keeps GOOGLE_REVIEWS and the
+// mapping logic out of the client bundle.
 import Reveal from "./Reveal";
 import { GOOGLE_REVIEWS } from "@/lib/reviewsData";
 

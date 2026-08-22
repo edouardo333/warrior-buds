@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
-import BudGuardian from "@/components/bud-guardian/BudGuardian";
+import BudGuardian from "@/components/bud-guardian/BudGuardianLoader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,7 +42,18 @@ export default function RootLayout({
           are wider than narrow mobile viewports; without this the page
           gains real horizontal scroll at ~320–375px. Purely a safety net —
           doesn't affect any component's own horizontal-scroll regions. */}
-      <body className="min-h-full flex flex-col overflow-x-hidden bg-background text-foreground font-sans">
+      {/* suppressHydrationWarning: browser extensions (Grammarly, LastPass,
+          etc.) inject their own attributes onto <body> — e.g. Grammarly's
+          data-gr-ext-installed / data-new-gr-c-s-check-loaded — before React
+          hydrates. React then reports a hydration mismatch that isn't a bug
+          in this app; nothing here renders differently between server and
+          client. This is the documented fix for that exact class of false
+          positive (https://react.dev/link/hydration-mismatch) and only
+          silences mismatches on body's own attributes, not on its children. */}
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col overflow-x-hidden bg-background text-foreground font-sans"
+      >
         <LanguageProvider>
           {children}
           <BudGuardian />

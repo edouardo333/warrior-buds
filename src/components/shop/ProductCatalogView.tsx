@@ -1,16 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
 import ShopCta from "./ShopCta";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useProducts } from "@/lib/shop/product-actions";
+import { findCategoryNode } from "@/lib/shop/category-tree";
 import type { ProductFilters as Filters, ProductSort } from "@/lib/shop/product-engine";
 
 export default function ProductCatalogView() {
   const { t } = useLanguage();
-  const [filters, setFilters] = useState<Filters>({});
+  const searchParams = useSearchParams();
+  // Homepage category cards (e.g. Topicals) can deep-link here via
+  // ?category=<node id> to open the catalog pre-filtered. Only used to seed
+  // the initial filter state — the dropdown filter logic itself is untouched.
+  const [filters, setFilters] = useState<Filters>(() => {
+    const requestedCategory = searchParams.get("category");
+    return requestedCategory && findCategoryNode(requestedCategory)
+      ? { categoryNode: requestedCategory }
+      : {};
+  });
   const [sort, setSort] = useState<ProductSort>("featured");
   const products = useProducts(filters, sort);
 

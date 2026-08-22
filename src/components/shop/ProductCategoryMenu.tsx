@@ -198,7 +198,7 @@ export default function ProductCategoryMenu({
               })}
             </ul>
 
-            <div className="hidden p-2 sm:block">
+            <div className="hidden max-h-[70vh] overflow-y-auto p-2 sm:block">
               {activeNode?.children ? (
                 <ul className="flex flex-col gap-0.5">
                   {activeNode.children.map((child) => (

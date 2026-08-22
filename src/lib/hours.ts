@@ -80,15 +80,21 @@ function formatTime(time: string, locale: Locale): string {
   return m === 0 ? `${hour12}:00 ${period}` : `${hour12}:${String(m).padStart(2, "0")} ${period}`;
 }
 
+// Hoisted to module scope: OpeningStatus re-derives this every second (and
+// two instances — hero + footer — are typically mounted at once), so
+// constructing a fresh Intl.DateTimeFormat on every tick/instance was pure
+// waste. The options never change, so one shared formatter is reused for
+// the lifetime of the app.
+const MONTREAL_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: STORE_TIMEZONE,
+  hourCycle: "h23",
+  weekday: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
 function getMontrealParts(date: Date) {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: STORE_TIMEZONE,
-    hourCycle: "h23",
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  const parts = formatter.formatToParts(date);
+  const parts = MONTREAL_PARTS_FORMATTER.formatToParts(date);
   const map: Record<string, string> = {};
   for (const part of parts) map[part.type] = part.value;
 

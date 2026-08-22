@@ -16,11 +16,11 @@ export type CartLine = {
 };
 
 const SHIPPING_FLAT_RATE = 9.95;
-// Announcement bar advertises "FREE SHIPPING ON ORDERS $150+" — this is the
+// Announcement bar advertises "FREE SHIPPING ON ORDERS $100+" — this is the
 // single source of truth that promise resolves to; exported so promo/UI
 // copy (lib/shop/promo-engine.ts, AnnouncementBar) can reference the same
 // number instead of hardcoding it a second time.
-export const FREE_SHIPPING_THRESHOLD = 150;
+export const FREE_SHIPPING_THRESHOLD = 100;
 const TAX_RATE = 0.14975; // QC combined GST+QST, approximate, demo-only
 
 // Pure variant taking already-fetched store snapshots — used by

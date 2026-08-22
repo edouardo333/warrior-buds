@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { MessageCircle, Phone } from "lucide-react";
 import Reveal from "../Reveal";
-import { OPEN_BUD_GUARDIAN_EVENT } from "../bud-guardian/BudGuardian";
+import { OPEN_BUD_GUARDIAN_EVENT } from "../bud-guardian/events";
 import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 

@@ -8,7 +8,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { CreditCard, Heart, LayoutDashboard, LogOut, MapPin, Menu, Package, Settings, User, X } from "lucide-react";
+import {
+  ArrowLeft,
+  CreditCard,
+  Heart,
+  LayoutDashboard,
+  LogOut,
+  MapPin,
+  Menu,
+  Package,
+  Settings,
+  User,
+  X,
+} from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount, useAuthActions } from "@/lib/shop/auth-actions";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -79,6 +91,13 @@ export default function AccountShell({ active, children }: { active: AccountNavK
               <p className="truncate text-xs text-white/45">{account.email}</p>
             </div>
           </div>
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-white/50 transition-all duration-200 hover:bg-white/5 hover:text-white/85"
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            {t.account.nav.backToSite}
+          </Link>
           <button
             type="button"
             onClick={handleLogout}
@@ -124,10 +143,18 @@ export default function AccountShell({ active, children }: { active: AccountNavK
                   </Link>
                 );
               })}
+              <Link
+                href="/"
+                onClick={() => setMobileOpen(false)}
+                className="group mt-2 flex items-center gap-2.5 border-t border-white/10 px-3 py-2.5 pt-3 text-sm font-medium text-white/50 hover:text-white/85"
+              >
+                <ArrowLeft className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                {t.account.nav.backToSite}
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="mt-2 flex items-center gap-2.5 border-t border-white/10 px-3 py-2.5 pt-3 text-sm font-medium text-white/60 hover:text-wb-red"
+                className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-white/60 hover:text-wb-red"
               >
                 <LogOut className="h-4 w-4" />
                 {t.account.nav.logout}

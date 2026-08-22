@@ -23,7 +23,7 @@ const en: Dictionary = {
     cartItemsAria: (count) => `Cart, ${count} item${count === 1 ? "" : "s"}`,
   },
   announcementBar: {
-    message: "FIRST ORDER? BUDS5 = 5% OFF • FREE SHIPPING $150+ • BUD GUARDIAN AI SUPPORT 24/7 • 18+ ONLY",
+    message: "FIRST ORDER? BUDS5 = 5% OFF • FREE SHIPPING $100+ • BUD GUARDIAN AI SUPPORT 24/7 • 18+ ONLY",
   },
   hero: {
     kicker: "Kanesatake · Oka · Quebec",
@@ -54,6 +54,7 @@ const en: Dictionary = {
       cbd: { name: "CBD", description: "Balanced wellness, no compromise." },
       accessories: { name: "Accessories", description: "Gear built for the ritual." },
       mushrooms: { name: "Mushrooms", description: "Functional fungi, no THC, no compromise." },
+      topicals: { name: "Topicals", description: "Targeted relief, applied directly." },
     },
   },
   whyWarriorBuds: {
@@ -75,6 +76,16 @@ const en: Dictionary = {
       },
     },
     cta: "Our Story",
+  },
+  homeSeo: {
+    eyebrow: "Local & Trusted",
+    title: "Your Trusted Cannabis Dispensary in Kanesatake",
+    intro: [
+      "Warrior Buds is a cannabis dispensary rooted in Oka and Kanesatake, built around real product knowledge and a catalog curated by people who actually use it. From cannabis flower and concentrates to edibles, vapes, and more, every category is chosen for quality and consistency, not just volume.",
+      "The sections below cover what we carry, how ordering and shipping work, and how to find the right product for your experience level — with Bud Guardian and our full team on hand if you'd rather just ask.",
+    ],
+    expand: (title) => `Expand: ${title}`,
+    collapse: (title) => `Collapse: ${title}`,
   },
   homeFinalCta: {
     label: "Visit The Store",
@@ -449,6 +460,7 @@ const en: Dictionary = {
       wishlist: "Wishlist",
       settings: "Settings",
       logout: "Log Out",
+      backToSite: "Back to website",
     },
     guardTitle: "Account Required",
     guardMessage: "Log in to view this page.",
@@ -1019,7 +1031,7 @@ const en: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $150 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
+              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $100 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
             },
             {
               type: "todo",

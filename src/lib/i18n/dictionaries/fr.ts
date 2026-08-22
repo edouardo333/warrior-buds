@@ -23,7 +23,7 @@ const fr: Dictionary = {
     cartItemsAria: (count) => `Panier, ${count} article${count === 1 ? "" : "s"}`,
   },
   announcementBar: {
-    message: "PREMIÈRE COMMANDE? BUDS5 = 5% DE RABAIS • LIVRAISON GRATUITE DÈS 150$ • SOUTIEN IA BUD GUARDIAN 24/7 • 18+ SEULEMENT",
+    message: "PREMIÈRE COMMANDE? BUDS5 = 5% DE RABAIS • LIVRAISON GRATUITE DÈS 100$ • SOUTIEN IA BUD GUARDIAN 24/7 • 18+ SEULEMENT",
   },
   hero: {
     kicker: "Kanesatake · Oka · Québec",
@@ -54,6 +54,7 @@ const fr: Dictionary = {
       cbd: { name: "CBD", description: "Bien-être équilibré, sans compromis." },
       accessories: { name: "Accessoires", description: "De l'équipement pensé pour le rituel." },
       mushrooms: { name: "Champignons", description: "Champignons fonctionnels, sans THC, sans compromis." },
+      topicals: { name: "Produits topiques", description: "Soulagement ciblé, appliqué directement." },
     },
   },
   whyWarriorBuds: {
@@ -75,6 +76,16 @@ const fr: Dictionary = {
       },
     },
     cta: "Notre histoire",
+  },
+  homeSeo: {
+    eyebrow: "Local et fiable",
+    title: "Votre dispensaire de cannabis de confiance à Kanesatake",
+    intro: [
+      "Warrior Buds est un dispensaire de cannabis enraciné à Oka et à Kanesatake, bâti autour d'une vraie connaissance des produits et d'un catalogue sélectionné par des gens qui l'utilisent eux-mêmes. Des fleurs de cannabis aux concentrés, en passant par les comestibles et les vapoteuses, chaque catégorie est choisie pour sa qualité et sa constance, pas seulement pour le volume.",
+      "Les sections ci-dessous présentent ce que nous offrons, comment fonctionnent la commande et la livraison, et comment trouver le bon produit selon votre expérience — avec Bud Guardian et toute notre équipe prêts à répondre si vous préférez simplement demander.",
+    ],
+    expand: (title) => `Déplier : ${title}`,
+    collapse: (title) => `Replier : ${title}`,
   },
   homeFinalCta: {
     label: "Visitez le commerce",
@@ -449,6 +460,7 @@ const fr: Dictionary = {
       wishlist: "Liste de souhaits",
       settings: "Paramètres",
       logout: "Déconnexion",
+      backToSite: "Retour au site",
     },
     guardTitle: "Compte requis",
     guardMessage: "Connectez-vous pour accéder à cette page.",
@@ -1022,7 +1034,7 @@ const fr: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 150 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
+              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 100 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
             },
             {
               type: "todo",

@@ -182,8 +182,8 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
         slug: "free-shipping",
         question: { en: "Do you offer free shipping?", fr: "Offrez-vous la livraison gratuite ?" },
         answer: {
-          en: "Yes — orders of $150 or more qualify for free shipping automatically once your cart reaches that total. No code needed.",
-          fr: "Oui — les commandes de 150 $ ou plus donnent droit à la livraison gratuite automatiquement dès que votre panier atteint ce montant. Aucun code requis.",
+          en: "Yes — orders of $100 or more qualify for free shipping automatically once your cart reaches that total. No code needed.",
+          fr: "Oui — les commandes de 100 $ ou plus donnent droit à la livraison gratuite automatiquement dès que votre panier atteint ce montant. Aucun code requis.",
         },
       },
       {

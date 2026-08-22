@@ -14,6 +14,7 @@ type CategoryCardProps = {
   exploreLabel: string;
   icon: ReactNode;
   theme: CategoryCardTheme;
+  href?: string;
 };
 
 export default function CategoryCard({
@@ -22,6 +23,7 @@ export default function CategoryCard({
   exploreLabel,
   icon,
   theme,
+  href = "/products",
 }: CategoryCardProps) {
   const cardStyle = {
     "--card-glow": theme.glow,
@@ -30,7 +32,7 @@ export default function CategoryCard({
 
   return (
     <Link
-      href="/products"
+      href={href}
       style={cardStyle}
       className="wb-cat-card group relative flex h-72 flex-col overflow-hidden rounded-3xl border border-white/10 bg-wb-charcoal p-6 shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition-all duration-[250ms] ease-out hover:-translate-y-1.5 hover:border-white/20 hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] sm:h-80 sm:p-7"
     >

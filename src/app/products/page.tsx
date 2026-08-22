@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCatalogView from "@/components/shop/ProductCatalogView";
@@ -13,7 +14,9 @@ export default function ProductsPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        <ProductCatalogView />
+        <Suspense fallback={null}>
+          <ProductCatalogView />
+        </Suspense>
       </main>
       <Footer hideCta />
     </>

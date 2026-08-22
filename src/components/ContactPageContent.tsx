@@ -4,7 +4,7 @@ import { MapPin, Phone, Clock, AtSign, Link2, ChevronDown, ShieldCheck, MessageC
 import Reveal from "./Reveal";
 import OpeningStatus from "./OpeningStatus";
 import ContactForm from "./ContactForm";
-import { OPEN_BUD_GUARDIAN_EVENT } from "./bud-guardian/BudGuardian";
+import { OPEN_BUD_GUARDIAN_EVENT } from "./bud-guardian/events";
 import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
