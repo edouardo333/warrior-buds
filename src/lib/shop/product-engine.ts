@@ -4,8 +4,33 @@
 // lib/staff/**, or components/staff/**.
 
 import type { Locale } from "@/lib/i18n/types";
-import type { ProductBadge, ProductCategory, ProductStrain, StorefrontProduct } from "@/types/product";
+import type { BulkPriceTier, ProductBadge, ProductCategory, ProductStrain, StorefrontProduct } from "@/types/product";
 import { findCategoryNode } from "./category-tree";
+
+// True for products catalogued with verified format/size pricing
+// (types/product.ts's ProductFormat — e.g. regulated cannabis flower sold by
+// 3.5g/7g/14g/oz/QP/HP/lb) instead of the quantity-tier model above. These
+// are priced and added to cart entirely through the selected ProductFormat
+// object (label + price), never through the quantity-tier helpers below —
+// never call getProductPriceForQuantity/getBulkTierForQuantity for a product
+// this returns true for. ProductDetail requires a format to be selected
+// before Add to Cart is enabled (see its formatPriced branch); ProductCard's
+// quick-add stays off for these (no format selector on the card itself) —
+// shoppers pick a format on the product page. Bud Guardian's add-to-cart
+// tool/intent still refuses these and points shoppers to the product page —
+// see each call site's own comment.
+export function isFormatPriced(product: StorefrontProduct): boolean {
+  return Boolean(product.formats && product.formats.length > 0);
+}
+
+// True for a product that must never be purchasable through this site (see
+// types/product.ts's inStoreOnly) — Product Detail reads this to hide the
+// quantity stepper, Add to Cart, and wishlist controls entirely and show
+// t.productCatalog.detail.inStoreOnlyNotice instead, regardless of whether
+// the product is also format-priced. Every other product is unaffected.
+export function isInStoreOnly(product: StorefrontProduct): boolean {
+  return Boolean(product.inStoreOnly);
+}
 
 export function getEffectivePrice(product: StorefrontProduct): number {
   return product.salePrice ?? product.price;
@@ -21,12 +46,59 @@ export function getAverageRating(product: StorefrontProduct): number | null {
   return Math.round((total / product.reviews.length) * 10) / 10;
 }
 
+// `product.stock` is `null` whenever the client hasn't provided a verified
+// inventory count — treated as "no known cap" everywhere a numeric stock
+// ceiling is otherwise enforced (quantity steppers, Bud Guardian's cart
+// tools). Never surfaced to a customer as a number either way.
+export function getAvailableStock(product: StorefrontProduct): number {
+  return product.stock ?? Infinity;
+}
+
 export type StockStatus = "in-stock" | "low-stock" | "out-of-stock";
 
 export function getStockStatus(product: StorefrontProduct): StockStatus {
+  if (product.stock === null) return "in-stock";
   if (product.stock <= 0) return "out-of-stock";
   if (product.stock <= 8) return "low-stock";
   return "in-stock";
+}
+
+// Single source of truth for a verified bulk/wholesale tier — an EXACT
+// quantity match against product.bulkPricing (data/shop/products.ts), never
+// an interpolated/invented discount for quantities in between tiers.
+export function getBulkTierForQuantity(product: StorefrontProduct, quantity: number): BulkPriceTier | null {
+  return product.bulkPricing?.find((tier) => tier.quantity === quantity) ?? null;
+}
+
+// THE shared pricing helper — every surface that needs "what does buying
+// `quantity` of this product cost" (Product Detail's total, Add to Cart,
+// the cart, checkout) must call this instead of recomputing price × quantity
+// itself, so an exact verified bulk tier is never silently overridden by a
+// naive multiplication. Returns the TOTAL price for `quantity` units: the
+// verified tier price when `quantity` exactly matches one, otherwise the
+// regular per-unit (sale-aware) price × quantity.
+export function getProductPriceForQuantity(product: StorefrontProduct, quantity: number): number {
+  const tier = getBulkTierForQuantity(product, quantity);
+  if (tier) return tier.price;
+  return Math.round(getEffectivePrice(product) * quantity * 100) / 100;
+}
+
+// Savings vs. buying the same quantity at the regular (non-sale) per-unit
+// price — only meaningful, and only ever returned, for an exact verified
+// bulk tier. Never an invented percentage or promotional claim.
+export function getBulkSavings(product: StorefrontProduct, quantity: number): number | null {
+  const tier = getBulkTierForQuantity(product, quantity);
+  if (!tier) return null;
+  const savings = Math.round((product.price * quantity - tier.price) * 100) / 100;
+  return savings > 0 ? savings : null;
+}
+
+// Locale-aware CAD currency formatting — the single formatter shared by
+// Product Detail, the bulk pricing table, the cart, and checkout so a
+// price's FORMATTING (not its numeric value) is the only thing that changes
+// between FR and EN.
+export function formatPrice(amount: number, locale: Locale): string {
+  return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(amount);
 }
 
 export type ProductFilters = {
@@ -49,7 +121,7 @@ export function filterProducts(products: StorefrontProduct[], filters: ProductFi
     if (filters.onSaleOnly && !isOnSale(p)) return false;
     if (filters.search) {
       const q = filters.search.trim().toLowerCase();
-      if (q && !`${p.name} ${p.brand} ${p.shortDescription}`.toLowerCase().includes(q)) return false;
+      if (q && !`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -82,6 +154,7 @@ const CATEGORY_LABELS: Record<ProductCategory, Record<Locale, string>> = {
   accessories: { fr: "Accessoires", en: "Accessories" },
   topicals: { fr: "Topiques", en: "Topicals" },
   mushrooms: { fr: "Champignons", en: "Mushrooms" },
+  cigarettes: { fr: "Cigarettes", en: "Cigarettes" },
 };
 
 export function getCategoryLabel(category: ProductCategory, locale: Locale): string {

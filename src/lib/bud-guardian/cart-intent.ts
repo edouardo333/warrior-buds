@@ -26,7 +26,7 @@ import type { Locale } from "@/lib/i18n/types";
 import type { QuickActionId } from "@/data/bud-guardian/types";
 import type { StorefrontProduct } from "@/types/product";
 import { getProducts } from "@/data/shop/product-store";
-import { getEffectivePrice } from "@/lib/shop/product-engine";
+import { getAvailableStock, getEffectivePrice, isFormatPriced } from "@/lib/shop/product-engine";
 import {
   getCartLines,
   getCartTotals,
@@ -269,7 +269,27 @@ function buildRemoveAnswer(ownerId: string, product: StorefrontProduct, locale: 
 }
 
 function buildAddAnswer(ownerId: string, product: StorefrontProduct, requestedQuantity: number, locale: Locale): CartQueryResult {
-  if (product.stock <= 0) {
+  // Format-priced products (verified format/size pricing, e.g. regulated
+  // cannabis flower — types/product.ts's ProductFormat) require picking a
+  // size/format before Add to Cart is even enabled (see ProductDetail.tsx
+  // and product-engine.ts's isFormatPriced header) — a chat turn has no
+  // format selection UI, so Guardian can't complete this itself and instead
+  // points the shopper to the product page to pick a format there.
+  // buildSetQuantityAnswer falls back to this function for a product not yet
+  // in the cart, so this guard covers that path too.
+  if (isFormatPriced(product)) {
+    return {
+      answer:
+        locale === "fr"
+          ? `${product.name} est vendu par format — visitez sa page produit pour choisir un format et l'ajouter à votre panier.`
+          : `${product.name} is sold by format — visit its product page to pick a format and add it to your cart.`,
+      suggestions: CART_SUGGESTIONS,
+      productId: product.id,
+    };
+  }
+
+  const availableStock = getAvailableStock(product);
+  if (availableStock <= 0) {
     return {
       answer: locale === "fr" ? `Désolé, ${product.name} est actuellement en rupture de stock.` : `Sorry, ${product.name} is currently out of stock.`,
       suggestions: CART_SUGGESTIONS,
@@ -278,7 +298,7 @@ function buildAddAnswer(ownerId: string, product: StorefrontProduct, requestedQu
   }
 
   const existingQty = getCartLines(ownerId).find((l) => l.product.id === product.id)?.quantity ?? 0;
-  if (existingQty >= product.stock) {
+  if (existingQty >= availableStock) {
     return {
       answer:
         locale === "fr"
@@ -289,7 +309,7 @@ function buildAddAnswer(ownerId: string, product: StorefrontProduct, requestedQu
     };
   }
 
-  const allowedToAdd = Math.min(requestedQuantity, product.stock - existingQty);
+  const allowedToAdd = Math.min(requestedQuantity, availableStock - existingQty);
   addToCartEngine(ownerId, product.id, allowedToAdd);
   const totals = getCartTotals(ownerId);
   const cappedNote =
@@ -316,7 +336,8 @@ function buildSetQuantityAnswer(ownerId: string, product: StorefrontProduct, req
     return buildAddAnswer(ownerId, product, requestedQuantity, locale);
   }
 
-  if (product.stock <= 0) {
+  const availableStock = getAvailableStock(product);
+  if (availableStock <= 0) {
     return {
       answer: locale === "fr" ? `Désolé, ${product.name} est actuellement en rupture de stock.` : `Sorry, ${product.name} is currently out of stock.`,
       suggestions: CART_SUGGESTIONS,
@@ -324,7 +345,7 @@ function buildSetQuantityAnswer(ownerId: string, product: StorefrontProduct, req
     };
   }
 
-  const clamped = Math.min(requestedQuantity, product.stock);
+  const clamped = Math.min(requestedQuantity, availableStock);
   updateCartQuantityEngine(ownerId, product.id, clamped);
   const totals = getCartTotals(ownerId);
   const cappedNote =

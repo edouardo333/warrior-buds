@@ -65,16 +65,52 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 12);
+    // While the mobile menu is open, body is pinned with `position: fixed`
+    // (see the scroll-lock effect below) so it can't visually scroll — but
+    // that pin itself makes `window.scrollY` read back as 0, since the page
+    // no longer has any real scroll offset while pinned. Left unguarded,
+    // that synthetic 0 fires this listener and flips the header back to its
+    // transparent top-of-page look mid-open, exposing whatever real page
+    // content sits behind the now-transparent header strip. Skipping scroll
+    // reads while the menu is open keeps the header exactly as it looked
+    // the moment the menu opened.
+    const onScroll = () => {
+      if (isOpen) return;
+      setIsScrolled(window.scrollY > 12);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isOpen]);
 
+  // Body scroll lock for the open mobile menu. Plain `overflow: hidden` on
+  // body is not enough — iOS Safari still lets touch-scrolling bleed through
+  // to the page behind a fixed overlay. Pinning the body itself with
+  // `position: fixed` (offset by the current scrollY) is the standard fix:
+  // it fully blocks background scrolling and, since the page never actually
+  // scrolled while pinned, restoring position/top and calling scrollTo puts
+  // the user back exactly where they were.
+  const scrollPositionRef = useRef(0);
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    if (!isOpen) return;
+    scrollPositionRef.current = window.scrollY;
+    const { style } = document.body;
+    const previousPosition = style.position;
+    const previousTop = style.top;
+    const previousLeft = style.left;
+    const previousRight = style.width;
+    style.position = "fixed";
+    style.top = `-${scrollPositionRef.current}px`;
+    style.left = "0";
+    style.right = "0";
+    style.width = "100%";
     return () => {
-      document.body.style.overflow = "";
+      style.position = previousPosition;
+      style.top = previousTop;
+      style.left = previousLeft;
+      style.width = previousRight;
+      style.right = "";
+      window.scrollTo(0, scrollPositionRef.current);
     };
   }, [isOpen]);
 
@@ -89,99 +125,110 @@ export default function Navbar() {
   }, [t]);
 
   return (
-    <header
-      ref={headerRef}
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        isScrolled
-          ? "bg-background/80 backdrop-blur-md border-b border-white/10"
-          : "bg-transparent border-b border-transparent"
-      }`}
-    >
-      <AnnouncementBar />
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" onClick={handleLogoClick}>
-          <Logo imageClassName="h-9 sm:h-11" />
-        </Link>
-
-        <ul className={`hidden items-center gap-4 xl:flex ${isFr ? "xl:gap-3" : "xl:gap-6"}`}>
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="whitespace-nowrap text-sm font-medium uppercase tracking-wide text-foreground/80 transition-colors hover:text-wb-orange"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className={`hidden items-center gap-2.5 xl:flex ${isFr ? "xl:gap-1.5" : "xl:gap-3"}`}>
-          <Link
-            href="/track-order"
-            aria-label={t.nav.trackOrder}
-            title={t.nav.trackOrder}
-            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
-          >
-            <PackageSearch className="h-5 w-5" />
+    <>
+      <header
+        ref={headerRef}
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+          isScrolled
+            ? "bg-background/80 backdrop-blur-md border-b border-white/10"
+            : "bg-transparent border-b border-transparent"
+        }`}
+      >
+        <AnnouncementBar />
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
+          <Link href="/" onClick={handleLogoClick}>
+            <Logo imageClassName="h-9 sm:h-11" />
           </Link>
-          <Link
-            href="/wishlist"
-            aria-label={t.nav.wishlist}
-            title={t.nav.wishlist}
-            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
-          >
-            <Heart className="h-5 w-5" />
-          </Link>
-          <Link
-            href={accountHref}
-            aria-label={account ? t.nav.account : t.nav.login}
-            title={account ? t.nav.account : t.nav.login}
-            className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
-          >
-            <User className="h-5 w-5" />
-          </Link>
-          <MiniCart />
-          <span className="mx-1 h-6 w-px bg-white/10" aria-hidden="true" />
-          <LanguageSwitcher />
-          <Link
-            href="/contact"
-            className={`whitespace-nowrap rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow py-2 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105 ${
-              isFr ? "px-4" : "px-5"
-            }`}
-          >
-            {t.nav.visitStore}
-          </Link>
-        </div>
 
-        <button
-          type="button"
-          aria-label={isOpen ? t.nav.closeMenu : t.nav.openMenu}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((v) => !v)}
-          className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 xl:hidden"
-        >
-          <span
-            className={`h-0.5 w-6 bg-foreground transition-transform duration-300 ${
-              isOpen ? "translate-y-2 rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`h-0.5 w-6 bg-foreground transition-opacity duration-300 ${
-              isOpen ? "opacity-0" : "opacity-100"
-            }`}
-          />
-          <span
-            className={`h-0.5 w-6 bg-foreground transition-transform duration-300 ${
-              isOpen ? "-translate-y-2 -rotate-45" : ""
-            }`}
-          />
-        </button>
-      </nav>
+          <ul className={`hidden items-center gap-4 xl:flex ${isFr ? "xl:gap-3" : "xl:gap-6"}`}>
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="whitespace-nowrap text-sm font-medium uppercase tracking-wide text-foreground/80 transition-colors hover:text-wb-orange"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
+          <div className={`hidden items-center gap-2.5 xl:flex ${isFr ? "xl:gap-1.5" : "xl:gap-3"}`}>
+            <Link
+              href="/track-order"
+              aria-label={t.nav.trackOrder}
+              title={t.nav.trackOrder}
+              className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+            >
+              <PackageSearch className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/wishlist"
+              aria-label={t.nav.wishlist}
+              title={t.nav.wishlist}
+              className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+            >
+              <Heart className="h-5 w-5" />
+            </Link>
+            <Link
+              href={accountHref}
+              aria-label={account ? t.nav.account : t.nav.login}
+              title={account ? t.nav.account : t.nav.login}
+              className="flex h-9 w-9 items-center justify-center text-foreground/80 transition-colors hover:text-wb-orange"
+            >
+              <User className="h-5 w-5" />
+            </Link>
+            <MiniCart />
+            <span className="mx-1 h-6 w-px bg-white/10" aria-hidden="true" />
+            <LanguageSwitcher />
+            <Link
+              href="/contact"
+              className={`whitespace-nowrap rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow py-2 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105 ${
+                isFr ? "px-4" : "px-5"
+              }`}
+            >
+              {t.nav.visitStore}
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            aria-label={isOpen ? t.nav.closeMenu : t.nav.openMenu}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((v) => !v)}
+            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-1.5 xl:hidden"
+          >
+            <span
+              className={`h-0.5 w-6 bg-foreground transition-transform duration-300 ${
+                isOpen ? "translate-y-2 rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-foreground transition-opacity duration-300 ${
+                isOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-foreground transition-transform duration-300 ${
+                isOpen ? "-translate-y-2 -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </nav>
+      </header>
+
+      {/* Rendered as a header SIBLING, not a child — `header` gains
+          `backdrop-blur-md` once the page is scrolled, and a backdrop-filter
+          (like a transform or filter) creates a containing block for any
+          `position: fixed` descendant. That reparented the overlay's "fixed"
+          coordinates onto header's own small box instead of the viewport,
+          which is why it only looked like a true fullscreen overlay at
+          scrollY 0 (before backdrop-blur-md ever applied). Living outside
+          header keeps it fixed to the viewport no matter how far the page
+          has scrolled or what styles header picks up. */}
       <div
         style={{ top: headerHeight || undefined }}
-        className={`fixed inset-x-0 bottom-0 top-16 z-40 bg-background/98 backdrop-blur-lg transition-all duration-300 xl:hidden ${
+        className={`fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain bg-background/98 backdrop-blur-lg transition-all duration-300 xl:hidden ${
           isOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -247,6 +294,6 @@ export default function Navbar() {
           </li>
         </ul>
       </div>
-    </header>
+    </>
   );
 }

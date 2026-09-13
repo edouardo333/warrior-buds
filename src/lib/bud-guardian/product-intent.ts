@@ -21,7 +21,7 @@
 // recommendation ask is detected).
 
 import { getProducts } from "@/data/shop/product-store";
-import { getEffectivePrice, getStockStatus, getAverageRating, getCategoryLabel, getStrainLabel } from "@/lib/shop/product-engine";
+import { getAvailableStock, getEffectivePrice, getStockStatus, getAverageRating, getCategoryLabel, getStrainLabel } from "@/lib/shop/product-engine";
 import { findGuardianProducts } from "./guardian-shop-hooks";
 import { findBestMatch, type SearchableEntry } from "./search";
 import type { Locale } from "@/lib/i18n/types";
@@ -91,6 +91,11 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
   ],
   topicals: ["topique", "topiques", "creme", "creme cbd", "topical", "topicals", "cream", "balm"],
   mushrooms: ["champignon", "champignons", "mushroom", "mushrooms", "fongique", "fungi", "reishi", "chaga", "cordyceps", "adaptogene"],
+  // No verified cigarette products exist yet (see ProductCategory in
+  // types/product.ts) — these keywords only let Bud Guardian recognize the
+  // category in free text; detectCategory + the generic zero-results reply
+  // above already handle "no cigarettes available right now" correctly.
+  cigarettes: ["cigarette", "cigarettes", "tabac", "tobacco"],
 };
 
 function normalizeText(value: string): string[] {
@@ -377,13 +382,13 @@ function buildRelativePriceAnswer(anchor: StorefrontProduct, direction: "cheaper
 // "similar" built only from fields the catalog actually has.
 function buildSimilarAnswer(anchor: StorefrontProduct, locale: Locale): ProductQueryResult {
   const anchorPrice = getEffectivePrice(anchor);
-  const candidates = getProducts().filter((p) => p.id !== anchor.id && p.stock > 0 && p.category === anchor.category);
+  const candidates = getProducts().filter((p) => p.id !== anchor.id && getAvailableStock(p) > 0 && p.category === anchor.category);
   const scored = candidates
     .map((p) => ({
       product: p,
       score:
         (p.strain && anchor.strain && p.strain === anchor.strain ? 2 : 0) +
-        (p.brand === anchor.brand ? 1 : 0) +
+        (p.brand && anchor.brand && p.brand === anchor.brand ? 1 : 0) +
         Math.max(0, 2 - Math.abs(getEffectivePrice(p) - anchorPrice) / 15),
     }))
     .sort((a, b) => b.score - a.score || (getAverageRating(b.product) ?? 0) - (getAverageRating(a.product) ?? 0));
@@ -504,7 +509,9 @@ type ProductEntry = SearchableEntry & { product: StorefrontProduct };
 function buildProductEntries(): ProductEntry[] {
   return getProducts().map((product) => ({
     product,
-    keywords: [product.name, product.brand, product.slug.replace(/-/g, " ")],
+    keywords: [product.name, product.brand, product.grade, product.slug.replace(/-/g, " ")].filter(
+      (k): k is string => Boolean(k)
+    ),
   }));
 }
 

@@ -7,6 +7,20 @@ export const metadata: Metadata = {
   title: "Politique relative aux témoins | Warrior Buds",
   description:
     "Comment Warrior Buds utilise le stockage local, le stockage de session et les intégrations tierces — et comment les contrôler.",
+  alternates: { canonical: "/cookie-policy" },
+  openGraph: {
+    title: "Politique relative aux témoins | Warrior Buds",
+    description:
+      "Comment Warrior Buds utilise le stockage local, le stockage de session et les intégrations tierces — et comment les contrôler.",
+    url: "/cookie-policy",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Politique relative aux témoins | Warrior Buds",
+    description:
+      "Comment Warrior Buds utilise le stockage local, le stockage de session et les intégrations tierces — et comment les contrôler.",
+  },
 };
 
 export default function CookiePolicyPage() {

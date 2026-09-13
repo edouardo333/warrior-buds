@@ -1,10 +1,21 @@
-// Storefront — customer order lifecycle rules: status labels, the ordered
-// tracking timeline, and a demo-only "advance" helper. There is no real
-// payment gateway or staff workflow wired in to move an order forward in
-// this build (that's the Staff Dashboard/CRM, which this module never
-// touches), so the account order-detail page offers a clearly-labeled
-// simulate control that calls simulateAdvanceOrder(). Never imports from or
-// writes to data/bud-guardian/**, lib/staff/**, or components/staff/**.
+// Storefront — customer order lifecycle rules: status labels and the
+// timeline shown on /account/orders/[id] and /track-order, both derived
+// entirely from ShopOrder.status/timeline (see buildTrackingSteps below) so
+// there is exactly one source of truth for order status — never separate
+// booleans per stage. Never imports from or writes to data/bud-guardian/**,
+// lib/staff/**, or components/staff/**.
+//
+// There is no real payment gateway or staff workflow wired in to move an
+// order forward in this build (that's the Staff Dashboard/CRM, which this
+// module never touches, and which manages a *different* order type/lifecycle
+// — see types/order.ts). A customer-facing "Demo: Advance to Next Stage"
+// control used to call simulateAdvanceOrder() below so the flow could be
+// demoed end-to-end without a real backend; it has been removed from
+// customer pages (customers must not be able to write their own order
+// status). simulateAdvanceOrder() is kept as the single-step status-advance
+// primitive — the same one a real staff order-status update or payment
+// webhook would call — for whichever trusted, non-customer caller wires
+// staff status updates in next; nothing currently calls it.
 
 import { advanceOrderStatus, setTrackingNumber } from "@/data/shop/order-store";
 import type { Locale } from "@/lib/i18n/types";

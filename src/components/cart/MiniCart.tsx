@@ -7,9 +7,10 @@ import SmartImage from "@/components/SmartImage";
 import ProductImageFallback from "@/components/shop/ProductImageFallback";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart } from "@/lib/shop/cart-actions";
+import { formatPrice } from "@/lib/shop/product-engine";
 
 export default function MiniCart() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { lines, totals, itemCount } = useCart();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -47,7 +48,10 @@ export default function MiniCart() {
             <>
               <div className="flex max-h-72 flex-col gap-3 overflow-y-auto pr-1">
                 {lines.map((line) => (
-                  <div key={line.product.id} className="flex items-center gap-3">
+                  // Two formats of the same product are separate lines
+                  // sharing product.id — key by format label too so React
+                  // never conflates them.
+                  <div key={`${line.product.id}:${line.selectedFormat?.label ?? ""}`} className="flex items-center gap-3">
                     <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-white/10">
                       <SmartImage
                         src={line.product.images[0]?.url ?? ""}
@@ -60,15 +64,16 @@ export default function MiniCart() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs font-medium text-foreground/90">{line.product.name}</p>
+                      {line.selectedFormat && <p className="truncate text-[11px] text-wb-orange/90">{t.cart.formatLabel(line.selectedFormat.label)}</p>}
                       <p className="text-[11px] text-foreground/50">x{line.quantity}</p>
                     </div>
-                    <p className="shrink-0 text-xs font-semibold text-foreground">${line.lineTotal.toFixed(2)}</p>
+                    <p className="shrink-0 text-xs font-semibold text-foreground">{formatPrice(line.lineTotal, locale)}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3 text-sm">
                 <span className="text-foreground/60">{t.cart.total}</span>
-                <span className="font-semibold text-foreground">${totals.total.toFixed(2)}</span>
+                <span className="font-semibold text-foreground">{formatPrice(totals.total, locale)}</span>
               </div>
               <Link
                 href="/cart"

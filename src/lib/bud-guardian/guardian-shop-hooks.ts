@@ -20,7 +20,7 @@ import { getOrders, getOrdersForAccount } from "@/data/shop/order-store";
 import { getProducts } from "@/data/shop/product-store";
 import type { Locale } from "@/lib/i18n/types";
 import { buildTrackingSteps, getOrderStatusLabel } from "@/lib/shop/order-engine";
-import { getAverageRating, getEffectivePrice } from "@/lib/shop/product-engine";
+import { getAvailableStock, getAverageRating, getEffectivePrice } from "@/lib/shop/product-engine";
 import type { ProductCategory, StorefrontProduct } from "@/types/product";
 import type { ShopOrder } from "@/types/shop-order";
 
@@ -67,7 +67,7 @@ export type ProductAdviceSort = "rating" | "price-asc";
 // Guardian should never recommend something a customer can't actually buy.
 export function findGuardianProducts(filters: ProductAdviceFilters, sort: ProductAdviceSort = "rating", limit = 3): StorefrontProduct[] {
   const matches = getProducts().filter((p) => {
-    if (p.stock <= 0) return false;
+    if (getAvailableStock(p) <= 0) return false;
     if (filters.excludeId && p.id === filters.excludeId) return false;
     if (filters.category && p.category !== filters.category) return false;
     const price = getEffectivePrice(p);

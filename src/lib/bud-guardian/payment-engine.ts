@@ -26,6 +26,7 @@ import { findOrderById, replaceOrder } from "@/data/bud-guardian/orders-store";
 import { addPayment, findLatestPaymentByOrderId, findPaymentById, replacePayment } from "@/data/bud-guardian/payments";
 import { extractIdentifiers, getOrderTotal, getStatusLabel, matchOrder } from "./order-engine";
 import { findBestMatch } from "./search";
+import { INTERAC_PAYMENT_EMAIL } from "@/lib/shop/payment-providers/interac";
 
 export type PaymentEngineResponse = {
   text: string;
@@ -265,7 +266,10 @@ export function cancelPayment(paymentId: string, actor: string): PaymentRecord |
 // store FAQ: local keyword search, no lookup required.
 // ---------------------------------------------------------------------------
 
-export const INTERAC_RECIPIENT_EMAIL = "paiement@warriorbuds.ca"; // Simulated recipient only — no real Interac account is connected.
+// Single source of truth for the real Interac recipient lives in the
+// checkout payment provider — re-exported here so Bud Guardian never drifts
+// from what checkout actually tells customers to pay.
+export const INTERAC_RECIPIENT_EMAIL = INTERAC_PAYMENT_EMAIL;
 
 type GenericPaymentFaqId = "payment-interac-info" | "payment-in-store";
 

@@ -1,6 +1,9 @@
 import type { Dictionary } from "../types";
 
 const fr: Dictionary = {
+  home: {
+    metaTitle: "Warrior Buds | Dispensaire de cannabis haut de gamme à Oka/Kanesatake",
+  },
   nav: {
     links: {
       home: "Accueil",
@@ -23,7 +26,7 @@ const fr: Dictionary = {
     cartItemsAria: (count) => `Panier, ${count} article${count === 1 ? "" : "s"}`,
   },
   announcementBar: {
-    message: "PREMIÈRE COMMANDE? BUDS5 = 5% DE RABAIS • LIVRAISON GRATUITE DÈS 100$ • SOUTIEN IA BUD GUARDIAN 24/7 • 18+ SEULEMENT",
+    message: "CODE BUDS5 = 5% DE RABAIS, UNE FOIS PAR COMPTE • LIVRAISON GRATUITE DÈS 100$ • SOUTIEN IA BUD GUARDIAN 24/7 • 18+ SEULEMENT",
   },
   hero: {
     kicker: "Kanesatake · Oka · Québec",
@@ -47,14 +50,15 @@ const fr: Dictionary = {
     title: "Découvrez nos catégories",
     explore: "Découvrir",
     items: {
-      flower: { name: "Fleur", description: "Des variétés premium sélectionnées à la main." },
-      edibles: { name: "Comestibles", description: "Élaborés avec précision, pour un effet puissant." },
-      vapes: { name: "Vapoteuses", description: "Matériel de qualité, extraits purs." },
-      concentrates: { name: "Concentrés", description: "Spectre complet, haute puissance." },
-      cbd: { name: "CBD", description: "Bien-être équilibré, sans compromis." },
-      accessories: { name: "Accessoires", description: "De l'équipement pensé pour le rituel." },
-      mushrooms: { name: "Champignons", description: "Champignons fonctionnels, sans THC, sans compromis." },
-      topicals: { name: "Produits topiques", description: "Soulagement ciblé, appliqué directement." },
+      flower: { name: "Fleur", description: "Des variétés premium sélectionnées à la main.", alt: "Catégorie Fleur" },
+      edibles: { name: "Comestibles", description: "Élaborés avec précision, pour un effet puissant.", alt: "Catégorie Comestibles" },
+      vapes: { name: "Vapoteuses", description: "Matériel de qualité, extraits purs.", alt: "Catégorie Vapoteuses" },
+      concentrates: { name: "Concentrés", description: "Spectre complet, haute puissance.", alt: "Catégorie Concentrés" },
+      cbd: { name: "CBD", description: "Bien-être équilibré, sans compromis.", alt: "Catégorie CBD" },
+      accessories: { name: "Accessoires", description: "De l'équipement pensé pour le rituel.", alt: "Catégorie Accessoires" },
+      mushrooms: { name: "Champignons", description: "Champignons fonctionnels, sans THC, sans compromis.", alt: "Catégorie Champignons" },
+      topicals: { name: "Produits topiques", description: "Soulagement ciblé, appliqué directement.", alt: "Catégorie Produits topiques" },
+      cigarettes: { name: "Cigarettes", description: "Produits du tabac et formats sélectionnés.", alt: "Catégorie Cigarettes" },
     },
   },
   whyWarriorBuds: {
@@ -350,7 +354,7 @@ const fr: Dictionary = {
   learningCenter: {
     metaTitle: "Centre d'apprentissage | Warrior Buds",
     metaDescription:
-      "Découvrez le Centre d'apprentissage de Warrior Buds — des guides clairs sur les bases du cannabis, les concentrés, les produits à haute puissance, les psychédéliques, les produits de nicotine et la consommation responsable.",
+      "Découvrez le Centre d'apprentissage de Warrior Buds — des guides clairs sur les bases du cannabis, les concentrés, les produits à haute puissance, le CBD, les comestibles, les produits topiques, les psychédéliques, les produits de nicotine et la consommation responsable.",
     hero: {
       eyebrow: "Le savoir d'abord",
       title: "Centre d'apprentissage",
@@ -546,7 +550,7 @@ const fr: Dictionary = {
     appliedMessage: (code, amount) => `Code ${code} appliqué — vous économisez ${amount} $.`,
     freeShippingMessage: (threshold) => `Livraison gratuite débloquée — votre commande est admissible dès ${threshold} $.`,
     errorInvalid: "Ce code n'est pas valide.",
-    errorNotFirstOrder: "BUDS5 est réservé à la première commande sur ce compte.",
+    errorAlreadyRedeemed: "BUDS5 a déjà été utilisé sur ce compte.",
     errorEmpty: "Entrez un code à appliquer.",
     discountLabel: (code) => `Promo (${code})`,
   },
@@ -570,6 +574,7 @@ const fr: Dictionary = {
     miniCartTitle: "Votre panier",
     viewCart: "Voir le panier",
     itemsInCart: (count) => `${count} article${count === 1 ? "" : "s"} dans votre panier`,
+    formatLabel: (label) => `Format : ${label}`,
   },
   wishlist: {
     metaTitle: "Liste de souhaits | Warrior Buds",
@@ -616,7 +621,7 @@ const fr: Dictionary = {
       addNew: "Ajouter une nouvelle adresse",
       useAddress: "Utiliser cette adresse",
       method: "Mode de livraison",
-      standard: "Standard (3 à 5 jours ouvrables)",
+      standard: "Standard — 2–5 jours ouvrables",
       expedited: "Accéléré (1 à 2 jours ouvrables)",
       pickup: "Cueillette en boutique",
       continueBtn: "Continuer vers la facturation",
@@ -644,7 +649,7 @@ const fr: Dictionary = {
       metaTitle: "Commande confirmée | Warrior Buds",
       title: "Commande confirmée",
       thankYou: (orderId) => `Merci ! Votre commande ${orderId} a été passée.`,
-      whatNext: "Nous vous avons envoyé un courriel de confirmation avec les instructions de paiement.",
+      whatNext: "Vos instructions de paiement sont indiquées ci-dessous. Vous pouvez aussi retrouver votre commande en tout temps dans Compte → Commandes.",
       viewOrder: "Voir la commande",
       continueShopping: "Continuer mes achats",
     },
@@ -675,7 +680,6 @@ const fr: Dictionary = {
     shippingAddress: "Adresse de livraison",
     billingAddress: "Adresse de facturation",
     paymentMethod: "Mode de paiement",
-    simulateAdvance: "Démo : Passer à l'étape suivante →",
     orderComplete: "Cette commande a été livrée.",
     timeline: "Suivi de la commande",
     total: "Total",
@@ -714,6 +718,7 @@ const fr: Dictionary = {
       addToCart: "Ajouter au panier",
       outOfStock: "Rupture de stock",
       lowStock: "Stock limité",
+      startingFrom: (formattedPrice) => `À partir de ${formattedPrice}`,
     },
     detail: {
       addToCart: "Ajouter au panier",
@@ -736,6 +741,19 @@ const fr: Dictionary = {
       trustSecureCheckout: "Paiement sécurisé",
       trustInStorePickup: "Cueillette en magasin",
       trustCustomerSupport: "Service à la clientèle",
+      bulkPricingTitle: "Prix de gros",
+      bulkPricingQuantity: "Quantité",
+      bulkPricingPrice: "Prix",
+      bulkPricingUnit: (quantity) => (quantity === 1 ? "unité" : "unités"),
+      totalPrice: (formattedPrice) => `Prix total : ${formattedPrice}`,
+      youSave: (formattedAmount) => `Vous économisez ${formattedAmount}`,
+      availableFormatsTitle: "Formats disponibles",
+      formatColumn: "Format",
+      priceColumn: "Prix",
+      inStoreOnlyNotice: "Disponible en boutique seulement — visitez-nous ou appelez pour vous procurer ce produit.",
+      selectFormatPrompt: "Sélectionnez un format",
+      enlargeImage: (label) => `Agrandir l'image de ${label}`,
+      closeImage: "Fermer l'image",
     },
     finalCta: {
       label: "Visiter la boutique",
@@ -745,6 +763,12 @@ const fr: Dictionary = {
       getDirections: "Obtenir l'itinéraire",
       callNow: "Appeler maintenant",
     },
+  },
+  notFoundPage: {
+    title: "Page introuvable",
+    message: "Cette page n'existe pas ou a peut-être été déplacée.",
+    backToProducts: "Retour aux produits",
+    backHome: "Retour à l'accueil",
   },
   legal: {
     onThisPage: "Sur cette page",
@@ -803,8 +827,8 @@ const fr: Dictionary = {
               text: "La boutique en ligne de Warrior Buds fonctionne actuellement sans base de données clients à distance : les détails de votre compte, votre panier, votre liste de souhaits, votre historique de commandes et vos adresses enregistrées sont stockés localement dans votre propre navigateur (au moyen de son stockage intégré), et non sur un serveur Warrior Buds. Ces données restent donc sur l'appareil et le navigateur avec lesquels vous les avez créées, et l'effacement des données du site dans votre navigateur les supprimera.",
             },
             {
-              type: "todo",
-              text: "À mesure que la plateforme évolue, une partie ou l'ensemble de ces informations pourrait être transférée vers une base de données sécurisée côté serveur. Cette Politique sera mise à jour avant que ce changement n'ait lieu.",
+              type: "p",
+              text: "Si notre façon de conserver ces informations change à l'avenir — par exemple, si une partie est transférée vers une base de données sécurisée côté serveur — nous mettrons d'abord cette Politique à jour.",
             },
             {
               type: "p",
@@ -851,8 +875,8 @@ const fr: Dictionary = {
               ],
             },
             {
-              type: "todo",
-              text: "Nous n'utilisons actuellement aucun outil d'analyse ou de publicité tiers. Si cela change, cette Politique sera mise à jour au préalable.",
+              type: "p",
+              text: "Nous n'utilisons actuellement aucun outil d'analyse ou de publicité tiers sur ce site. Si cela change, cette Politique sera mise à jour au préalable.",
             },
           ],
         },
@@ -865,8 +889,8 @@ const fr: Dictionary = {
               text: "Comme la plupart des données clients sont stockées dans votre propre navigateur plutôt que sur un serveur central, nous vous recommandons de ne pas enregistrer votre mot de passe sur un appareil partagé ou public, et de vous déconnecter de votre compte une fois terminé — votre session reste autrement ouverte jusqu'à ce que vous vous déconnectiez.",
             },
             {
-              type: "todo",
-              text: "Les pratiques de sécurité formelles (normes de chiffrement, processus de notification en cas d'incident) pour une future infrastructure côté serveur sont encore en cours de finalisation et seront documentées ici avant le lancement.",
+              type: "p",
+              text: "Ce site n'exploite actuellement aucune base de données clients côté serveur; il n'y a donc pas d'infrastructure de sécurité côté serveur à décrire ici. Si une infrastructure côté serveur est mise en place à l'avenir, nous documenterons ses pratiques de sécurité dans cette Politique.",
             },
           ],
         },
@@ -893,8 +917,8 @@ const fr: Dictionary = {
               text: "Pour demander une copie de vos informations, en demander la correction, ou demander la suppression de votre compte et des données associées, contactez-nous en utilisant les coordonnées ci-dessous. Conformément à la loi canadienne sur la protection des renseignements personnels (LPRPDE), nous répondrons aux demandes raisonnables dans un délai raisonnable.",
             },
             {
-              type: "todo",
-              text: "La suppression de compte en libre-service dans Votre compte est prévue pour une mise à jour future; les demandes de suppression sont traitées manuellement par notre équipe entre-temps.",
+              type: "p",
+              text: "La suppression de compte n'est pas encore offerte en libre-service dans Votre compte — les demandes de suppression sont traitées manuellement par notre équipe. Contactez-nous avec les coordonnées ci-dessous pour demander la suppression de votre compte et des données associées.",
             },
           ],
         },
@@ -992,7 +1016,7 @@ const fr: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Les prix sont affichés en dollars canadiens (CAD) et n'incluent pas les taxes applicables ni les frais d'expédition, sauf indication contraire; les taxes et les frais d'expédition sont calculés automatiquement lors du paiement. Nous nous réservons le droit de corriger les erreurs de prix ou de fiche produit, même après qu'une commande a été passée, et d'annuler les commandes touchées en vous en avisant.",
+              text: "Les prix sont affichés en dollars canadiens (CAD). Warrior Buds n'ajoute actuellement aucune taxe à la clientèle lors du paiement, et les frais d'expédition applicables, le cas échéant, sont affichés avant que vous ne confirmiez votre commande — le total affiché au paiement reflète les frais réels appliqués à votre commande. Nous nous réservons le droit de corriger les erreurs de prix ou de fiche produit, même après qu'une commande a été passée, et d'annuler les commandes touchées en vous en avisant.",
             },
             {
               type: "p",
@@ -1006,7 +1030,7 @@ const fr: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Vous pouvez nous demander d'annuler une commande qui n'a pas encore été expédiée ou préparée pour la cueillette en nous contactant dès que possible. Nous pouvons également annuler une commande — par exemple pour des raisons de stock, de paiement ou de vérification d'âge — et vous en informerons le cas échéant.",
+              text: "Vous pouvez demander l'annulation de votre commande dans les 48 heures suivant son passage, à condition qu'elle n'ait pas déjà été expédiée ou préparée pour la cueillette — contactez-nous dès que possible avec votre numéro de commande. Une fois la commande expédiée, nous ne pouvons plus l'annuler. Nous pouvons également annuler une commande de notre côté — par exemple pour des raisons de stock, de paiement ou de vérification d'âge — et vous en informerons le cas échéant.",
             },
           ],
         },
@@ -1023,8 +1047,8 @@ const fr: Dictionary = {
               text: "Nous ne conservons pas votre numéro de carte, vos coordonnées bancaires ni les identifiants de votre portefeuille de cryptomonnaie sur ce site. Les virements Interac sont envoyés directement depuis votre propre application bancaire; les autres modes de paiement électroniques sont traités par le fournisseur affiché au moment du paiement.",
             },
             {
-              type: "todo",
-              text: "Il se peut que tous les modes de paiement affichés ne soient pas pleinement actifs en tout temps pendant la finalisation de notre plateforme; l'écran de paiement affiche toujours les instructions exactes et à jour pour chaque mode actif.",
+              type: "p",
+              text: "L'écran de paiement affiche toujours les instructions exactes et à jour pour le mode de paiement que vous choisissez.",
             },
           ],
         },
@@ -1034,11 +1058,7 @@ const fr: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes de 100 $ CAD ou plus peuvent être admissibles à la livraison standard gratuite; des frais d'expédition fixes s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
-            },
-            {
-              type: "todo",
-              text: "Les zones de livraison précises, les heures limites de commande et les délais de préparation pour la cueillette sont en cours de finalisation et seront confirmés au paiement ou par notre équipe.",
+              text: "Lors du paiement, vous pouvez choisir la livraison standard, la livraison accélérée, ou la cueillette en magasin à notre emplacement d'Oka. Les commandes expédiées sont livrées par Postes Canada partout au Québec, avec un délai estimé de 2 à 5 jours ouvrables — une estimation plutôt qu'une garantie, puisque des délais de transporteur peuvent survenir. Les commandes de 100 $ CAD ou plus sont expédiées gratuitement; des frais d'expédition fixes de 9,95 $ CAD s'appliquent autrement et sont affichés au paiement avant que vous ne payiez.",
             },
           ],
         },
@@ -1057,8 +1077,8 @@ const fr: Dictionary = {
           title: "Remboursements et litiges",
           blocks: [
             {
-              type: "todo",
-              text: "Notre politique détaillée de retour, d'échange et de remboursement est en cours de finalisation. En attendant, si un problème survient avec votre commande — produit endommagé, article manquant ou litige de paiement — contactez-nous directement avec votre numéro de commande et nous collaborerons avec vous pour le résoudre.",
+              type: "p",
+              text: "Toutes les ventes sont finales, et nous n'acceptons pas les retours ou échanges ordinaires. Si votre commande arrive incorrecte ou défectueuse — ou si vous croyez qu'il y a un litige de paiement — contactez-nous avec votre numéro de commande afin que nous puissions examiner la situation et trouver une solution avec vous.",
             },
           ],
         },
@@ -1223,7 +1243,7 @@ const fr: Dictionary = {
           title: "Analyse et publicité",
           blocks: [
             {
-              type: "todo",
+              type: "p",
               text: "Nous n'utilisons actuellement aucun témoin d'analyse ou de publicité tiers sur ce site. Si cela change, cette Politique relative aux témoins sera mise à jour avant l'ajout d'un tel outil.",
             },
           ],

@@ -7,8 +7,26 @@
 
 import type { Cart, Wishlist } from "@/types/cart";
 
-const CARTS_KEY = "wb-shop-carts-v1";
-const WISHLISTS_KEY = "wb-shop-wishlists-v1";
+// v2 — bumped alongside product-store.ts's PRODUCTS_KEY migration (v1 -> v2)
+// so browsers holding a pre-migration cart with stale fake/demo product IDs
+// (from the old 18-product demo seed) stop reading that cart back out of
+// localStorage. computeCartLines() already drops lines whose productId no
+// longer resolves, but getCartItemCount() does not, so the navbar badge
+// could show a stale count while the Cart page rendered fewer/zero lines.
+// Reseeding from an empty wb-shop-carts-v2 key closes that gap. The old
+// wb-shop-carts-v1 payload, if still present in a visitor's browser, is
+// simply never read again — no compatibility mapping to real products.
+const CARTS_KEY = "wb-shop-carts-v2";
+// v2 — bumped for the same reason as CARTS_KEY above: a pre-migration
+// wishlist can still hold stale fake/demo product IDs from the old 18-product
+// demo seed. computeWishlistProducts() already drops items whose productId no
+// longer resolves, but that still means a browser holding an old
+// wb-shop-wishlists-v1 payload full of nothing-but-stale IDs would render an
+// empty wishlist without ever being reseeded. Bumping the key makes that
+// browser start over from an empty wb-shop-wishlists-v2 instead. The old
+// wb-shop-wishlists-v1 payload, if still present, is simply never read again
+// — no compatibility mapping to real products.
+const WISHLISTS_KEY = "wb-shop-wishlists-v2";
 
 export const GUEST_OWNER_ID = "guest";
 

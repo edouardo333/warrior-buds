@@ -85,10 +85,10 @@ export default function AccountShell({ active, children }: { active: AccountNavK
               <User className="h-4 w-4" />
             </span>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white/85">
+              <p className="truncate text-sm font-medium text-white/85" title={`${account.firstName} ${account.lastName}`}>
                 {account.firstName} {account.lastName}
               </p>
-              <p className="truncate text-xs text-white/45">{account.email}</p>
+              <p className="truncate text-xs text-white/45" title={account.email}>{account.email}</p>
             </div>
           </div>
           <Link

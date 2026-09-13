@@ -86,7 +86,7 @@ const faqEn: FaqEntry[] = [
     question: "Do you accept Interac?",
     keywords: ["interac", "debit", "debit card"],
     answer:
-      "I don't have the exact list of accepted payment methods yet. The safest bet is to call us to confirm before your visit.",
+      "Yes — Interac e-Transfer is one of our checkout payment options. The checkout screen shows exactly where to send it once you place your order.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -94,8 +94,7 @@ const faqEn: FaqEntry[] = [
     topic: "payment",
     question: "Do you accept credit cards?",
     keywords: ["credit card", "visa", "mastercard"],
-    answer:
-      "I don't have the exact list of accepted payment methods yet. The safest bet is to call us to confirm before your visit.",
+    answer: "Yes — credit/debit card is one of our checkout payment options, alongside Interac e-Transfer, Bitcoin, Ethereum, and Shakepay.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -104,7 +103,7 @@ const faqEn: FaqEntry[] = [
     question: "Do you accept cash?",
     keywords: ["cash", "cash only"],
     answer:
-      "I don't have the exact list of accepted payment methods yet. The safest bet is to call us to confirm before your visit.",
+      "Cash isn't one of our online checkout payment options. At checkout you can pay by Interac e-Transfer, credit/debit card, Bitcoin, Ethereum, or Shakepay.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -112,7 +111,7 @@ const faqEn: FaqEntry[] = [
     topic: "payment",
     question: "Do you accept e-transfers?",
     keywords: ["e-transfer", "etransfer", "interac e-transfer"],
-    answer: "I don't have that specific information yet. Please contact us directly to confirm accepted payment methods.",
+    answer: "Yes — Interac e-Transfer is one of our checkout payment options; the checkout screen shows exactly where to send it.",
     suggestions: ["phone"],
   },
   {
@@ -120,7 +119,7 @@ const faqEn: FaqEntry[] = [
     topic: "age",
     question: "How old do I need to be to buy?",
     keywords: ["age", "18", "minimum age", "how old"],
-    answer: "You must be 18 years or older to purchase in-store, in accordance with Québec law.",
+    answer: "You must be at least 18 to shop with us, and of the legal age to purchase cannabis in your jurisdiction — see our Terms & Conditions for details.",
     suggestions: ["products", "hours"],
   },
   {
@@ -128,7 +127,7 @@ const faqEn: FaqEntry[] = [
     topic: "age",
     question: "Do I need to show ID?",
     keywords: ["id", "identification", "proof of age"],
-    answer: "Yes, valid photo ID proving you're 18 or older is required in-store.",
+    answer: "Yes, valid photo ID proving you're 18 or older may be required — at checkout, on delivery, or on pickup.",
     suggestions: ["hours", "directions"],
   },
   {
@@ -137,7 +136,7 @@ const faqEn: FaqEntry[] = [
     question: "Can I buy online?",
     keywords: ["buy online", "online order", "online store", "order online"],
     answer:
-      "Not yet — purchases are currently in-store only. Online ordering is part of our next steps!",
+      "Yes — browse the Shop, add products to your cart, and check out online. Choose Canada Post shipping (throughout Québec) or in-store pickup.",
     suggestions: ["products", "directions"],
   },
   {
@@ -145,7 +144,8 @@ const faqEn: FaqEntry[] = [
     topic: "purchase",
     question: "Do you offer delivery?",
     keywords: ["delivery", "deliver", "do you deliver"],
-    answer: "We don't offer delivery yet. All purchases currently happen in-store in Oka/Kanesatake.",
+    answer:
+      "Yes — we ship via Canada Post throughout Québec, with an estimated delivery of 2–5 business days (carrier delays can occur). Orders of $100 CAD or more ship free; a $9.95 shipping fee applies otherwise. In-store pickup is also available.",
     suggestions: ["directions", "hours"],
   },
   {
@@ -391,7 +391,7 @@ const faqEn: FaqEntry[] = [
     topic: "legal",
     question: "Are there age restrictions?",
     keywords: ["restriction", "disclaimer", "warning"],
-    answer: "For adults 18+ only, in-store purchase only, in accordance with current regulations.",
+    answer: "For adults 18+ only, in accordance with our storefront's age policy.",
   },
   {
     id: "gallery-info",
@@ -465,8 +465,7 @@ const faqEn: FaqEntry[] = [
     topic: "purchase",
     question: "How does in-store pickup work?",
     keywords: ["how does pickup work", "pickup process", "how do i pick up my order", "how does in-store pickup work"],
-    answer:
-      "In-store: come with valid photo ID (18+), payment happens on the spot by Interac or cash, then you leave with your order.",
+    answer: `Choose Pickup as your shipping method at checkout and pay with one of our checkout payment options. Then come by our location — ${SITE.addressLine1}, ${SITE.addressLine2} — with valid photo ID (18+) to pick up your order.`,
     suggestions: ["order-track", "directions"],
   },
   {
@@ -475,7 +474,7 @@ const faqEn: FaqEntry[] = [
     question: "Can I return or exchange a product?",
     keywords: ["return", "returns", "exchange", "refund"],
     answer:
-      "I don't have the exact return/exchange policy details on hand. Best to call us or message us on Instagram, with your order number if you have it.",
+      "All sales are final — we don't accept ordinary returns or exchanges. If your order arrives incorrect or defective, contact us with your order number and we'll review the issue and work with you to resolve it.",
     suggestions: ["phone", "instagram"],
   },
   {
@@ -484,7 +483,7 @@ const faqEn: FaqEntry[] = [
     question: "What are your store policies?",
     keywords: ["policy", "policies", "store rules", "terms"],
     answer:
-      "Our main rules: 18+ with valid ID, in-store purchase only, payment by Interac or cash. For anything more specific, call us directly.",
+      "Our main rules: 18+ to order, valid photo ID may be required, and all sales are final except for incorrect or defective orders. See our Terms & Conditions for the full details, or contact us directly.",
     suggestions: ["policy-age", "phone"],
   },
   {

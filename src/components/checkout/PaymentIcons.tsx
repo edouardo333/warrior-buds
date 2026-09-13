@@ -1,20 +1,13 @@
 // Storefront — small icon badges for the checkout payment-method grid.
-// Purely decorative SVGs, no external assets. Keyed by PaymentProviderId so
+// Interac and Shakepay reuse the real official brand assets (see
+// PaymentBrandMark.tsx) that the site footer already uses — no generic
+// placeholder icon for those two. The rest (card, bitcoin, ethereum) are
+// purely decorative SVGs, no external assets. Keyed by PaymentProviderId so
 // PaymentStep/PaymentInstructionsCard can look one up generically instead of
 // hardcoding per-provider markup.
 
 import type { ReactNode } from "react";
-
-export function InteracBadge() {
-  return (
-    <svg viewBox="0 0 64 32" className="h-8 w-auto shrink-0" role="img" aria-label="Interac">
-      <rect width="64" height="32" rx="6" fill="#FDB913" />
-      <text x="32" y="21" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="10.5" fill="#000">
-        INTERAC
-      </text>
-    </svg>
-  );
-}
+import { InteracMark, ShakepayMark } from "./PaymentBrandMark";
 
 export function CardBadge() {
   return (
@@ -51,28 +44,10 @@ export function EthereumBadge() {
   );
 }
 
-export function ShakepayBadge() {
-  return (
-    <svg viewBox="0 0 40 40" className="h-9 w-9 shrink-0" role="img" aria-label="Shakepay">
-      <defs>
-        <linearGradient id="wb-shakepay-grad" x1="0" y1="0" x2="40" y2="40">
-          <stop offset="0" stopColor="#E0202E" />
-          <stop offset="0.55" stopColor="#F4670F" />
-          <stop offset="1" stopColor="#F8B400" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="10" fill="url(#wb-shakepay-grad)" />
-      <text x="20" y="27" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="800" fontSize="18" fill="#0d0b0a">
-        S
-      </text>
-    </svg>
-  );
-}
-
 export const PAYMENT_PROVIDER_BADGES: Record<string, () => ReactNode> = {
-  interac: InteracBadge,
+  interac: InteracMark,
   card: CardBadge,
   bitcoin: BitcoinBadge,
   ethereum: EthereumBadge,
-  shakepay: ShakepayBadge,
+  shakepay: ShakepayMark,
 };

@@ -6,6 +6,18 @@ import LegalPageContent from "@/components/legal/LegalPageContent";
 export const metadata: Metadata = {
   title: "Modalités et conditions | Warrior Buds",
   description: "Les modalités qui régissent votre utilisation du site Warrior Buds et toute commande passée avec nous.",
+  alternates: { canonical: "/terms-and-conditions" },
+  openGraph: {
+    title: "Modalités et conditions | Warrior Buds",
+    description: "Les modalités qui régissent votre utilisation du site Warrior Buds et toute commande passée avec nous.",
+    url: "/terms-and-conditions",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Modalités et conditions | Warrior Buds",
+    description: "Les modalités qui régissent votre utilisation du site Warrior Buds et toute commande passée avec nous.",
+  },
 };
 
 export default function TermsAndConditionsPage() {

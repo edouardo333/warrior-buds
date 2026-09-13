@@ -24,7 +24,7 @@ import type { PaymentProviderId } from "@/types/shop-payment";
 type Step = "shipping" | "billing" | "review" | "payment";
 
 export default function CheckoutView() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const account = useAccount();
   const { ownerId, lines, totals } = useCart();
@@ -62,15 +62,22 @@ export default function CheckoutView() {
     const result = evaluatePromoCode(rawCode, { accountId: ownerId, guestEmail: identityEmail, subtotal: totals.subtotal });
     if (result.ok) {
       setAppliedPromoCode(result.code);
+      // t.promo.appliedMessage wraps this in its own literal "$" (en:
+      // `$${amount}`, fr: `${amount} $`), so format only the decimal
+      // separator for the locale — formatPrice() would add a second "$".
+      const formattedDiscount = result.discount.toLocaleString(locale === "fr" ? "fr-CA" : "en-CA", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
       const message =
         totals.shipping === 0
-          ? `${t.promo.appliedMessage(result.code, result.discount.toFixed(2))} ${t.promo.freeShippingMessage(String(FREE_SHIPPING_THRESHOLD))}`
-          : t.promo.appliedMessage(result.code, result.discount.toFixed(2));
+          ? `${t.promo.appliedMessage(result.code, formattedDiscount)} ${t.promo.freeShippingMessage(String(FREE_SHIPPING_THRESHOLD))}`
+          : t.promo.appliedMessage(result.code, formattedDiscount);
       setPromoFeedback({ type: "success", message });
     } else {
       setAppliedPromoCode(null);
       const message =
-        result.reason === "empty" ? t.promo.errorEmpty : result.reason === "not_first_order" ? t.promo.errorNotFirstOrder : t.promo.errorInvalid;
+        result.reason === "empty" ? t.promo.errorEmpty : result.reason === "already_redeemed" ? t.promo.errorAlreadyRedeemed : t.promo.errorInvalid;
       setPromoFeedback({ type: "error", message });
     }
   }

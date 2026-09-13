@@ -30,12 +30,14 @@ import type { GuardianToolCall, GuardianToolResult } from "./guardian-tools";
 
 import { getProducts } from "@/data/shop/product-store";
 import {
+  getAvailableStock,
   getEffectivePrice,
   getStockStatus,
   getAverageRating,
   getCategoryLabel as getProductCategoryLabel,
   getStrainLabel,
   getAllCategories,
+  isFormatPriced,
 } from "@/lib/shop/product-engine";
 import { getStoreStatus, getWeeklySchedule } from "@/lib/hours";
 import { SITE } from "@/lib/site";
@@ -127,7 +129,7 @@ function toolSearchProducts(call: GuardianToolCall, ctx: ToolExecContext): Guard
     if (maxPrice != null && price > maxPrice) return false;
     if (minPrice != null && price <= minPrice) return false;
     if (!needle) return true;
-    return normalize(`${p.name} ${p.brand} ${p.shortDescription}`).includes(needle);
+    return normalize(`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription}`).includes(needle);
   });
 
   const results = matches.slice(0, 8).map((p) => ({
@@ -391,11 +393,22 @@ function toolAddToCart(call: GuardianToolCall): GuardianToolResult {
   const product = getProducts().find((p) => p.id === productId);
   if (!product) return ok(call.id, call.name, { added: false, reason: "product_not_found" });
 
+  // Format-priced products (verified format/size pricing, e.g. regulated
+  // cannabis flower — types/product.ts's ProductFormat) require picking a
+  // size/format before Add to Cart is even enabled (see ProductDetail.tsx
+  // and product-engine.ts's isFormatPriced header) — this tool call carries
+  // no format selection, so Guardian can't complete it and should direct the
+  // shopper to the product page to pick a format themselves.
+  if (isFormatPriced(product)) {
+    return ok(call.id, call.name, { added: false, reason: "requires_format_selection", productId, name: product.name }, { productId });
+  }
+
   const ownerId = resolveOwnerId();
   const requestedRaw = num(call.input, "quantity");
   const requestedQuantity = requestedRaw != null && requestedRaw > 0 ? Math.floor(requestedRaw) : 1;
 
-  if (product.stock <= 0) {
+  const availableStock = getAvailableStock(product);
+  if (availableStock <= 0) {
     return ok(
       call.id,
       call.name,
@@ -405,7 +418,7 @@ function toolAddToCart(call: GuardianToolCall): GuardianToolResult {
   }
 
   const existingQuantity = getCartLines(ownerId).find((l) => l.product.id === productId)?.quantity ?? 0;
-  if (existingQuantity >= product.stock) {
+  if (existingQuantity >= availableStock) {
     return ok(
       call.id,
       call.name,
@@ -415,8 +428,9 @@ function toolAddToCart(call: GuardianToolCall): GuardianToolResult {
   }
 
   // Never let the cart hold more than what's actually in stock — same cap
-  // the Product Detail page's own quantity stepper enforces.
-  const addedQuantity = Math.min(requestedQuantity, product.stock - existingQuantity);
+  // the Product Detail page's own quantity stepper enforces. No verified
+  // stock (product.stock === null) means no cap.
+  const addedQuantity = Math.min(requestedQuantity, availableStock - existingQuantity);
   addToCartEngine(ownerId, productId, addedQuantity);
 
   return ok(
@@ -455,7 +469,7 @@ function toolUpdateCartQuantity(call: GuardianToolCall): GuardianToolResult {
     return ok(call.id, call.name, { updated: true, productId, name: product.name, quantity: 0, cart: buildCartSnapshot(ownerId) }, { productId });
   }
 
-  if (product.stock <= 0) {
+  if (getAvailableStock(product) <= 0) {
     return ok(
       call.id,
       call.name,
@@ -464,7 +478,7 @@ function toolUpdateCartQuantity(call: GuardianToolCall): GuardianToolResult {
     );
   }
 
-  const quantity = Math.min(requestedQuantity, product.stock);
+  const quantity = Math.min(requestedQuantity, getAvailableStock(product));
   updateCartQuantityEngine(ownerId, productId, quantity);
 
   return ok(

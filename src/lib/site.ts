@@ -1,12 +1,24 @@
 export const SITE = {
   name: "Warrior Buds",
+  // Production website origin (H2 SEO pass) — single source of truth for
+  // metadataBase, canonical URLs, robots.ts and sitemap.ts. Deliberately a
+  // different domain than the confirmed business email below — do not
+  // "align" the two, they're intentionally separate (see AGENTS.md / H2
+  // report).
+  url: "https://warriorbuds.wtf",
+  defaultTitle: "Warrior Buds | Dispensaire de cannabis haut de gamme à Oka/Kanesatake",
+  defaultDescription:
+    "Warrior Buds est un dispensaire de cannabis haut de gamme à Oka/Kanesatake offrant fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires, avec un service expert et chaleureux.",
   addressLine1: "2 Av. 1 Terrasse Raymond",
   addressLine2: "Oka, QC J0N 1E0",
+  addressLocality: "Oka",
+  addressRegion: "QC",
+  postalCode: "J0N 1E0",
+  addressCountry: "CA",
   phoneDisplay: "+1 (514) 714-7959",
   phoneHref: "tel:+15147147959",
-  // TODO(warrior-buds): TEMP placeholder inbox — swap for the real Warrior
-  // Buds professional email address before launch, then update emailHref
-  // to match.
+  // Confirmed Warrior Buds contact inbox — keep emailHref in sync if this
+  // ever changes.
   email: "contact@warriorbuds.ca",
   emailHref: "mailto:contact@warriorbuds.ca",
   instagramUrl: "https://www.instagram.com/warriorbudscafe/",

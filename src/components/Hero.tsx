@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import type { MouseEvent as ReactMouseEvent } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import SmartImage from "./SmartImage";
 import Logo from "./Logo";
 import OpeningStatus from "./OpeningStatus";
@@ -19,25 +18,35 @@ function StarGlyph() {
 
 // Nudges the button toward the cursor within a small radius, then springs
 // back on leave — a "magnetic" feel without pulling in a gesture library.
+// Implemented as a single callback ref that wires up (and tears down) its
+// own native listeners on the DOM node, so no ref value is ever read during
+// render — only from the browser's own mount/event callbacks.
 function useMagneticHover<T extends HTMLElement>(strength = 0.25, max = 8) {
-  const ref = useRef<T | null>(null);
+  return useCallback(
+    (el: T | null) => {
+      if (!el) return;
 
-  const onMouseMove = (event: ReactMouseEvent<T>) => {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const relX = event.clientX - (rect.left + rect.width / 2);
-    const relY = event.clientY - (rect.top + rect.height / 2);
-    const x = Math.max(Math.min(relX * strength, max), -max);
-    const y = Math.max(Math.min(relY * strength, max), -max);
-    el.style.transform = `translate(${x}px, ${y}px) scale(1.045)`;
-  };
+      const onMouseMove = (event: MouseEvent) => {
+        const rect = el.getBoundingClientRect();
+        const relX = event.clientX - (rect.left + rect.width / 2);
+        const relY = event.clientY - (rect.top + rect.height / 2);
+        const x = Math.max(Math.min(relX * strength, max), -max);
+        const y = Math.max(Math.min(relY * strength, max), -max);
+        el.style.transform = `translate(${x}px, ${y}px) scale(1.045)`;
+      };
+      const onMouseLeave = () => {
+        el.style.transform = "";
+      };
 
-  const onMouseLeave = () => {
-    if (ref.current) ref.current.style.transform = "";
-  };
-
-  return { ref, onMouseMove, onMouseLeave };
+      el.addEventListener("mousemove", onMouseMove);
+      el.addEventListener("mouseleave", onMouseLeave);
+      return () => {
+        el.removeEventListener("mousemove", onMouseMove);
+        el.removeEventListener("mouseleave", onMouseLeave);
+      };
+    },
+    [strength, max],
+  );
 }
 
 export default function Hero() {
@@ -156,9 +165,7 @@ export default function Hero() {
 
           <div className="wb-hero-reveal mt-9 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: "400ms" }}>
             <Link
-              ref={primaryMagnet.ref}
-              onMouseMove={primaryMagnet.onMouseMove}
-              onMouseLeave={primaryMagnet.onMouseLeave}
+              ref={primaryMagnet}
               href="/products"
               className="group relative isolate overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-black transition-[background-position,box-shadow,transform] duration-500 ease-out hover:bg-right hover:shadow-[0_0_32px_-4px_rgba(244,103,15,0.65)] focus-visible:scale-105"
             >
@@ -166,9 +173,7 @@ export default function Hero() {
               {t.hero.ctaPrimary}
             </Link>
             <a
-              ref={secondaryMagnet.ref}
-              onMouseMove={secondaryMagnet.onMouseMove}
-              onMouseLeave={secondaryMagnet.onMouseLeave}
+              ref={secondaryMagnet}
               href={SITE.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"

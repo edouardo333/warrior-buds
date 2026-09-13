@@ -52,6 +52,9 @@ const CARD_THEME: Record<string, keyof typeof SECONDARY> = {
   "nicotine-products": "yellow",
   "cannabis-education": "gold",
   "responsible-use": "orange",
+  cbd: "green",
+  edibles: "gold",
+  topicals: "red",
 };
 
 export default function LearningCenterHub() {
@@ -73,12 +76,15 @@ export default function LearningCenterHub() {
               const accent = ACCENT[category.accent];
               const secondary = SECONDARY[CARD_THEME[category.slug] ?? category.accent];
               const Icon = category.icon;
-              const isResponsibleUse = category.slug === "responsible-use";
+              // Centers a lone card in the final row of the 3-column desktop
+              // grid so an incomplete last row never looks accidental.
+              const isLastInIncompleteRow =
+                index === LEARNING_CATEGORIES.length - 1 && LEARNING_CATEGORIES.length % 3 === 1;
               return (
                 <Reveal
                   key={category.slug}
                   delay={index * 70}
-                  className={isResponsibleUse ? "lg:col-start-2" : ""}
+                  className={isLastInIncompleteRow ? "lg:col-start-2" : ""}
                 >
                   <button
                     type="button"

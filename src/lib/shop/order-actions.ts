@@ -10,7 +10,6 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { getOrders, subscribeOrderStore } from "@/data/shop/order-store";
 import * as checkoutEngine from "./checkout-engine";
-import * as orderEngine from "./order-engine";
 import { useSession } from "./auth-actions";
 import type { ShopOrder } from "@/types/shop-order";
 
@@ -36,8 +35,7 @@ export function useOrder(id: string): ShopOrder | undefined {
 
 export function useOrderActions() {
   const createOrder = useCallback((input: checkoutEngine.CreateOrderInput) => checkoutEngine.createOrderFromCart(input), []);
-  const simulateAdvance = useCallback((order: ShopOrder) => orderEngine.simulateAdvanceOrder(order), []);
-  return { createOrder, simulateAdvance };
+  return { createOrder };
 }
 
 // Public order lookup (order number + email) for the unauthenticated

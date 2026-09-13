@@ -22,7 +22,14 @@ export default function OrderConfirmationView({ orderId }: { orderId: string }) 
     const recipient = account?.email ?? order.guestEmail;
     if (!recipient) return;
     emailSent.current = true;
-    sendMockEmail(recipient, "order-confirmation", { orderId: order.id, total: order.total.toFixed(2) }, locale);
+    // The template wraps this value in its own literal "$" (en: `$${total}`,
+    // fr: `${total} $`), so we format the number with the locale's decimal
+    // separator only — formatPrice() would add a second currency symbol.
+    const formattedTotal = order.total.toLocaleString(locale === "fr" ? "fr-CA" : "en-CA", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    sendMockEmail(recipient, "order-confirmation", { orderId: order.id, total: formattedTotal }, locale);
   }, [order, account, locale]);
 
   if (!order) return null;

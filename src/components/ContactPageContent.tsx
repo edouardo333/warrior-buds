@@ -230,9 +230,6 @@ export default function ContactPageContent() {
                   <MessageCircle className="h-4 w-4" strokeWidth={2} />
                   {t.contact.support.chatCta}
                 </button>
-                {/* TODO(warrior-buds): SITE.email / SITE.emailHref are a TEMP
-                    placeholder inbox — replace with the real Warrior Buds
-                    professional email address before launch (see src/lib/site.ts). */}
                 <a
                   href={SITE.emailHref}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"

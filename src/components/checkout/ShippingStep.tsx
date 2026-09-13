@@ -124,6 +124,7 @@ export default function ShippingStep({
               <input
                 id="ship-fullname"
                 required
+                autoComplete="name"
                 value={form.fullName}
                 onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))}
                 className={fieldClass()}
@@ -133,6 +134,7 @@ export default function ShippingStep({
               <input
                 id="ship-line1"
                 required
+                autoComplete="address-line1"
                 value={form.line1}
                 onChange={(e) => setForm((p) => ({ ...p, line1: e.target.value }))}
                 className={fieldClass()}
@@ -143,6 +145,7 @@ export default function ShippingStep({
                 <input
                   id="ship-city"
                   required
+                  autoComplete="address-level2"
                   value={form.city}
                   onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
                   className={fieldClass()}
@@ -152,6 +155,7 @@ export default function ShippingStep({
                 <input
                   id="ship-province"
                   required
+                  autoComplete="address-level1"
                   value={form.province}
                   onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
                   className={fieldClass()}
@@ -163,6 +167,7 @@ export default function ShippingStep({
                 <input
                   id="ship-postal"
                   required
+                  autoComplete="postal-code"
                   value={form.postalCode}
                   onChange={(e) => setForm((p) => ({ ...p, postalCode: e.target.value }))}
                   className={fieldClass()}
@@ -171,6 +176,8 @@ export default function ShippingStep({
               <FormField label={t.account.addresses.phone} htmlFor="ship-phone">
                 <input
                   id="ship-phone"
+                  type="tel"
+                  autoComplete="tel"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                   className={fieldClass()}

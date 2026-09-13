@@ -9,7 +9,11 @@
 import type { ProductReview, StorefrontProduct } from "@/types/product";
 import { STOREFRONT_PRODUCTS } from "./products";
 
-const PRODUCTS_KEY = "wb-shop-products-v1";
+// v2 — bumped when the fake demo catalog was replaced with the real
+// Warrior Buds catalog, so browsers that already persisted the old
+// 18-product demo seed reseed from the new STOREFRONT_PRODUCTS instead of
+// reading stale fake products back out of localStorage.
+const PRODUCTS_KEY = "wb-shop-products-v2";
 
 function uid(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -86,9 +90,10 @@ export function addReview(productId: string, input: Omit<ProductReview, "id" | "
 
 // Single mutation primitive for stock changes triggered by a completed
 // checkout — keeps `stock` from ever drifting from what was actually
-// purchased. Clamped at 0 (never negative).
+// purchased. Clamped at 0 (never negative). A `null` stock (no verified
+// inventory count) is left untouched rather than turned into a fake number.
 export function decrementStock(productId: string, quantity: number): void {
-  products = products.map((p) => (p.id === productId ? { ...p, stock: Math.max(0, p.stock - quantity) } : p));
+  products = products.map((p) => (p.id === productId && p.stock !== null ? { ...p, stock: Math.max(0, p.stock - quantity) } : p));
   persist();
   notify();
 }

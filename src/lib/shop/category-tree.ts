@@ -5,12 +5,14 @@
 // and Bud Guardian keyword map keeps working unchanged.
 //
 // Every node's `match` predicate is derived only from fields that already
-// exist on StorefrontProduct (category, strain, price, weightGrams, name,
-// description) — never from data we don't have. This taxonomy is
-// intentionally wider than the current 18-product seed catalog (grading
-// tiers like AAAA/AAA/AA, most concentrate subtypes, several edible/
-// mushroom formats, etc. have no matching field or honest text signal
-// today), so many leaf subcategories always return false and show 0
+// exist on StorefrontProduct (category, strain, grade, price, weightGrams,
+// name, description) — never from data we don't have. The AAA/AAA+ grade
+// nodes below match the structured `grade` field (never title-string
+// parsing) now that verified flower products carry one. This taxonomy is
+// still intentionally wider than the current verified real-product catalog
+// (grading tiers like AAAA/AA, most concentrate subtypes, several
+// edible/mushroom formats, etc. have no matching field or honest text
+// signal today), so those leaf subcategories always return false and show 0
 // products. That's expected, not a bug — subcategories are allowed to be
 // empty and counts stay 100% dynamic from real catalog data. Never imports
 // from or writes to data/bud-guardian/**, lib/staff/**, or
@@ -81,9 +83,16 @@ export const CATEGORY_TREE: CategoryNode[] = [
         match: never,
       },
       {
+        id: "cannabis-aaa-plus",
+        label: { en: "AAA+", fr: "AAA+" },
+        // Exact grade match, never a prefix/substring match against "AAA" —
+        // an AAA+ product must never be counted under the plain AAA node.
+        match: (p) => p.category === "flower" && p.grade === "AAA+",
+      },
+      {
         id: "cannabis-aaa",
         label: { en: "AAA", fr: "AAA" },
-        match: never,
+        match: (p) => p.category === "flower" && p.grade === "AAA",
       },
       {
         id: "cannabis-aa",
@@ -179,6 +188,11 @@ export const CATEGORY_TREE: CategoryNode[] = [
         label: { en: "Disposables", fr: "Vapoteuses jetables" },
         match: (p) => p.category === "vapes" && /disposable/.test(searchableText(p)),
       },
+      {
+        id: "vapes-wax-pens",
+        label: { en: "Wax Pens", fr: "Wax Pens" },
+        match: (p) => p.category === "vapes" && /wax pen/.test(searchableText(p)),
+      },
     ],
   },
   {
@@ -241,6 +255,16 @@ export const CATEGORY_TREE: CategoryNode[] = [
         match: (p) => p.category === "mushrooms" && /(gumm|chocolate|\bcandy\b|edible)/.test(searchableText(p)),
       },
     ],
+  },
+  {
+    // No verified cigarette products exist in the catalog yet — this node
+    // deliberately has no children and always counts/filters to 0 real
+    // products, never a fabricated one. It exists so the Products page
+    // filter and the homepage category card have a correct destination to
+    // link to (see Categories.tsx's cigarettes entry).
+    id: "cigarettes",
+    label: { en: "Cigarettes", fr: "Cigarettes" },
+    match: (p) => p.category === "cigarettes",
   },
 ];
 

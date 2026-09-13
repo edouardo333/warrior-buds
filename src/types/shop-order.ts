@@ -41,8 +41,10 @@ export type ShopOrder = {
   subtotal: number;
   shippingCost: number;
   tax: number;
-  // BUDS5 first-order discount actually applied at order creation (see
-  // lib/shop/promo-engine.ts) — 0 / null when no code was applied.
+  // BUDS5 once-per-account discount actually applied at order creation (see
+  // lib/shop/promo-engine.ts) — 0 / null when no code was applied. This is
+  // also the durable record promo-engine.ts queries to decide whether this
+  // account/guest email has already redeemed BUDS5.
   discount: number;
   promoCode: string | null;
   total: number;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Cannabis, Candy, Wind, Gem, Scale, Settings2, Sparkles, Bandage } from "lucide-react";
+import { Cannabis, Candy, Wind, Gem, Scale, Settings2, Sparkles, Bandage, Cigarette } from "lucide-react";
 import CategoryCard from "./CategoryCard";
 import Reveal from "./Reveal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -17,6 +17,7 @@ const CATEGORY_META = [
       gradient: "from-wb-red/25 via-black to-wb-green/10",
     },
     href: "/products",
+    image: "/images/categories/fleur.png",
   },
   {
     key: "edibles",
@@ -27,6 +28,7 @@ const CATEGORY_META = [
       gradient: "from-wb-orange/30 via-black to-wb-charcoal",
     },
     href: "/products",
+    image: "/images/categories/comestibles.png",
   },
   {
     key: "vapes",
@@ -37,6 +39,7 @@ const CATEGORY_META = [
       gradient: "from-wb-yellow/25 via-black to-wb-charcoal",
     },
     href: "/products",
+    image: "/images/categories/vapoteuses.png",
   },
   {
     key: "concentrates",
@@ -47,6 +50,7 @@ const CATEGORY_META = [
       gradient: "from-wb-orange/35 via-wb-red/15 to-black",
     },
     href: "/products",
+    image: "/images/categories/concentrés.png",
   },
   {
     key: "cbd",
@@ -57,6 +61,7 @@ const CATEGORY_META = [
       gradient: "from-wb-green/25 via-black to-wb-gold/10",
     },
     href: "/products",
+    image: "/images/categories/cbd.png",
   },
   {
     key: "mushrooms",
@@ -67,6 +72,7 @@ const CATEGORY_META = [
       gradient: "from-wb-gold/25 via-black to-wb-green/10",
     },
     href: "/products",
+    image: "/images/categories/champignons.png",
   },
   {
     key: "topicals",
@@ -77,6 +83,7 @@ const CATEGORY_META = [
       gradient: "from-wb-red/20 via-black to-wb-gold/10",
     },
     href: "/products?category=topicals",
+    image: "/images/categories/produits topiques.png",
   },
   {
     key: "accessories",
@@ -87,18 +94,20 @@ const CATEGORY_META = [
       gradient: "from-wb-yellow/20 via-black to-wb-orange/10",
     },
     href: "/products",
+    image: "/images/categories/accessoires.png",
+  },
+  {
+    key: "cigarettes",
+    icon: <Cigarette className={iconClass} strokeWidth={1.75} />,
+    theme: {
+      glow: "var(--wb-gold)",
+      glowSecondary: "var(--wb-red)",
+      gradient: "from-wb-charcoal via-black to-wb-red/10",
+    },
+    href: "/products?category=cigarettes",
+    image: "/images/categories/cigarettes.png",
   },
 ] as const;
-
-// Final row (Topicals + Accessories) has only 2 cards instead of 3. At the
-// lg breakpoint the grid switches to 6 columns with every card spanning 2,
-// which is mathematically identical in width to 3 columns of 1 (same gap
-// arithmetic) but lets the last two cards be offset to sit dead-center of
-// the row instead of hugging the left edge.
-const CENTER_LAST_ROW: Partial<Record<(typeof CATEGORY_META)[number]["key"], string>> = {
-  topicals: "lg:col-start-2",
-  accessories: "lg:col-start-4",
-};
 
 export default function Categories() {
   const { t } = useLanguage();
@@ -115,15 +124,14 @@ export default function Categories() {
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+        {/* 9 categories = a clean 3×3 grid at desktop width (lg), no
+            leftover/centered last row needed. sm keeps 2 columns (4 rows of
+            2 + 1), base stays 1 column. */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORY_META.map((category, index) => {
             const content = t.categories.items[category.key];
             return (
-              <Reveal
-                key={category.key}
-                delay={index * 80}
-                className={`lg:col-span-2 ${CENTER_LAST_ROW[category.key] ?? ""}`}
-              >
+              <Reveal key={category.key} delay={index * 80}>
                 <CategoryCard
                   name={content.name}
                   description={content.description}
@@ -131,6 +139,8 @@ export default function Categories() {
                   icon={category.icon}
                   theme={category.theme}
                   href={category.href}
+                  imageSrc={category.image}
+                  imageAlt={content.alt}
                 />
               </Reveal>
             );

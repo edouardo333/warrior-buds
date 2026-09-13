@@ -75,6 +75,7 @@ export default function AddressBook() {
             <input
               id="addr-fullname"
               required
+              autoComplete="name"
               value={form.fullName}
               onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))}
               className={fieldClass()}
@@ -84,6 +85,7 @@ export default function AddressBook() {
             <input
               id="addr-line1"
               required
+              autoComplete="address-line1"
               value={form.line1}
               onChange={(e) => setForm((p) => ({ ...p, line1: e.target.value }))}
               className={fieldClass()}
@@ -92,6 +94,7 @@ export default function AddressBook() {
           <FormField label={t.account.addresses.line2} htmlFor="addr-line2">
             <input
               id="addr-line2"
+              autoComplete="address-line2"
               value={form.line2}
               onChange={(e) => setForm((p) => ({ ...p, line2: e.target.value }))}
               className={fieldClass()}
@@ -102,6 +105,7 @@ export default function AddressBook() {
               <input
                 id="addr-city"
                 required
+                autoComplete="address-level2"
                 value={form.city}
                 onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
                 className={fieldClass()}
@@ -111,6 +115,7 @@ export default function AddressBook() {
               <input
                 id="addr-province"
                 required
+                autoComplete="address-level1"
                 value={form.province}
                 onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
                 className={fieldClass()}
@@ -122,6 +127,7 @@ export default function AddressBook() {
               <input
                 id="addr-postal"
                 required
+                autoComplete="postal-code"
                 value={form.postalCode}
                 onChange={(e) => setForm((p) => ({ ...p, postalCode: e.target.value }))}
                 className={fieldClass()}
@@ -131,6 +137,7 @@ export default function AddressBook() {
               <input
                 id="addr-country"
                 required
+                autoComplete="country-name"
                 value={form.country}
                 onChange={(e) => setForm((p) => ({ ...p, country: e.target.value }))}
                 className={fieldClass()}
@@ -140,6 +147,8 @@ export default function AddressBook() {
           <FormField label={t.account.addresses.phone} htmlFor="addr-phone">
             <input
               id="addr-phone"
+              type="tel"
+              autoComplete="tel"
               value={form.phone}
               onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
               className={fieldClass()}

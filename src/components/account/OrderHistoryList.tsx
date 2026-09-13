@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCustomerOrders } from "@/lib/shop/order-actions";
 import { getOrderStatusLabel } from "@/lib/shop/order-engine";
+import { formatPrice } from "@/lib/shop/product-engine";
 
 export default function OrderHistoryList() {
   const { t, locale } = useLanguage();
@@ -40,7 +41,7 @@ export default function OrderHistoryList() {
                   <td className="py-3 pr-4 font-mono text-foreground/90">{order.id}</td>
                   <td className="py-3 pr-4 text-foreground/60">{new Date(order.createdAt).toLocaleDateString(locale)}</td>
                   <td className="py-3 pr-4 text-foreground/60">{getOrderStatusLabel(order.status, locale)}</td>
-                  <td className="py-3 pr-4 font-semibold text-foreground">${order.total.toFixed(2)}</td>
+                  <td className="py-3 pr-4 font-semibold text-foreground">{formatPrice(order.total, locale)}</td>
                   <td className="py-3 text-right">
                     <Link href={`/account/orders/${order.id}`} className="text-wb-orange hover:underline">
                       {t.account.orders.viewDetails}

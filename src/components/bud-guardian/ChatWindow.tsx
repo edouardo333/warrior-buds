@@ -119,6 +119,7 @@ export default function ChatWindow({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={copy.placeholder}
+          aria-label={copy.placeholder}
           className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-foreground placeholder:text-foreground/40 outline-none transition-colors duration-200 focus:border-wb-orange/50"
         />
         <button

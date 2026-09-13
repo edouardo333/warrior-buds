@@ -74,8 +74,8 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
           fr: "Puis-je suivre, modifier ou annuler une commande ?",
         },
         answer: {
-          en: "Tracking: signed-in customers see live status under Account → Orders; anyone, including guests, can also look up an order at Track Order using the order number and the email used at checkout. Editing or cancelling: once an order is placed we can't guarantee automatic changes — contact us (phone, Instagram, or Bud Guardian) as soon as possible and we'll do our best before it ships.",
-          fr: "Suivi : les clients connectés voient le statut en direct dans Compte → Commandes; tout le monde, y compris les invités, peut aussi repérer une commande dans Suivre ma commande avec le numéro de commande et le courriel utilisé lors du paiement. Modification ou annulation : une fois la commande passée, nous ne pouvons pas garantir des changements automatiques — contactez-nous (téléphone, Instagram ou Bud Guardian) le plus vite possible et nous ferons de notre mieux avant l'expédition.",
+          en: "Tracking: signed-in customers see live status under Account → Orders; anyone, including guests, can also look up an order at Track Order using the order number and the email used at checkout. Editing or cancelling: you can request cancellation within 48 hours of placing your order, as long as it hasn't already shipped or been prepared for pickup — contact us (phone, Instagram, or Bud Guardian) as soon as possible with your order number. Once an order has shipped, it can no longer be cancelled.",
+          fr: "Suivi : les clients connectés voient le statut en direct dans Compte → Commandes; tout le monde, y compris les invités, peut aussi repérer une commande dans Suivre ma commande avec le numéro de commande et le courriel utilisé lors du paiement. Modification ou annulation : vous pouvez demander l'annulation dans les 48 heures suivant le passage de votre commande, à condition qu'elle n'ait pas déjà été expédiée ou préparée pour la cueillette — contactez-nous (téléphone, Instagram ou Bud Guardian) le plus vite possible avec votre numéro de commande. Une fois la commande expédiée, elle ne peut plus être annulée.",
         },
         links: [
           { label: { en: "Account → Orders", fr: "Compte → Commandes" }, href: "/account/orders" },
@@ -170,12 +170,12 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
       {
         slug: "buds5",
         question: {
-          en: "Is there a discount code for my first order?",
-          fr: "Y a-t-il un code de rabais pour ma première commande ?",
+          en: "Is there a discount code I can use?",
+          fr: "Y a-t-il un code de rabais que je peux utiliser ?",
         },
         answer: {
-          en: "Yes — enter code BUDS5 at checkout on the Review step for 5% off. It's automatically validated: it only works once, on your very first order, per account or per guest email.",
-          fr: "Oui — entrez le code BUDS5 à l'étape de révision du paiement pour 5 % de rabais. Il est validé automatiquement : il ne fonctionne qu'une fois, sur votre toute première commande, par compte ou par courriel d'invité.",
+          en: "Yes — enter code BUDS5 at checkout on the Review step for 5% off. It's automatically validated: it can be used once per account (or per guest email), on any order — not only your first one.",
+          fr: "Oui — entrez le code BUDS5 à l'étape de révision du paiement pour 5 % de rabais. Il est validé automatiquement : il peut être utilisé une seule fois par compte (ou par courriel d'invité), sur n'importe quelle commande — pas seulement la première.",
         },
       },
       {
@@ -204,8 +204,8 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
           fr: "Puis-je réutiliser BUDS5 sur une commande future ?",
         },
         answer: {
-          en: "No — BUDS5 is strictly a first-order discount. Once an order exists on your account or guest email (with or without the code), it can't be used again on that identity.",
-          fr: "Non — BUDS5 est strictement un rabais de première commande. Dès qu'une commande existe sur votre compte ou votre courriel d'invité (avec ou sans le code), il ne peut plus être réutilisé sur cette identité.",
+          en: "No — BUDS5 can be redeemed once per account (or per guest email). Placing orders without the code doesn't use up your eligibility, but once BUDS5 has actually been applied to an order, that account can't use it again.",
+          fr: "Non — BUDS5 peut être utilisé une seule fois par compte (ou par courriel d'invité). Passer des commandes sans le code ne fait pas perdre votre admissibilité, mais une fois que BUDS5 a été appliqué à une commande, ce compte ne peut plus le réutiliser.",
         },
       },
     ],

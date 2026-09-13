@@ -30,7 +30,10 @@ export default function CartView() {
         <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-6">
             {lines.map((line) => (
-              <CartLineItem key={line.product.id} line={line} />
+              // Two formats of the same product are separate lines sharing
+              // product.id — key by format label too so React never merges
+              // their DOM/state.
+              <CartLineItem key={`${line.product.id}:${line.selectedFormat?.label ?? ""}`} line={line} />
             ))}
           </div>
           <div className="flex flex-col gap-4">

@@ -6,10 +6,10 @@ import SmartImage from "@/components/SmartImage";
 import ProductImageFallback from "@/components/shop/ProductImageFallback";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useWishlist } from "@/lib/shop/cart-actions";
-import { getEffectivePrice } from "@/lib/shop/product-engine";
+import { formatPrice, getEffectivePrice } from "@/lib/shop/product-engine";
 
 export default function WishlistGrid() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { items, toggle, moveToCart } = useWishlist();
 
   return (
@@ -43,7 +43,7 @@ export default function WishlistGrid() {
                 <Link href={`/products/${product.slug}`} className="line-clamp-2 text-sm font-semibold text-foreground hover:text-wb-orange">
                   {product.name}
                 </Link>
-                <p className="text-sm font-semibold text-foreground/80">${getEffectivePrice(product).toFixed(2)}</p>
+                <p className="text-sm font-semibold text-foreground/80">{formatPrice(getEffectivePrice(product), locale)}</p>
                 <div className="mt-auto flex gap-2 pt-2">
                   <button
                     type="button"

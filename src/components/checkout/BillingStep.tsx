@@ -129,6 +129,7 @@ export default function BillingStep({
                 <input
                   id="bill-fullname"
                   required
+                  autoComplete="name"
                   value={form.fullName}
                   onChange={(e) => setForm((p) => ({ ...p, fullName: e.target.value }))}
                   className={fieldClass()}
@@ -138,6 +139,7 @@ export default function BillingStep({
                 <input
                   id="bill-line1"
                   required
+                  autoComplete="address-line1"
                   value={form.line1}
                   onChange={(e) => setForm((p) => ({ ...p, line1: e.target.value }))}
                   className={fieldClass()}
@@ -148,6 +150,7 @@ export default function BillingStep({
                   <input
                     id="bill-city"
                     required
+                    autoComplete="address-level2"
                     value={form.city}
                     onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
                     className={fieldClass()}
@@ -157,6 +160,7 @@ export default function BillingStep({
                   <input
                     id="bill-province"
                     required
+                    autoComplete="address-level1"
                     value={form.province}
                     onChange={(e) => setForm((p) => ({ ...p, province: e.target.value }))}
                     className={fieldClass()}
@@ -167,6 +171,7 @@ export default function BillingStep({
                 <input
                   id="bill-postal"
                   required
+                  autoComplete="postal-code"
                   value={form.postalCode}
                   onChange={(e) => setForm((p) => ({ ...p, postalCode: e.target.value }))}
                   className={fieldClass()}

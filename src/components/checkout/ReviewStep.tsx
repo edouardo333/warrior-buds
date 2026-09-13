@@ -5,6 +5,7 @@ import { PrimaryButton, SecondaryButton } from "@/components/forms/FormField";
 import PromoCodeField, { type PromoFeedback } from "./PromoCodeField";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { CartLine, CartTotals } from "@/lib/shop/cart-engine";
+import { formatPrice } from "@/lib/shop/product-engine";
 import type { Address } from "@/types/account";
 import type { ShippingMethod } from "@/types/shop-order";
 
@@ -37,7 +38,7 @@ export default function ReviewStep({
   onBack: () => void;
   onContinue: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   return (
     <div className="flex flex-col gap-8">
@@ -45,11 +46,15 @@ export default function ReviewStep({
         <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.checkout.review.items}</h2>
         <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
           {lines.map((line) => (
-            <div key={line.product.id} className="flex items-center justify-between text-sm">
+            // Two formats of the same product are separate lines sharing
+            // product.id — key by format label too so React never conflates
+            // them.
+            <div key={`${line.product.id}:${line.selectedFormat?.label ?? ""}`} className="flex items-center justify-between text-sm">
               <span className="text-foreground/80">
-                {line.product.name} x{line.quantity}
+                {line.product.name}
+                {line.selectedFormat ? ` (${line.selectedFormat.label})` : ""} x{line.quantity}
               </span>
-              <span className="font-semibold text-foreground">${line.lineTotal.toFixed(2)}</span>
+              <span className="font-semibold text-foreground">{formatPrice(line.lineTotal, locale)}</span>
             </div>
           ))}
         </div>

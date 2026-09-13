@@ -648,6 +648,38 @@ body {
   }
 }
 
+.wb-cat-card__image-wrap {
+  position: absolute;
+  z-index: 1;
+  inset: 0.75rem 0.75rem 42% 0.75rem;
+  pointer-events: none;
+}
+
+.wb-cat-card__image {
+  transition: transform 400ms ease-out;
+}
+
+.wb-cat-card:hover .wb-cat-card__image {
+  transform: scale(1.06);
+}
+
+/* Fades the image into solid black behind the title/description/CTA block
+   without a hard edge or heavy blur — the top of the card stays image-first,
+   only the bottom third darkens enough for text contrast. */
+.wb-cat-card__image-scrim {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0 0;
+  height: 58%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.55) 55%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 .wb-cat-card__badge {
   position: relative;
   z-index: 6;
@@ -808,7 +840,8 @@ body {
   .wb-cat-card__glow,
   .wb-cat-card__accent-line,
   .wb-cat-card__badge,
-  .wb-cat-card__arrow {
+  .wb-cat-card__arrow,
+  .wb-cat-card__image {
     transition: none !important;
     animation: none !important;
   }
@@ -816,7 +849,8 @@ body {
     transform: none !important;
   }
   .wb-cat-card:hover .wb-cat-card__badge,
-  .wb-cat-card:hover .wb-cat-card__arrow {
+  .wb-cat-card:hover .wb-cat-card__arrow,
+  .wb-cat-card:hover .wb-cat-card__image {
     transform: none !important;
   }
   .wb-product-card,

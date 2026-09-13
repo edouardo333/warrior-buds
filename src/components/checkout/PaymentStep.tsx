@@ -4,6 +4,7 @@ import { PAYMENT_PROVIDER_BADGES } from "./PaymentIcons";
 import { PrimaryButton, SecondaryButton } from "@/components/forms/FormField";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { CartTotals } from "@/lib/shop/cart-engine";
+import { formatPrice } from "@/lib/shop/product-engine";
 import { getEnabledProviders } from "@/lib/shop/payment-providers/registry";
 import type { PaymentProviderId } from "@/types/shop-payment";
 
@@ -85,7 +86,7 @@ export default function PaymentStep({
 
       <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-sm">
         <span className="text-foreground/60">{t.orderDetail.total}</span>
-        <span className="font-semibold text-foreground">${finalTotal.toFixed(2)}</span>
+        <span className="font-semibold text-foreground">{formatPrice(finalTotal, locale)}</span>
       </div>
 
       <div className="flex gap-3">

@@ -6,6 +6,9 @@ import {
   Cigarette,
   GraduationCap,
   ShieldAlert,
+  Droplet,
+  Cookie,
+  SprayCan,
   type LucideIcon,
 } from "lucide-react";
 
@@ -765,6 +768,207 @@ export const LEARNING_CATEGORIES: LearningCategory[] = [
           fr: [
             "Cette section rassemble certaines des questions les plus fréquentes posées par la clientèle au sujet des produits de cannabis en général — comment entreposer les produits en toute sécurité, à quoi s'attendre selon les différents formats, et où trouver de l'information fiable. Elle se veut un point de référence rapide plutôt qu'un guide complet.",
             "Pour toute question spécifique à un produit qui vous intéresse, le personnel en boutique demeure toujours la meilleure ressource, puisque l'étiquetage et les formulations peuvent varier d'une marque à l'autre. Cette section, comme le reste du Centre d'apprentissage, est fournie à titre éducatif seulement et ne constitue pas un avis médical.",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    slug: "cbd",
+    icon: Droplet,
+    emoji: "\u{1F4A7}",
+    accent: "yellow",
+    title: { en: "CBD", fr: "CBD" },
+    description: {
+      en: "Understand CBD, its different formats, and the essential concepts to know.",
+      fr: "Comprendre le CBD, ses différents formats et les notions essentielles à connaître.",
+    },
+    topics: [
+      {
+        slug: "what-is-cbd",
+        title: { en: "What Is CBD?", fr: "Qu'est-ce que le CBD?" },
+        summary: {
+          en: "An introduction to CBD, one of the main non-intoxicating cannabinoids found in cannabis.",
+          fr: "Une introduction au CBD, l'un des principaux cannabinoïdes non intoxicants présents dans le cannabis.",
+        },
+        body: {
+          en: [
+            "CBD (cannabidiol) is one of the many naturally occurring cannabinoids found in the cannabis plant. Unlike THC, CBD is generally described as non-intoxicating, meaning it isn't typically associated with the “high” commonly linked to cannabis use.",
+            "CBD is available in a wide range of formats, including oils, capsules, topicals, and vapes, and is often chosen by consumers exploring cannabis without the intoxicating effects associated with THC. As with all cannabis products, individual experience can vary, and checking product labeling is the best way to understand what a specific item contains.",
+          ],
+          fr: [
+            "Le CBD (cannabidiol) est l'un des nombreux cannabinoïdes naturellement présents dans la plante de cannabis. Contrairement au THC, le CBD est généralement décrit comme non intoxicant, ce qui signifie qu'il n'est habituellement pas associé au « high » couramment lié à la consommation de cannabis.",
+            "Le CBD est offert dans une large gamme de formats, notamment les huiles, les capsules, les produits topiques et les vapoteuses, et est souvent choisi par les consommateurs qui explorent le cannabis sans les effets intoxicants associés au THC. Comme pour tous les produits de cannabis, l'expérience individuelle peut varier, et vérifier l'étiquette du produit demeure la meilleure façon de savoir ce qu'il contient.",
+          ],
+        },
+      },
+      {
+        slug: "cbd-product-types",
+        title: { en: "Full-Spectrum, Broad-Spectrum & Isolate", fr: "Spectre complet, spectre large et isolat" },
+        summary: {
+          en: "The three common categories used to describe how much of the cannabis plant a CBD product contains.",
+          fr: "Les trois catégories courantes utilisées pour décrire la quantité de la plante de cannabis présente dans un produit de CBD.",
+        },
+        body: {
+          en: [
+            "CBD products are commonly grouped into three categories based on what else from the plant they contain alongside CBD. Full-spectrum products contain a range of cannabinoids and compounds naturally found in cannabis, including trace amounts of THC. Broad-spectrum products aim to include multiple cannabinoids while removing THC, and isolate products contain purified CBD with no other cannabinoids.",
+            "Which category a consumer chooses often comes down to personal preference, since each format offers a different balance of compounds. Reading the product label and any accompanying lab results is the most reliable way to understand exactly what a specific product contains.",
+          ],
+          fr: [
+            "Les produits de CBD sont généralement classés en trois catégories selon ce qu'ils contiennent d'autre de la plante en plus du CBD. Les produits à spectre complet contiennent une gamme de cannabinoïdes et de composés naturellement présents dans le cannabis, y compris des traces de THC. Les produits à spectre large visent à inclure plusieurs cannabinoïdes tout en retirant le THC, tandis que les produits isolats contiennent du CBD purifié sans autre cannabinoïde.",
+            "Le choix d'une catégorie plutôt qu'une autre dépend souvent des préférences personnelles, puisque chaque format offre un équilibre différent de composés. Lire l'étiquette du produit et les résultats d'analyses en laboratoire qui l'accompagnent demeure la façon la plus fiable de savoir exactement ce que contient un produit précis.",
+          ],
+        },
+      },
+      {
+        slug: "cbd-formats",
+        title: { en: "Common CBD Formats", fr: "Formats courants de CBD" },
+        summary: {
+          en: "An overview of the everyday ways CBD products are packaged and consumed.",
+          fr: "Un survol des façons courantes dont les produits de CBD sont emballés et consommés.",
+        },
+        body: {
+          en: [
+            "CBD is sold in many of the same formats used across the broader cannabis market, including oils and tinctures taken under the tongue, capsules, topical creams and balms, and vape cartridges. Each format offers a different way of incorporating CBD into a routine.",
+            "Oils and tinctures are often chosen for their flexibility, since the amount used can be adjusted drop by drop, while capsules offer a pre-measured, consistent option. Topical formats are applied directly to the skin, and vapes provide a fast-acting inhaled option. As with any cannabis product, checking the label helps clarify what a specific item contains.",
+          ],
+          fr: [
+            "Le CBD est vendu dans plusieurs des mêmes formats que l'on retrouve sur l'ensemble du marché du cannabis, notamment les huiles et teintures prises sous la langue, les capsules, les crèmes et baumes topiques, ainsi que les cartouches de vapotage. Chaque format offre une façon différente d'intégrer le CBD à une routine.",
+            "Les huiles et teintures sont souvent privilégiées pour leur flexibilité, puisque la quantité utilisée peut être ajustée goutte par goutte, tandis que les capsules offrent une option préformatée et constante. Les formats topiques s'appliquent directement sur la peau, et les vapoteuses offrent une option inhalée à action rapide. Comme pour tout produit de cannabis, vérifier l'étiquette aide à clarifier ce que contient un article précis.",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    slug: "edibles",
+    icon: Cookie,
+    emoji: "\u{1F36A}",
+    accent: "red",
+    title: { en: "Edibles", fr: "Comestibles" },
+    description: {
+      en: "Learn about the different types of edible products and their characteristics.",
+      fr: "Comprendre les différents types de produits comestibles et leurs particularités.",
+    },
+    topics: [
+      {
+        slug: "what-are-edibles",
+        title: { en: "What Are Edibles?", fr: "Que sont les comestibles?" },
+        summary: {
+          en: "A general introduction to cannabis-infused food and drink products.",
+          fr: "Une introduction générale aux produits alimentaires et aux boissons infusés au cannabis.",
+        },
+        body: {
+          en: [
+            "Edibles are food or drink products infused with cannabis extract, most commonly distillate. Rather than being smoked or vaporized, cannabis is consumed through digestion, which changes how and when its effects are felt.",
+            "Because edibles are processed by the digestive system and liver, their onset is generally slower and less predictable than inhaled products — often discussed as anywhere from 30 minutes to over two hours. This is a key reason “start low, go slow” is such commonly repeated guidance for this category specifically.",
+          ],
+          fr: [
+            "Les comestibles sont des produits alimentaires ou des boissons infusés à l'extrait de cannabis, le plus souvent du distillat. Plutôt que d'être fumé ou vapoté, le cannabis est consommé par digestion, ce qui change la façon et le moment où ses effets sont ressentis.",
+            "Comme les comestibles sont traités par le système digestif et le foie, leur apparition est généralement plus lente et moins prévisible que celle des produits inhalés — souvent discutée comme allant de 30 minutes à plus de deux heures. C'est une raison importante pour laquelle « commencer petit, aller lentement » est un conseil si souvent répété spécifiquement pour cette catégorie.",
+          ],
+        },
+      },
+      {
+        slug: "gummies-chocolates",
+        title: { en: "Gummies & Chocolates", fr: "Gommes et chocolats" },
+        summary: {
+          en: "Two of the most common edible formats, typically divided into individual pieces.",
+          fr: "Deux des formats de comestibles les plus courants, généralement divisés en morceaux individuels.",
+        },
+        body: {
+          en: [
+            "Gummies and chocolates are among the most widely available edible formats, typically made by infusing a cannabis extract into a food base and dividing it into individual pieces or squares. This piece-based format is designed to make each unit easy to identify and separate from the rest of the package.",
+            "Flavor, texture, and formulation vary by brand, and packaging typically indicates how the product is divided. As with all edibles, checking the label for how the total product is portioned is an important step before consuming.",
+          ],
+          fr: [
+            "Les gommes et les chocolats comptent parmi les formats de comestibles les plus répandus, généralement fabriqués en infusant un extrait de cannabis dans une base alimentaire, puis en la divisant en morceaux ou en carrés individuels. Ce format en morceaux vise à rendre chaque unité facile à reconnaître et à séparer du reste de l'emballage.",
+            "La saveur, la texture et la formulation varient selon la marque, et l'emballage indique généralement comment le produit est divisé. Comme pour tous les comestibles, vérifier l'étiquette pour savoir comment le produit total est réparti est une étape importante avant la consommation.",
+          ],
+        },
+      },
+      {
+        slug: "edible-beverages",
+        title: { en: "Edible Beverages", fr: "Boissons comestibles" },
+        summary: {
+          en: "Cannabis-infused drinks, from sparkling beverages to teas and coffees.",
+          fr: "Des boissons infusées au cannabis, des breuvages pétillants aux thés et cafés.",
+        },
+        body: {
+          en: [
+            "Cannabis-infused beverages include sparkling drinks, teas, coffees, and other beverage formats infused with cannabis extract. They're often chosen by consumers who prefer a familiar drinking experience over solid edibles.",
+            "Because beverages are still processed through digestion, they generally share the slower, less predictable onset associated with other edibles, though some formulations are designed for faster absorption. Shaking or stirring the product as directed, and checking the label for how it's portioned, are both commonly recommended steps.",
+          ],
+          fr: [
+            "Les boissons infusées au cannabis comprennent les breuvages pétillants, les thés, les cafés et d'autres formats de boissons infusés à l'extrait de cannabis. Elles sont souvent choisies par les consommateurs qui préfèrent une expérience de consommation familière plutôt que les comestibles solides.",
+            "Comme les boissons sont tout de même traitées par digestion, elles partagent généralement l'apparition plus lente et moins prévisible associée aux autres comestibles, bien que certaines formulations soient conçues pour une absorption plus rapide. Agiter ou brasser le produit selon les indications, et vérifier l'étiquette pour savoir comment il est réparti, sont deux étapes couramment recommandées.",
+          ],
+        },
+      },
+    ],
+  },
+  {
+    slug: "topicals",
+    icon: SprayCan,
+    emoji: "\u{1F9F4}",
+    accent: "orange",
+    title: { en: "Topicals", fr: "Produits topiques" },
+    description: {
+      en: "Learn about topical products, their formats, and their general use.",
+      fr: "Découvrir les produits topiques, leurs formats et leur utilisation générale.",
+    },
+    topics: [
+      {
+        slug: "what-are-topicals",
+        title: { en: "What Are Topicals?", fr: "Que sont les produits topiques?" },
+        summary: {
+          en: "An introduction to cannabis products designed to be applied directly to the skin.",
+          fr: "Une introduction aux produits de cannabis conçus pour être appliqués directement sur la peau.",
+        },
+        body: {
+          en: [
+            "Topicals are cannabis-infused products designed to be applied directly to the skin rather than inhaled or ingested, including creams, balms, oils, and patches. Most topical formats are not intended to produce an intoxicating effect, since standard topicals generally don't absorb deeply enough to reach the bloodstream in the same way inhaled or ingested products do.",
+            "Topicals are typically applied to a specific area and are chosen by consumers looking for a localized, non-intoxicating way to incorporate cannabinoids into a routine. As with any cannabis product, checking the label for ingredients and intended use is recommended before applying.",
+          ],
+          fr: [
+            "Les produits topiques sont des produits infusés au cannabis conçus pour être appliqués directement sur la peau plutôt qu'inhalés ou ingérés, incluant les crèmes, les baumes, les huiles et les timbres. La plupart des formats topiques ne visent pas à produire un effet intoxicant, puisque les topiques standards ne pénètrent généralement pas assez profondément pour atteindre la circulation sanguine de la même façon que les produits inhalés ou ingérés.",
+            "Les produits topiques sont généralement appliqués sur une zone précise et sont choisis par les consommateurs à la recherche d'une façon localisée et non intoxicante d'intégrer des cannabinoïdes à une routine. Comme pour tout produit de cannabis, il est recommandé de vérifier l'étiquette pour connaître les ingrédients et l'usage prévu avant l'application.",
+          ],
+        },
+      },
+      {
+        slug: "creams-balms",
+        title: { en: "Creams & Balms", fr: "Crèmes et baumes" },
+        summary: {
+          en: "The most common topical formats, applied by hand to a specific area.",
+          fr: "Les formats topiques les plus courants, appliqués à la main sur une zone précise.",
+        },
+        body: {
+          en: [
+            "Creams and balms are among the most common topical formats, typically combining a cannabis extract with a lotion, oil, or wax-based carrier. They're applied by hand directly to the skin, usually over a localized area.",
+            "Texture and absorption vary by product — creams tend to be lighter and absorb more quickly, while balms are thicker and longer-lasting on the skin. Checking the ingredient list is useful for consumers with sensitivities, since formulations differ between brands.",
+          ],
+          fr: [
+            "Les crèmes et les baumes comptent parmi les formats topiques les plus courants, combinant généralement un extrait de cannabis à une lotion, une huile ou une base cireuse. Ils s'appliquent à la main directement sur la peau, habituellement sur une zone localisée.",
+            "La texture et l'absorption varient selon le produit — les crèmes ont tendance à être plus légères et à s'absorber plus rapidement, tandis que les baumes sont plus épais et persistent plus longtemps sur la peau. Vérifier la liste des ingrédients est utile pour les consommateurs ayant des sensibilités, puisque les formulations diffèrent d'une marque à l'autre.",
+          ],
+        },
+      },
+      {
+        slug: "transdermal-patches",
+        title: { en: "Transdermal Patches", fr: "Timbres transdermiques" },
+        summary: {
+          en: "Adhesive patches designed for slow, sustained release through the skin.",
+          fr: "Des timbres adhésifs conçus pour une libération lente et continue à travers la peau.",
+        },
+        body: {
+          en: [
+            "Transdermal patches are adhesive patches applied to the skin that are designed to release cannabinoids gradually over an extended period. Unlike standard topicals, some transdermal formats are specifically engineered to pass through the skin into the bloodstream.",
+            "Because they can be designed differently from standard topical creams, it's important to read the label carefully to understand whether a specific patch is intended for localized use or systemic absorption. Placement instructions and wear time also vary by product.",
+          ],
+          fr: [
+            "Les timbres transdermiques sont des timbres adhésifs appliqués sur la peau, conçus pour libérer des cannabinoïdes graduellement sur une période prolongée. Contrairement aux topiques standards, certains formats transdermiques sont spécifiquement conçus pour traverser la peau et atteindre la circulation sanguine.",
+            "Comme ils peuvent être conçus différemment des crèmes topiques standards, il est important de lire attentivement l'étiquette pour comprendre si un timbre précis est destiné à un usage localisé ou à une absorption systémique. Les instructions de placement et la durée de port varient également selon le produit.",
           ],
         },
       },

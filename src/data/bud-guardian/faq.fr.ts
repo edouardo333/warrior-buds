@@ -86,7 +86,7 @@ const faqFr: FaqEntry[] = [
     question: "Acceptez-vous Interac ?",
     keywords: ["interac", "debit", "carte de debit"],
     answer:
-      "Je n'ai pas encore la liste exacte des modes de paiement acceptés en boutique. Le plus sûr est de nous appeler pour confirmer avant votre visite.",
+      "Oui — le virement Interac est l'un de nos modes de paiement au paiement en ligne. L'écran de paiement indique exactement où l'envoyer une fois votre commande passée.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -95,7 +95,7 @@ const faqFr: FaqEntry[] = [
     question: "Acceptez-vous les cartes de crédit ?",
     keywords: ["carte de credit", "visa", "mastercard", "credit card"],
     answer:
-      "Je n'ai pas encore la liste exacte des modes de paiement acceptés en boutique. Le plus sûr est de nous appeler pour confirmer avant votre visite.",
+      "Oui — la carte de crédit/débit est l'un de nos modes de paiement au paiement en ligne, en plus du virement Interac, de Bitcoin, d'Ethereum et de Shakepay.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -104,7 +104,7 @@ const faqFr: FaqEntry[] = [
     question: "Acceptez-vous l'argent comptant ?",
     keywords: ["comptant", "argent comptant", "cash", "especes"],
     answer:
-      "Je n'ai pas encore la liste exacte des modes de paiement acceptés en boutique. Le plus sûr est de nous appeler pour confirmer avant votre visite.",
+      "L'argent comptant ne fait pas partie de nos modes de paiement en ligne. Au paiement, vous pouvez payer par virement Interac, carte de crédit/débit, Bitcoin, Ethereum ou Shakepay.",
     suggestions: ["phone", "directions"],
   },
   {
@@ -113,7 +113,7 @@ const faqFr: FaqEntry[] = [
     question: "Acceptez-vous les virements Interac ?",
     keywords: ["virement", "e-transfer", "etransfer", "virement interac"],
     answer:
-      "Je n'ai pas encore cette information précise. Contactez-nous directement pour connaître les modes de paiement acceptés.",
+      "Oui — le virement Interac est l'un de nos modes de paiement au paiement en ligne; l'écran de paiement indique exactement où l'envoyer.",
     suggestions: ["phone"],
   },
   {
@@ -121,7 +121,8 @@ const faqFr: FaqEntry[] = [
     topic: "age",
     question: "Quel âge faut-il avoir pour acheter ?",
     keywords: ["age", "18 ans", "majeur", "age minimum", "quel age"],
-    answer: "Il faut avoir 18 ans ou plus pour acheter en boutique, conformément à la loi québécoise.",
+    answer:
+      "Il faut avoir au moins 18 ans pour magasiner chez nous, et avoir l'âge légal pour acheter du cannabis dans votre juridiction — voir nos Modalités et conditions pour les détails.",
     suggestions: ["products", "hours"],
   },
   {
@@ -129,7 +130,8 @@ const faqFr: FaqEntry[] = [
     topic: "age",
     question: "Dois-je présenter une pièce d'identité ?",
     keywords: ["piece d identite", "id", "carte identite", "preuve d age"],
-    answer: "Oui, une pièce d'identité avec photo prouvant que vous avez 18 ans ou plus est requise en boutique.",
+    answer:
+      "Oui, une pièce d'identité avec photo prouvant que vous avez 18 ans ou plus peut être exigée — au paiement, à la livraison ou à la cueillette.",
     suggestions: ["hours", "directions"],
   },
   {
@@ -138,7 +140,7 @@ const faqFr: FaqEntry[] = [
     question: "Puis-je acheter en ligne ?",
     keywords: ["acheter en ligne", "commande en ligne", "site de commande", "boutique en ligne", "online store"],
     answer:
-      "Pas pour le moment — les achats se font uniquement en boutique. La commande en ligne fait partie de nos prochaines étapes !",
+      "Oui — parcourez la Boutique, ajoutez des produits à votre panier et payez en ligne. Choisissez la livraison Postes Canada (partout au Québec) ou la cueillette en boutique.",
     suggestions: ["products", "directions"],
   },
   {
@@ -147,7 +149,7 @@ const faqFr: FaqEntry[] = [
     question: "Offrez-vous la livraison ?",
     keywords: ["livraison", "livrer", "delivery", "livrez vous"],
     answer:
-      "Nous n'offrons pas encore la livraison. Tous nos achats se font présentement en boutique à Oka/Kanesatake.",
+      "Oui — nous expédions avec Postes Canada partout au Québec, avec un délai estimé de 2 à 5 jours ouvrables (des délais de transporteur peuvent survenir). Les commandes de 100 $ CAD ou plus sont expédiées gratuitement; des frais de 9,95 $ s'appliquent autrement. La cueillette en boutique est aussi offerte.",
     suggestions: ["directions", "hours"],
   },
   {
@@ -394,7 +396,7 @@ const faqFr: FaqEntry[] = [
     topic: "legal",
     question: "Y a-t-il des restrictions d'âge ?",
     keywords: ["restriction", "disclaimer", "avertissement"],
-    answer: "Réservé aux 18 ans et plus, achat en boutique uniquement, conformément à la réglementation en vigueur.",
+    answer: "Réservé aux 18 ans et plus, conformément à la politique d'âge de notre boutique.",
   },
   {
     id: "gallery-info",
@@ -469,8 +471,7 @@ const faqFr: FaqEntry[] = [
     topic: "purchase",
     question: "Comment fonctionne le ramassage en boutique ?",
     keywords: ["comment fonctionne le ramassage", "processus de ramassage", "comment ca marche le ramassage", "recuperer ma commande comment"],
-    answer:
-      "En boutique : présentez-vous avec une pièce d'identité valide (18 ans ou plus), le paiement se fait sur place par Interac ou comptant, puis vous repartez avec votre commande.",
+    answer: `Choisissez la Cueillette comme mode de livraison au paiement, puis payez avec l'un de nos modes de paiement en ligne. Passez ensuite à notre emplacement — ${SITE.addressLine1}, ${SITE.addressLine2} — avec une pièce d'identité valide (18 ans ou plus) pour récupérer votre commande.`,
     suggestions: ["order-track", "directions"],
   },
   {
@@ -479,7 +480,7 @@ const faqFr: FaqEntry[] = [
     question: "Puis-je retourner ou échanger un produit ?",
     keywords: ["retour", "retourner", "echange", "echanger", "remboursement", "return", "exchange"],
     answer:
-      "Je n'ai pas les détails exacts de notre politique de retour/échange sous la main. Le plus fiable est de nous appeler ou de nous écrire sur Instagram, avec votre numéro de commande si possible.",
+      "Toutes les ventes sont finales — nous n'acceptons pas les retours ou échanges ordinaires. Si votre commande arrive incorrecte ou défectueuse, contactez-nous avec votre numéro de commande et nous examinerons la situation pour trouver une solution avec vous.",
     suggestions: ["phone", "instagram"],
   },
   {
@@ -488,7 +489,7 @@ const faqFr: FaqEntry[] = [
     question: "Quelles sont vos politiques en boutique ?",
     keywords: ["politique", "politiques", "reglement", "reglement de la boutique", "conditions"],
     answer:
-      "Nos règles principales : 18 ans et plus avec pièce d'identité, achat en boutique uniquement, paiement par Interac ou comptant. Pour tout détail plus précis, appelez-nous directement.",
+      "Nos règles principales : 18 ans et plus pour commander, une pièce d'identité peut être exigée, et toutes les ventes sont finales sauf en cas de commande incorrecte ou défectueuse. Voir nos Modalités et conditions pour tous les détails, ou contactez-nous directement.",
     suggestions: ["policy-age", "phone"],
   },
   {

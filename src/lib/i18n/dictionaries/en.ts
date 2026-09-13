@@ -1,6 +1,9 @@
 import type { Dictionary } from "../types";
 
 const en: Dictionary = {
+  home: {
+    metaTitle: "Warrior Buds | Premium Cannabis Dispensary in Oka/Kanesatake",
+  },
   nav: {
     links: {
       home: "Home",
@@ -23,7 +26,7 @@ const en: Dictionary = {
     cartItemsAria: (count) => `Cart, ${count} item${count === 1 ? "" : "s"}`,
   },
   announcementBar: {
-    message: "FIRST ORDER? BUDS5 = 5% OFF • FREE SHIPPING $100+ • BUD GUARDIAN AI SUPPORT 24/7 • 18+ ONLY",
+    message: "CODE BUDS5 = 5% OFF, ONCE PER ACCOUNT • FREE SHIPPING $100+ • BUD GUARDIAN AI SUPPORT 24/7 • 18+ ONLY",
   },
   hero: {
     kicker: "Kanesatake · Oka · Quebec",
@@ -47,14 +50,15 @@ const en: Dictionary = {
     title: "Explore Our Categories",
     explore: "Explore",
     items: {
-      flower: { name: "Flower", description: "Hand-selected premium strains." },
-      edibles: { name: "Edibles", description: "Crafted, precise, and potent." },
-      vapes: { name: "Vapes", description: "Clean hardware, pure extracts." },
-      concentrates: { name: "Concentrates", description: "Full-spectrum, high-potency." },
-      cbd: { name: "CBD", description: "Balanced wellness, no compromise." },
-      accessories: { name: "Accessories", description: "Gear built for the ritual." },
-      mushrooms: { name: "Mushrooms", description: "Functional fungi, no THC, no compromise." },
-      topicals: { name: "Topicals", description: "Targeted relief, applied directly." },
+      flower: { name: "Flower", description: "Hand-selected premium strains.", alt: "Flower category" },
+      edibles: { name: "Edibles", description: "Crafted, precise, and potent.", alt: "Edibles category" },
+      vapes: { name: "Vapes", description: "Clean hardware, pure extracts.", alt: "Vapes category" },
+      concentrates: { name: "Concentrates", description: "Full-spectrum, high-potency.", alt: "Concentrates category" },
+      cbd: { name: "CBD", description: "Balanced wellness, no compromise.", alt: "CBD category" },
+      accessories: { name: "Accessories", description: "Gear built for the ritual.", alt: "Accessories category" },
+      mushrooms: { name: "Mushrooms", description: "Functional fungi, no THC, no compromise.", alt: "Mushrooms category" },
+      topicals: { name: "Topicals", description: "Targeted relief, applied directly.", alt: "Topicals category" },
+      cigarettes: { name: "Cigarettes", description: "Selected tobacco products and formats.", alt: "Cigarettes category" },
     },
   },
   whyWarriorBuds: {
@@ -350,7 +354,7 @@ const en: Dictionary = {
   learningCenter: {
     metaTitle: "Learning Center | Warrior Buds",
     metaDescription:
-      "Explore the Warrior Buds Learning Center — clear, educational guides on cannabis basics, concentrates, high-potency products, psychedelics, nicotine products, and responsible use.",
+      "Explore the Warrior Buds Learning Center — clear, educational guides on cannabis basics, concentrates, high-potency products, CBD, edibles, topicals, psychedelics, nicotine products, and responsible use.",
     hero: {
       eyebrow: "Knowledge First",
       title: "Learning Center",
@@ -546,7 +550,7 @@ const en: Dictionary = {
     appliedMessage: (code, amount) => `Code ${code} applied — you saved $${amount}.`,
     freeShippingMessage: (threshold) => `Free shipping unlocked — your order qualifies for orders $${threshold}+.`,
     errorInvalid: "That code isn't valid.",
-    errorNotFirstOrder: "BUDS5 is reserved for first orders on this account.",
+    errorAlreadyRedeemed: "BUDS5 has already been used on this account.",
     errorEmpty: "Enter a code to apply.",
     discountLabel: (code) => `Promo (${code})`,
   },
@@ -570,6 +574,7 @@ const en: Dictionary = {
     miniCartTitle: "Your Cart",
     viewCart: "View Cart",
     itemsInCart: (count) => `${count} item${count === 1 ? "" : "s"} in your cart`,
+    formatLabel: (label) => `Format: ${label}`,
   },
   wishlist: {
     metaTitle: "Wishlist | Warrior Buds",
@@ -616,7 +621,7 @@ const en: Dictionary = {
       addNew: "Add a New Address",
       useAddress: "Use This Address",
       method: "Shipping Method",
-      standard: "Standard (3–5 business days)",
+      standard: "Standard — 2–5 business days",
       expedited: "Expedited (1–2 business days)",
       pickup: "Store Pickup",
       continueBtn: "Continue to Billing",
@@ -644,7 +649,7 @@ const en: Dictionary = {
       metaTitle: "Order Confirmed | Warrior Buds",
       title: "Order Confirmed",
       thankYou: (orderId) => `Thank you! Your order ${orderId} has been placed.`,
-      whatNext: "We've sent a confirmation email with your payment instructions.",
+      whatNext: "Your payment instructions are shown below. You can also find your order anytime in Account → Orders.",
       viewOrder: "View Order",
       continueShopping: "Continue Shopping",
     },
@@ -675,7 +680,6 @@ const en: Dictionary = {
     shippingAddress: "Shipping Address",
     billingAddress: "Billing Address",
     paymentMethod: "Payment Method",
-    simulateAdvance: "Demo: Advance to Next Stage →",
     orderComplete: "This order has been delivered.",
     timeline: "Order Timeline",
     total: "Total",
@@ -714,6 +718,7 @@ const en: Dictionary = {
       addToCart: "Add to Cart",
       outOfStock: "Out of Stock",
       lowStock: "Low Stock",
+      startingFrom: (formattedPrice) => `From ${formattedPrice}`,
     },
     detail: {
       addToCart: "Add to Cart",
@@ -736,6 +741,19 @@ const en: Dictionary = {
       trustSecureCheckout: "Secure Checkout",
       trustInStorePickup: "In-Store Pickup",
       trustCustomerSupport: "Customer Support",
+      bulkPricingTitle: "Bulk Pricing",
+      bulkPricingQuantity: "Quantity",
+      bulkPricingPrice: "Price",
+      bulkPricingUnit: (quantity) => (quantity === 1 ? "unit" : "units"),
+      totalPrice: (formattedPrice) => `Total price: ${formattedPrice}`,
+      youSave: (formattedAmount) => `You save ${formattedAmount}`,
+      availableFormatsTitle: "Available Formats",
+      formatColumn: "Format",
+      priceColumn: "Price",
+      inStoreOnlyNotice: "Available in-store only — visit us or call to purchase this product.",
+      selectFormatPrompt: "Select a format",
+      enlargeImage: (label) => `View larger image of ${label}`,
+      closeImage: "Close image",
     },
     finalCta: {
       label: "Visit The Store",
@@ -745,6 +763,12 @@ const en: Dictionary = {
       getDirections: "Get Directions",
       callNow: "Call Now",
     },
+  },
+  notFoundPage: {
+    title: "Page Not Found",
+    message: "This page doesn't exist or may have moved.",
+    backToProducts: "Back to Products",
+    backHome: "Back to Home",
   },
   legal: {
     onThisPage: "On This Page",
@@ -803,8 +827,8 @@ const en: Dictionary = {
               text: "Warrior Buds' online store currently runs without a remote customer database: your account details, cart, wishlist, order history and saved addresses are stored locally in your own browser (using its built-in storage), not on a Warrior Buds server. That data stays on the device and browser you used to create it, and clearing your browser's site data will remove it.",
             },
             {
-              type: "todo",
-              text: "As the platform grows, some or all of this information may move to a secure, server-side database. This Policy will be updated before that happens.",
+              type: "p",
+              text: "If our approach to storing this information changes in the future — for example, moving some of it to a secure, server-side database — we will update this Policy first.",
             },
             {
               type: "p",
@@ -851,8 +875,8 @@ const en: Dictionary = {
               ],
             },
             {
-              type: "todo",
-              text: "We do not currently use third-party analytics or advertising tools. If that changes, this Policy will be updated first.",
+              type: "p",
+              text: "We do not currently use third-party analytics or advertising tools on this site. If that changes, this Policy will be updated to reflect it first.",
             },
           ],
         },
@@ -865,8 +889,8 @@ const en: Dictionary = {
               text: "Because most customer data is stored in your own browser rather than on a central server, we recommend not saving your password on a shared or public device, and signing out of your account when you're done — your session otherwise stays signed in until you sign out.",
             },
             {
-              type: "todo",
-              text: "Formal security practices (encryption standards, breach notification process) for a future server-side backend are still being finalized and will be documented here before launch.",
+              type: "p",
+              text: "This site does not currently operate a server-side customer database, so there isn't server-side security infrastructure to describe here. If a server-side backend is introduced in the future, we will document its security practices in this Policy.",
             },
           ],
         },
@@ -893,8 +917,8 @@ const en: Dictionary = {
               text: "To request a copy of your information, ask us to correct it, or ask us to delete your account and associated data, contact us using the details below. In line with Canadian privacy law (PIPEDA), we will respond to reasonable requests within a reasonable timeframe.",
             },
             {
-              type: "todo",
-              text: "Self-serve account deletion inside Your Account is planned for a future update; deletion requests are handled manually by our team in the meantime.",
+              type: "p",
+              text: "Account deletion isn't yet available as a self-serve option inside Your Account — deletion requests are handled manually by our team. Contact us using the details below to request deletion of your account and its associated data.",
             },
           ],
         },
@@ -989,7 +1013,7 @@ const en: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "Prices are shown in Canadian dollars (CAD) and do not include applicable taxes or shipping unless stated otherwise; taxes and any shipping fee are calculated automatically at checkout. We reserve the right to correct pricing or listing errors, even after an order has been placed, and to cancel affected orders with notice to you.",
+              text: "Prices are shown in Canadian dollars (CAD). Warrior Buds does not currently add any customer tax at checkout, and any applicable shipping fee is shown before you confirm your order — the total displayed at checkout reflects the actual charges applied to your order. We reserve the right to correct pricing or listing errors, even after an order has been placed, and to cancel affected orders with notice to you.",
             },
             {
               type: "p",
@@ -1003,7 +1027,7 @@ const en: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "You may ask us to cancel an order that hasn't yet shipped or been prepared for pickup by contacting us as soon as possible. We may also cancel an order — for example, for stock, payment, or age-verification reasons — and will let you know if that happens.",
+              text: "You may request cancellation of your order within 48 hours of placing it, provided it hasn't already shipped or been prepared for pickup — contact us as soon as possible with your order number. Once an order has shipped, we're no longer able to cancel it. We may also cancel an order ourselves — for example, for stock, payment, or age-verification reasons — and will let you know if that happens.",
             },
           ],
         },
@@ -1020,8 +1044,8 @@ const en: Dictionary = {
               text: "We do not store your card number, bank account details, or cryptocurrency wallet credentials on this site. Interac e-Transfer payments are sent directly through your own banking app; other electronic payment methods are processed through the provider shown at checkout.",
             },
             {
-              type: "todo",
-              text: "Not every payment method listed may be fully live at all times while our platform is finalized; the checkout screen always shows the current, accurate instructions for each active method.",
+              type: "p",
+              text: "The checkout screen always shows the current, accurate instructions for whichever payment method you choose.",
             },
           ],
         },
@@ -1031,11 +1055,7 @@ const en: Dictionary = {
           blocks: [
             {
               type: "p",
-              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Orders of $100 CAD or more may qualify for free standard shipping; a flat shipping fee otherwise applies and is shown at checkout before you pay.",
-            },
-            {
-              type: "todo",
-              text: "Specific delivery areas, cut-off times, and pickup-readiness windows are being finalized and will be confirmed at checkout or by our team.",
+              text: "At checkout you can choose standard shipping, expedited shipping, or in-store pickup at our Oka location. Shipped orders are delivered by Canada Post throughout Québec, with an estimated delivery of 2–5 business days — an estimate rather than a guarantee, since carrier delays can occur. Orders of $100 CAD or more ship free; otherwise a flat $9.95 CAD shipping fee applies and is shown at checkout before you pay.",
             },
           ],
         },
@@ -1054,8 +1074,8 @@ const en: Dictionary = {
           title: "Refunds & Disputes",
           blocks: [
             {
-              type: "todo",
-              text: "Our detailed return, exchange and refund policy is being finalized. In the meantime, if there's a problem with your order — a damaged product, a missing item, or a payment dispute — contact us directly with your order number and we'll work with you to resolve it.",
+              type: "p",
+              text: "All sales are final, and we do not accept ordinary returns or exchanges. If your order arrives incorrect or defective — or if you believe there's a payment dispute — contact us with your order number so we can review the issue and work with you to resolve it.",
             },
           ],
         },
@@ -1220,7 +1240,7 @@ const en: Dictionary = {
           title: "Analytics & Advertising",
           blocks: [
             {
-              type: "todo",
+              type: "p",
               text: "We do not currently use third-party analytics or advertising cookies on this site. If that changes, this Cookie Policy will be updated before any such tool is added.",
             },
           ],

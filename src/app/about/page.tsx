@@ -12,6 +12,20 @@ export const metadata: Metadata = {
   title: "À propos | Warrior Buds",
   description:
     "Découvrez Warrior Buds, un dispensaire enraciné dans la communauté d'Oka et Kanesatake — notre histoire, nos valeurs et ce qui nous anime.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "À propos | Warrior Buds",
+    description:
+      "Découvrez Warrior Buds, un dispensaire enraciné dans la communauté d'Oka et Kanesatake — notre histoire, nos valeurs et ce qui nous anime.",
+    url: "/about",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "À propos | Warrior Buds",
+    description:
+      "Découvrez Warrior Buds, un dispensaire enraciné dans la communauté d'Oka et Kanesatake — notre histoire, nos valeurs et ce qui nous anime.",
+  },
 };
 
 export default function AboutPage() {

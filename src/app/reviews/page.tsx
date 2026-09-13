@@ -10,6 +10,20 @@ export const metadata: Metadata = {
   title: "Avis | Warrior Buds",
   description:
     "De vrais avis de clients Warrior Buds à Oka et Kanesatake — découvrez ce que disent des centaines de clients satisfaits.",
+  alternates: { canonical: "/reviews" },
+  openGraph: {
+    title: "Avis | Warrior Buds",
+    description:
+      "De vrais avis de clients Warrior Buds à Oka et Kanesatake — découvrez ce que disent des centaines de clients satisfaits.",
+    url: "/reviews",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Avis | Warrior Buds",
+    description:
+      "De vrais avis de clients Warrior Buds à Oka et Kanesatake — découvrez ce que disent des centaines de clients satisfaits.",
+  },
 };
 
 export default function ReviewsPage() {

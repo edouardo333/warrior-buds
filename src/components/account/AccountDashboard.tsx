@@ -6,6 +6,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAccount } from "@/lib/shop/auth-actions";
 import { useCustomerOrders } from "@/lib/shop/order-actions";
 import { getOrderStatusLabel } from "@/lib/shop/order-engine";
+import { formatPrice } from "@/lib/shop/product-engine";
 
 const QUICK_LINKS = [
   { key: "profile", href: "/account/profile", icon: User },
@@ -56,7 +57,7 @@ export default function AccountDashboard() {
                     <p className="font-mono text-sm text-foreground/90">{order.id}</p>
                     <p className="mt-1 text-xs text-foreground/50">{getOrderStatusLabel(order.status, locale)}</p>
                   </div>
-                  <p className="text-sm font-semibold text-foreground">${order.total.toFixed(2)}</p>
+                  <p className="text-sm font-semibold text-foreground">{formatPrice(order.total, locale)}</p>
                 </Link>
               </li>
             ))}

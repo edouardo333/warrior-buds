@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import BudGuardian from "@/components/bud-guardian/BudGuardianLoader";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,10 +21,45 @@ const bebasNeue = Bebas_Neue({
   weight: "400",
 });
 
+// H2 SEO pass — production domain / metadataBase and site-wide defaults.
+// Individual routes override title/description/alternates.canonical/robots
+// as needed (see app/**/page.tsx); openGraph/twitter set here are inherited
+// by any route that doesn't define its own (Next shallow-merges metadata
+// per segment — a child that sets its own `openGraph` replaces this one
+// wholesale, which is why pages with distinct copy repeat their own title/
+// description inside their openGraph/twitter blocks instead of relying on
+// inheritance).
 export const metadata: Metadata = {
-  title: "Warrior Buds | Dispensaire de cannabis haut de gamme à Oka/Kanesatake",
-  description:
-    "Warrior Buds est un dispensaire de cannabis haut de gamme à Oka/Kanesatake offrant fleurs, comestibles, vapoteuses, concentrés, CBD et accessoires, avec un service expert et chaleureux.",
+  metadataBase: new URL(SITE.url),
+  title: SITE.defaultTitle,
+  description: SITE.defaultDescription,
+  applicationName: SITE.name,
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE.name,
+    title: SITE.defaultTitle,
+    description: SITE.defaultDescription,
+    url: "/",
+    // No dedicated 1200x630 social-preview image exists in the repo yet —
+    // see the H2 SEO report. Do not add an `images` entry here until a real
+    // asset is provided; a missing/placeholder file would break OG previews
+    // on every page that inherits this block.
+    locale: "fr_CA",
+  },
+  twitter: {
+    // "summary" (not summary_large_image) because no OG image exists yet —
+    // see the openGraph note above. Revisit once a real image is added.
+    card: "summary",
+    title: SITE.defaultTitle,
+    description: SITE.defaultDescription,
+  },
 };
 
 export default function RootLayout({
@@ -54,6 +90,35 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col overflow-x-hidden bg-background text-foreground font-sans"
       >
+        {/* Organization/LocalBusiness structured data — built only from
+            verified fields in lib/site.ts (name, url, phone, email, postal
+            address, and the two confirmed social profiles). Deliberately
+            omits aggregateRating (SITE.googleReviewCount is the approximate
+            "610+" from the Google Business listing, not a clean integer
+            Schema.org requires), openingHours, geo, and priceRange, none of
+            which are verified here — see the H2 SEO report. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: SITE.name,
+              url: SITE.url,
+              telephone: SITE.phoneHref.replace(/^tel:/, ""),
+              email: SITE.email,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: SITE.addressLine1,
+                addressLocality: SITE.addressLocality,
+                addressRegion: SITE.addressRegion,
+                postalCode: SITE.postalCode,
+                addressCountry: SITE.addressCountry,
+              },
+              sameAs: [SITE.instagramUrl, SITE.linktreeUrl],
+            }),
+          }}
+        />
         <LanguageProvider>
           {children}
           <BudGuardian />

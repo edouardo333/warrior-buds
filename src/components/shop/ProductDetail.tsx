@@ -26,14 +26,20 @@ import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart, useWishlist } from "@/lib/shop/cart-actions";
 import {
+  formatPrice,
+  getAvailableStock,
   getAverageRating,
+  getBulkSavings,
   getCategoryLabel,
   getEffectivePrice,
+  getProductPriceForQuantity,
   getStockStatus,
   getStrainLabel,
+  isFormatPriced,
+  isInStoreOnly,
   isOnSale,
 } from "@/lib/shop/product-engine";
-import type { StorefrontProduct } from "@/types/product";
+import type { ProductFormat, StorefrontProduct } from "@/types/product";
 
 export default function ProductDetail({ product }: { product: StorefrontProduct }) {
   const { t, locale } = useLanguage();
@@ -41,13 +47,59 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
   const { toggle, isSaved } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  // Format-priced products only (see isFormatPriced below): the format row
+  // the shopper clicked in the "Available Formats" table, or null before any
+  // click — no format is pre-selected on load, so the top price area keeps
+  // showing "starting from" until the shopper picks one. Read directly from
+  // product.formats, never recomputed/interpolated — see ProductFormat.
+  const [selectedFormat, setSelectedFormat] = useState<ProductFormat | null>(null);
 
   const stockStatus = getStockStatus(product);
   const rating = getAverageRating(product);
   const saved = isSaved(product.id);
+  const availableStock = getAvailableStock(product);
+  // Format-priced products (verified format/size pricing, e.g. regulated
+  // cannabis flower — types/product.ts's ProductFormat) skip the
+  // quantity-tier stepper/pricing entirely and price/add to cart through
+  // whichever format row the shopper picked in the "Available Formats" table
+  // below instead — see selectedFormat above and product-engine.ts's
+  // isFormatPriced header. No wishlist control for these (unchanged).
+  const formatPriced = isFormatPriced(product);
+  // Never purchasable through this site (e.g. age-restricted cigarettes —
+  // types/product.ts's inStoreOnly): hides the quantity stepper, Add to
+  // Cart, and wishlist controls below regardless of formatPriced, and shows
+  // the in-store notice instead. Every other product is unaffected.
+  const inStoreOnly = isInStoreOnly(product);
+
+  // The official product name/brand are language-independent identity data
+  // (types/product.ts) and are read directly below — never through `t` or
+  // any locale-keyed lookup. Only supporting copy is localized here.
+  const shortDescription = product.shortDescriptionLocalized?.[locale] ?? product.shortDescription;
+  const description = product.descriptionLocalized?.[locale] ?? product.description;
+
+  // Total price for the selected quantity — resolves to the verified bulk
+  // tier when `quantity` matches one exactly, otherwise unit price × quantity.
+  // Single source of truth: lib/shop/product-engine.ts's getProductPriceForQuantity.
+  // Format-priced products (formatPriced) never go through this quantity-tier
+  // pricing at all — they render getEffectivePrice directly instead (see the
+  // formatPriced branches below) — so these are skipped for them.
+  const totalPrice = formatPriced ? 0 : getProductPriceForQuantity(product, quantity);
+  const savings = formatPriced ? null : getBulkSavings(product, quantity);
+
+  // Disabled/enabled state for the Add to Cart button below: a format-priced
+  // product requires a format to be selected first (requirement: "A format
+  // must be selected before Add to Cart is enabled"); an ordinary product is
+  // always addable from here (out-of-stock is handled by its own branch
+  // further down, which hides this control entirely).
+  const canAdd = !formatPriced || selectedFormat !== null;
 
   function handleAdd() {
-    addItem(product.id, quantity);
+    if (!canAdd) return;
+    // Format-priced add: pass the selected format's label as the cart line's
+    // identity (types/cart.ts's selectedFormatLabel) — the price itself is
+    // never passed here, only ever re-read live from product.formats by the
+    // cart layer (lib/shop/cart-engine.ts computeCartLines).
+    addItem(product.id, quantity, formatPriced ? selectedFormat!.label : undefined);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 2000);
   }
@@ -88,19 +140,45 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
           </Reveal>
 
           <Reveal delay={100}>
-            <p className="text-xs font-semibold uppercase tracking-widest text-foreground/40">{product.brand}</p>
+            {/* Same brand → grade → category-label fallback as ProductCard's
+                eyebrow — see its comment. */}
+            <p className="text-xs font-semibold uppercase tracking-widest text-foreground/40">
+              {product.brand ?? product.grade ?? getCategoryLabel(product.category, locale)}
+            </p>
             <h1 className="mt-2 font-display text-3xl tracking-wide text-foreground sm:text-4xl">{product.name}</h1>
             <div className="mt-3 flex items-center gap-3">
               <StarRating rating={rating} size="md" />
             </div>
             <ProductBadges badges={product.badges} className="mt-4" />
 
-            <div className="mt-6 flex items-baseline gap-3">
-              {isOnSale(product) && <span className="text-lg text-foreground/40 line-through">${product.price.toFixed(2)}</span>}
-              <span className="font-display text-4xl tracking-wide text-gradient-ember">${getEffectivePrice(product).toFixed(2)}</span>
-            </div>
+            {formatPriced ? (
+              <div className="mt-6 flex items-baseline gap-3">
+                <span className="font-display text-4xl tracking-wide text-gradient-ember">
+                  {selectedFormat
+                    ? `${selectedFormat.labelLocalized?.[locale] ?? selectedFormat.label} — ${formatPrice(selectedFormat.price, locale)}`
+                    : t.productCatalog.card.startingFrom(formatPrice(getEffectivePrice(product), locale))}
+                </span>
+              </div>
+            ) : (
+              <>
+                <div className="mt-6 flex items-baseline gap-3">
+                  {isOnSale(product) && <span className="text-lg text-foreground/40 line-through">{formatPrice(product.price * quantity, locale)}</span>}
+                  <span className="font-display text-4xl tracking-wide text-gradient-ember">{formatPrice(totalPrice, locale)}</span>
+                </div>
+                {quantity > 1 && (
+                  <p className="mt-1.5 text-xs text-foreground/50">
+                    {quantity} {t.productCatalog.detail.bulkPricingUnit(quantity)}
+                    <br />
+                    {t.productCatalog.detail.totalPrice(formatPrice(totalPrice, locale))}
+                  </p>
+                )}
+                {savings !== null && (
+                  <p className="mt-1.5 text-xs font-semibold text-wb-green">{t.productCatalog.detail.youSave(formatPrice(savings, locale))}</p>
+                )}
+              </>
+            )}
 
-            <p className="mt-4 text-sm leading-relaxed text-foreground/70">{product.shortDescription}</p>
+            <p className="mt-4 text-sm leading-relaxed text-foreground/70">{shortDescription}</p>
 
             {specs.length > 0 && (
               <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -119,7 +197,12 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
               </dl>
             )}
 
-            {stockStatus === "out-of-stock" ? (
+            {inStoreOnly ? (
+              <div className="mt-6 flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-foreground/70">
+                <Store className="h-4 w-4 shrink-0 text-wb-orange" strokeWidth={2} />
+                {t.productCatalog.detail.inStoreOnlyNotice}
+              </div>
+            ) : !formatPriced && stockStatus === "out-of-stock" ? (
               <p className="mt-6 text-sm font-semibold text-wb-red">{t.productCatalog.detail.outOfStock}</p>
             ) : (
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -135,7 +218,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                   <span className="w-10 text-center text-sm font-semibold text-foreground">{quantity}</span>
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                    onClick={() => setQuantity((q) => Math.min(availableStock, q + 1))}
                     className="flex h-12 w-12 items-center justify-center text-foreground/70 transition-colors duration-250 hover:text-wb-orange"
                     aria-label="Increase quantity"
                   >
@@ -145,23 +228,28 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                 <button
                   type="button"
                   onClick={handleAdd}
-                  className="group relative isolate flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black shadow-[0_10px_30px_-8px_rgba(244,103,15,0.6)] transition-[background-position,box-shadow,transform] duration-500 ease-out hover:scale-[1.02] hover:bg-right hover:shadow-[0_14px_38px_-6px_rgba(244,103,15,0.75)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:scale-100"
+                  disabled={!canAdd}
+                  aria-disabled={!canAdd}
+                  title={!canAdd ? t.productCatalog.detail.selectFormatPrompt : undefined}
+                  className="group relative isolate flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black shadow-[0_10px_30px_-8px_rgba(244,103,15,0.6)] transition-[background-position,box-shadow,transform] duration-500 ease-out hover:scale-[1.02] hover:bg-right hover:shadow-[0_14px_38px_-6px_rgba(244,103,15,0.75)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:scale-100 disabled:pointer-events-none disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100"
                 >
                   <ShoppingCart className="h-4 w-4" />
-                  {added ? t.productCatalog.detail.addedToCart : t.productCatalog.detail.addToCart}
+                  {added ? t.productCatalog.detail.addedToCart : formatPriced && !selectedFormat ? t.productCatalog.detail.selectFormatPrompt : t.productCatalog.detail.addToCart}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => toggle(product.id)}
-                  aria-label={saved ? t.productCatalog.detail.removeFromWishlist : t.productCatalog.detail.addToWishlist}
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition-all duration-250 ${
-                    saved
-                      ? "border-wb-red bg-wb-red/10 text-wb-red shadow-[0_0_16px_-4px_rgba(224,32,46,0.6)]"
-                      : "border-white/15 bg-white/[0.03] text-foreground/70 hover:border-wb-orange/50 hover:text-wb-orange"
-                  }`}
-                >
-                  <Heart className="h-5 w-5" fill={saved ? "currentColor" : "none"} />
-                </button>
+                {!formatPriced && (
+                  <button
+                    type="button"
+                    onClick={() => toggle(product.id)}
+                    aria-label={saved ? t.productCatalog.detail.removeFromWishlist : t.productCatalog.detail.addToWishlist}
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition-all duration-250 ${
+                      saved
+                        ? "border-wb-red bg-wb-red/10 text-wb-red shadow-[0_0_16px_-4px_rgba(224,32,46,0.6)]"
+                        : "border-white/15 bg-white/[0.03] text-foreground/70 hover:border-wb-orange/50 hover:text-wb-orange"
+                    }`}
+                  >
+                    <Heart className="h-5 w-5" fill={saved ? "currentColor" : "none"} />
+                  </button>
+                )}
               </div>
             )}
 
@@ -181,9 +269,101 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
         <Reveal className="mt-16 sm:mt-20">
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.description}</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/70">{product.description}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/70">{description}</p>
           </div>
         </Reveal>
+
+        {product.formats && product.formats.length > 0 && (
+          <Reveal className="mt-10 sm:mt-12">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.availableFormatsTitle}</h2>
+              <div className="mt-5 max-w-2xl overflow-x-auto">
+                <table className="w-full min-w-[280px] border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
+                      <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.formatColumn}</th>
+                      <th className="pb-3 font-semibold">{t.productCatalog.detail.priceColumn}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {product.formats.map((format) => {
+                      const active = selectedFormat?.label === format.label;
+                      return (
+                        <tr
+                          key={format.label}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={active}
+                          onClick={() => setSelectedFormat(format)}
+                          onKeyDown={(e) => {
+                            if (e.key !== "Enter" && e.key !== " ") return;
+                            e.preventDefault();
+                            setSelectedFormat(format);
+                          }}
+                          className={`cursor-pointer border-b border-white/5 transition-colors duration-200 last:border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-wb-orange/60 ${
+                            active ? "bg-wb-orange/10" : "hover:bg-white/[0.04]"
+                          }`}
+                        >
+                          <td className={`py-2.5 pr-4 ${active ? "font-semibold text-wb-orange" : "text-foreground/80"}`}>{format.labelLocalized?.[locale] ?? format.label}</td>
+                          <td className={`py-2.5 font-semibold ${active ? "text-wb-orange" : "text-foreground"}`}>
+                            {formatPrice(format.price, locale)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Reveal>
+        )}
+
+        {product.bulkPricing && product.bulkPricing.length > 0 && (
+          <Reveal className="mt-10 sm:mt-12">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.bulkPricingTitle}</h2>
+              <div className="mt-5 max-w-2xl overflow-x-auto">
+                <table className="w-full min-w-[320px] border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
+                      <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.bulkPricingQuantity}</th>
+                      <th className="pb-3 font-semibold">{t.productCatalog.detail.bulkPricingPrice}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {product.bulkPricing.map((tier) => {
+                      const active = tier.quantity === quantity;
+                      return (
+                        <tr
+                          key={tier.quantity}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={active}
+                          onClick={() => setQuantity(tier.quantity)}
+                          onKeyDown={(e) => {
+                            if (e.key !== "Enter" && e.key !== " ") return;
+                            e.preventDefault();
+                            setQuantity(tier.quantity);
+                          }}
+                          className={`cursor-pointer border-b border-white/5 transition-colors duration-200 last:border-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-wb-orange/60 ${
+                            active ? "bg-wb-orange/10" : "hover:bg-white/[0.04]"
+                          }`}
+                        >
+                          <td className={`py-2.5 pr-4 ${active ? "font-semibold text-wb-orange" : "text-foreground/80"}`}>
+                            {tier.quantity} {t.productCatalog.detail.bulkPricingUnit(tier.quantity)}
+                          </td>
+                          <td className={`py-2.5 font-semibold ${active ? "text-wb-orange" : "text-foreground"}`}>
+                            {formatPrice(tier.price, locale)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Reveal>
+        )}
 
         <Reveal className="mt-10 sm:mt-12">
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">

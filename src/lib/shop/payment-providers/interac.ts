@@ -1,6 +1,7 @@
 // Storefront — Interac e-Transfer payment provider adapter (active).
 
 import type { PaymentProviderAdapter } from "@/types/shop-payment";
+import { formatPrice } from "@/lib/shop/product-engine";
 
 export const INTERAC_PAYMENT_EMAIL = "Pascal42221@gmail.com";
 
@@ -10,7 +11,7 @@ const TEXT = {
     title: "Payer par virement Interac",
     steps: (orderId: string, total: number) => [
       "Ouvrez l'application de votre banque et démarrez un virement Interac.",
-      `Envoyez ${total.toFixed(2)} $ CAD à ${INTERAC_PAYMENT_EMAIL}.`,
+      `Envoyez ${formatPrice(total, "fr")} CAD à ${INTERAC_PAYMENT_EMAIL}.`,
       `Inscrivez le numéro de commande ${orderId} dans le message du virement.`,
       "Aucune question de sécurité n'est requise — le dépôt automatique est activé.",
     ],
@@ -21,7 +22,7 @@ const TEXT = {
     title: "Pay by Interac e-Transfer",
     steps: (orderId: string, total: number) => [
       "Open your banking app and start an Interac e-Transfer.",
-      `Send $${total.toFixed(2)} CAD to ${INTERAC_PAYMENT_EMAIL}.`,
+      `Send ${formatPrice(total, "en")} CAD to ${INTERAC_PAYMENT_EMAIL}.`,
       `Include the order number ${orderId} in the transfer message.`,
       "No security question is needed — auto-deposit is enabled.",
     ],

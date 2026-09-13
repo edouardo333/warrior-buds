@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -15,6 +16,8 @@ type CategoryCardProps = {
   icon: ReactNode;
   theme: CategoryCardTheme;
   href?: string;
+  imageSrc: string;
+  imageAlt: string;
 };
 
 export default function CategoryCard({
@@ -24,6 +27,8 @@ export default function CategoryCard({
   icon,
   theme,
   href = "/products",
+  imageSrc,
+  imageAlt,
 }: CategoryCardProps) {
   const cardStyle = {
     "--card-glow": theme.glow,
@@ -42,6 +47,23 @@ export default function CategoryCard({
       <div className="absolute inset-0 z-0 bg-noise opacity-[0.04]" />
       <div className="wb-cat-card__glow wb-cat-card__glow-a" />
       <div className="wb-cat-card__glow wb-cat-card__glow-b" />
+
+      {/* Real category product photo — the dominant visual layer. Sized to
+          the card's top ~60% so it never fights the title/description/CTA
+          block below (which is pinned to the bottom via mt-auto), and
+          object-contain + a transparent PNG lets each product's real shape
+          show instead of forcing one crop onto every image. */}
+      <div className="wb-cat-card__image-wrap">
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
+          className="wb-cat-card__image object-contain object-bottom"
+        />
+      </div>
+      <div className="wb-cat-card__image-scrim" />
+
       <div className="wb-cat-card__accent-line" />
 
       <div className="relative z-10 flex h-full flex-col">

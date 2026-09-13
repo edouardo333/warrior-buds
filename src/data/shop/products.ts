@@ -1,13 +1,13 @@
-// Storefront — sample product catalog seed. This is deliberately fabricated
-// demo data for the new customer-facing shop (images, price, THC/CBD,
-// strain, category, stock, brand, weight, reviews, badges) and is fully
+// Storefront — real product catalog. As of the Phase 1 fake-data removal,
+// this holds only client-verified Warrior Buds products (see AGENTS.md /
+// the migration ticket for the removal + first-product spec). It is fully
 // independent of the empty CRM BUD_GUARDIAN_PRODUCTS fixture
 // (data/bud-guardian/products.ts, which Bud Guardian's chat must never
 // invent from) and the staff Inventory module's InventoryProduct
 // (types/inventory.ts). Never imported by anything under lib/staff/**,
 // components/staff/**, or lib/bud-guardian/**.
 
-import type { ProductReview, StorefrontProduct } from "@/types/product";
+import type { StorefrontProduct } from "@/types/product";
 
 let sequence = 1000;
 function nextId(): string {
@@ -21,372 +21,243 @@ function daysAgo(n: number): string {
   return d.toISOString();
 }
 
-let reviewSequence = 1;
-function review(
-  author: string,
-  rating: number,
-  title: string,
-  body: string,
-  createdDaysAgo: number,
-  verifiedPurchase = true
-): ProductReview {
-  reviewSequence += 1;
-  return { id: `REV-${reviewSequence}`, author, rating, title, body, createdAt: daysAgo(createdDaysAgo), verifiedPurchase };
-}
-
 function product(input: Omit<StorefrontProduct, "id" | "createdAt"> & { createdAtDaysAgo?: number }): StorefrontProduct {
   const { createdAtDaysAgo, ...rest } = input;
-  return { id: nextId(), createdAt: daysAgo(createdAtDaysAgo ?? 45), ...rest };
+  return { id: nextId(), createdAt: daysAgo(createdAtDaysAgo ?? 0), ...rest };
 }
 
 export const STOREFRONT_PRODUCTS: StorefrontProduct[] = [
   product({
-    slug: "warrior-og",
-    name: "Warrior OG",
-    brand: "Warrior Buds Reserve",
-    category: "flower",
-    strain: "hybrid",
-    thcPercent: 24.5,
-    cbdPercent: 0.4,
-    weightGrams: 3.5,
-    price: 45,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/warrior-og-1.webp", alt: "Warrior OG flower jar" }],
-    shortDescription: "Our house hybrid — bold pine and citrus over a heavy-handed body high.",
-    description:
-      "Warrior OG is our flagship hybrid, hand-trimmed and cured slow for a dense, resinous nug. Expect a sharp pine-and-citrus nose up front, settling into a warm, full-body relaxation without knocking you flat.",
-    stock: 42,
-    badges: ["best-seller", "staff-pick"],
-    reviews: [
-      review("Marc-André T.", 5, "House favourite for a reason", "Consistent every time, great cure, no harshness.", 6),
-      review("Jess L.", 4, "Solid hybrid", "Great for evenings, a bit sleepy if you overdo it.", 14),
-    ],
-    createdAtDaysAgo: 120,
-  }),
-  product({
-    slug: "kanesatake-kush",
-    name: "Kanesatake Kush",
-    brand: "Local Roots",
-    category: "flower",
-    strain: "indica",
-    thcPercent: 27,
-    cbdPercent: 0.2,
-    weightGrams: 3.5,
-    price: 50,
-    salePrice: 42,
-    images: [{ url: "/images/shop/products/kanesatake-kush-1.webp", alt: "Kanesatake Kush flower jar" }],
-    shortDescription: "A heavy-hitting local indica — grape and diesel notes, deep couch-lock.",
-    description:
-      "Grown by a local Kanesatake grower, this indica is dense, purple-tinged, and unapologetically strong. Grape and diesel on the nose, with a heavy sedative body effect best saved for nighttime.",
-    stock: 4,
-    badges: ["sale", "low-stock"],
-    reviews: [review("Ken R.", 5, "Knocks you out (in a good way)", "Perfect for insomnia. Don't drive after.", 3)],
-  }),
-  product({
-    slug: "sunrise-sativa",
-    name: "Sunrise Sativa",
-    brand: "Solar Farms",
-    category: "flower",
-    strain: "sativa",
-    thcPercent: 22,
-    cbdPercent: 0.5,
-    weightGrams: 3.5,
-    price: 40,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/sunrise-sativa-1.webp", alt: "Sunrise Sativa flower jar" }],
-    shortDescription: "Bright, energizing daytime sativa with a sweet tropical nose.",
-    description:
-      "Sunrise Sativa is a light, uplifting daytime strain — think mango and citrus with a clear-headed, motivating high. A great starting point if flower usually puts you to sleep.",
-    stock: 60,
-    badges: ["new"],
-    reviews: [],
-    createdAtDaysAgo: 6,
-  }),
-  product({
-    slug: "ember-pack-prerolls",
-    name: "Ember Pack — 5x0.5g Pre-Rolls",
-    brand: "Warrior Buds Reserve",
-    category: "pre-rolls",
-    strain: "hybrid",
-    thcPercent: 20,
-    cbdPercent: 0.3,
-    weightGrams: 2.5,
-    price: 30,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/ember-pack-1.webp", alt: "Ember Pack pre-roll box" }],
-    shortDescription: "Five perfectly rolled joints, ready to grab and go.",
-    description:
-      "No grinder, no papers, no mess — five 0.5g pre-rolls of our house hybrid blend, machine-rolled for a consistent, even burn every time.",
-    stock: 80,
-    badges: ["staff-pick"],
-    reviews: [review("Priya S.", 5, "Never uneven", "Burns clean every single time, love the pack size.", 20)],
-    createdAtDaysAgo: 80,
-  }),
-  product({
-    slug: "midnight-indica-preroll",
-    name: "Midnight Indica Pre-Roll",
-    brand: "Night Owl",
-    category: "pre-rolls",
-    strain: "indica",
-    thcPercent: 25,
-    cbdPercent: 0.2,
-    weightGrams: 1,
-    price: 12,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/midnight-indica-1.webp", alt: "Midnight Indica single pre-roll" }],
-    shortDescription: "A single 1g indica pre-roll for a heavy, quiet night.",
-    description: "One gram, hand-rolled, packed with a dense indica blend built for winding down at the end of the day.",
-    stock: 120,
-    badges: [],
-    reviews: [],
-  }),
-  product({
-    slug: "ember-gummies",
-    name: "Ember Gummies — 10x5mg",
-    brand: "Sweet Relief",
-    category: "edibles",
-    strain: null,
-    thcPercent: 5,
-    cbdPercent: 0,
-    weightGrams: null,
-    price: 25,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/ember-gummies-1.webp", alt: "Ember Gummies package" }],
-    shortDescription: "Ten precisely-dosed 5mg THC gummies, mixed berry.",
-    description:
-      "Consistent, lab-tested 5mg-per-piece gummies in mixed berry flavour. Start with one, wait at least an hour before having more.",
-    stock: 150,
-    badges: ["best-seller"],
-    reviews: [
-      review("Alicia G.", 5, "Perfect microdose", "Exactly 5mg every time, easy to control your dose.", 10),
-      review("Steve O.", 4, "Great taste", "Tastes way better than most edibles I've tried.", 25),
-    ],
-    createdAtDaysAgo: 95,
-  }),
-  product({
-    slug: "cbd-chocolate-bar",
-    name: "CBD Chocolate Bar — 100mg",
-    brand: "Sweet Relief",
-    category: "edibles",
-    strain: null,
-    thcPercent: 0,
-    cbdPercent: 100,
-    weightGrams: null,
-    price: 22,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/cbd-chocolate-1.webp", alt: "CBD chocolate bar" }],
-    shortDescription: "Dark chocolate bar infused with 100mg full-spectrum CBD.",
-    description: "Twelve squares, ~8mg CBD each, zero THC. A calm-without-the-high option for the evening.",
-    stock: 90,
-    badges: ["new"],
-    reviews: [],
-    createdAtDaysAgo: 8,
-  }),
-  product({
-    slug: "live-resin-shatter",
-    name: "Live Resin Shatter — 1g",
-    brand: "Solar Farms",
-    category: "concentrates",
-    strain: "hybrid",
-    thcPercent: 78,
-    cbdPercent: 0.2,
-    weightGrams: 1,
-    price: 55,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/live-resin-shatter-1.webp", alt: "Live resin shatter container" }],
-    shortDescription: "Glassy, high-potency shatter pressed from fresh-frozen flower.",
-    description: "Extracted from fresh-frozen flower for maximum terpene retention. For experienced concentrate users only.",
-    stock: 15,
-    badges: ["limited"],
-    reviews: [],
-  }),
-  product({
-    slug: "rosin-press-1g",
-    name: "Rosin Press — 1g",
-    brand: "Warrior Buds Reserve",
-    category: "concentrates",
-    strain: "indica",
-    thcPercent: 72,
-    cbdPercent: 0.3,
-    weightGrams: 1,
-    price: 65,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/rosin-press-1.webp", alt: "Rosin press concentrate jar" }],
-    shortDescription: "Solventless, hand-pressed rosin — full flavour, no extraction chemicals.",
-    description: "Pressed in-house from premium indica flower using heat and pressure only — no solvents, just a stronger, cleaner terpene profile.",
-    stock: 20,
-    badges: [],
-    reviews: [review("Dan F.", 5, "Best rosin around", "So much flavour compared to shatter, worth the price.", 30)],
-  }),
-  product({
-    slug: "sativa-vape-cartridge",
-    name: "Sativa Vape Cartridge — 0.5g",
-    brand: "Cloud Nine",
+    slug: "whole-melts-dual-chamber-2g",
+    name: "Whole Melts Extracts — Dual Chamber 2G",
+    brand: "Whole Melts Extracts",
     category: "vapes",
-    strain: "sativa",
-    thcPercent: 85,
-    cbdPercent: 0.5,
-    weightGrams: 0.5,
-    price: 45,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/sativa-vape-1.webp", alt: "Sativa vape cartridge" }],
-    shortDescription: "Fits standard 510-thread batteries, citrus-forward sativa oil.",
-    description: "A clean, high-potency distillate cartridge with reintroduced terpenes for a bright, citrus-forward sativa flavour.",
-    stock: 50,
-    badges: ["best-seller"],
-    reviews: [review("Nadia C.", 4, "Good flavour, smooth pull", "No harsh throat hit, good for daytime.", 18)],
-    createdAtDaysAgo: 70,
-  }),
-  product({
-    slug: "disposable-vape-hybrid",
-    name: "Disposable Vape Pen — 1g Hybrid",
-    brand: "Cloud Nine",
-    category: "vapes",
-    strain: "hybrid",
-    thcPercent: 82,
-    cbdPercent: 0.4,
-    weightGrams: 1,
-    price: 60,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/disposable-vape-1.webp", alt: "Disposable vape pen" }],
-    shortDescription: "All-in-one 1g disposable, no charging, no refilling.",
-    description: "A full gram, all-in-one disposable pen — draw-activated, no buttons, no charging required. Balanced hybrid oil.",
-    stock: 40,
-    badges: ["new"],
-    reviews: [],
-    createdAtDaysAgo: 4,
-  }),
-  product({
-    slug: "full-spectrum-cbd-oil",
-    name: "Full-Spectrum CBD Oil — 30ml / 1500mg",
-    brand: "Pure Leaf Wellness",
-    category: "cbd",
-    strain: null,
-    thcPercent: 0.3,
-    cbdPercent: 5,
-    weightGrams: null,
-    price: 75,
-    salePrice: 60,
-    images: [{ url: "/images/shop/products/cbd-oil-1.webp", alt: "Full-spectrum CBD oil bottle" }],
-    shortDescription: "A 30ml dropper bottle, ~50mg CBD per full dropper.",
-    description: "Cold-pressed, full-spectrum CBD oil under the legal THC limit. Comes with a measured dropper for consistent dosing.",
-    stock: 35,
-    badges: ["sale"],
-    reviews: [review("Renée B.", 5, "Helps with my sleep", "Been using this every night for a month, huge difference.", 40)],
-    createdAtDaysAgo: 60,
-  }),
-  product({
-    slug: "glass-water-pipe-8in",
-    name: "Glass Water Pipe — 8-inch",
-    brand: "Warrior Buds Reserve",
-    category: "accessories",
+    // Not yet verified by the client — left unset rather than guessed.
     strain: null,
     thcPercent: null,
     cbdPercent: null,
-    weightGrams: null,
-    price: 65,
+    // The 2G size is the one verified spec value for this product.
+    weightGrams: 2,
+    price: 40,
     salePrice: null,
-    images: [{ url: "/images/shop/products/glass-pipe-1.webp", alt: "8-inch glass water pipe" }],
-    shortDescription: "Thick borosilicate glass, removable downstem, easy to clean.",
-    description: "A sturdy 8-inch borosilicate water pipe with a removable downstem and flared mouthpiece — smooth, cool hits and easy cleanup.",
-    stock: 25,
-    badges: ["staff-pick"],
+    images: [
+      {
+        url: "/images/shop/products/whole-melts-dual-chamber-2g.jpg",
+        alt: "Whole Melts Extracts Dual Chamber 2G wax pen",
+      },
+    ],
+    // Default/fallback copy (English) — read by non-localizing consumers
+    // (search, Bud Guardian, page metadata). See shortDescriptionLocalized/
+    // descriptionLocalized below for what the storefront UI actually shows.
+    shortDescription: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+    description: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+    shortDescriptionLocalized: {
+      fr: "Wax pen Whole Melts Extracts Dual Chamber au format 2G.",
+      en: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+    },
+    descriptionLocalized: {
+      fr: "Wax pen Whole Melts Extracts Dual Chamber au format 2G.",
+      en: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+    },
+    // No verified inventory count from the client — null rather than an
+    // invented number (e.g. the old placeholder "50"). Treated as "no known
+    // cap" throughout (see product-engine.ts's getAvailableStock/
+    // getStockStatus); the product stays purchasable, including at every
+    // bulk tier up to 1000 units, without displaying any stock figure.
+    stock: null,
+    badges: [],
     reviews: [],
+    bulkPricing: [
+      { quantity: 1, price: 40 },
+      { quantity: 10, price: 300 },
+      { quantity: 25, price: 550 },
+      { quantity: 50, price: 900 },
+      { quantity: 100, price: 1700 },
+      { quantity: 200, price: 3200 },
+      { quantity: 500, price: 7500 },
+      { quantity: 1000, price: 14000 },
+    ],
+  }),
+
+  // Three client-supplied real cannabis flower products (catalog integration
+  // pass — see the accompanying task report). Format-priced, not quantity-
+  // priced: `formats` holds the exact client-verified size/price sheet, and
+  // `price` below is only the lowest (3.5g) format price, used for card/sort
+  // display ("starting from") — never an addable per-unit price. These never
+  // run through bulkPricing/getProductPriceForQuantity, and never expose Add
+  // to Cart/wishlist controls (see isFormatPriced in product-engine.ts) —
+  // informational listings only, no new checkout/payment flow.
+  //
+  // `brand` has no client-supplied manufacturer name distinct from the
+  // product name itself, so it's left unset rather than invented; `grade`
+  // instead carries the client-supplied quality grade (already part of the
+  // official title, e.g. "AAA"/"AAA+") — see types/product.ts's `grade` for
+  // why this is a distinct field, not the brand. ProductCard/ProductDetail
+  // fall back to `grade` for the eyebrow label Whole Melts' real brand fills.
+  //
+  // THC/CBD percent, stock, ratings/reviews, terpenes, effects, and
+  // genetics/origin were not provided — left null/empty rather than guessed
+  // (never rendered as a result, see product-engine.ts/ProductDetail.tsx).
+  product({
+    slug: "blueberry-aaa",
+    name: "Blueberry AAA",
+    grade: "AAA",
+    category: "flower",
+    strain: "indica",
+    thcPercent: null,
+    cbdPercent: null,
+    weightGrams: null,
+    price: 10,
+    salePrice: null,
+    images: [{ url: "/images/shop/products/blueberry-aaa.jpg", alt: "Blueberry AAA cannabis flower" }],
+    shortDescription: "Blueberry AAA cannabis flower. Available in multiple sizes.",
+    description: "Blueberry AAA cannabis flower. Available in multiple sizes.",
+    shortDescriptionLocalized: {
+      fr: "Fleur de cannabis Blueberry AAA. Disponible en plusieurs formats.",
+      en: "Blueberry AAA cannabis flower. Available in multiple sizes.",
+    },
+    descriptionLocalized: {
+      fr: "Fleur de cannabis Blueberry AAA. Disponible en plusieurs formats.",
+      en: "Blueberry AAA cannabis flower. Available in multiple sizes.",
+    },
+    stock: null,
+    badges: [],
+    reviews: [],
+    formats: [
+      { label: "3.5g", price: 10 },
+      { label: "7g", price: 20 },
+      { label: "14g", price: 30 },
+      { label: "1 oz", price: 50 },
+      { label: "QP", price: 160 },
+      { label: "HP", price: 250 },
+      { label: "1 lb", price: 450 },
+      { label: "2 lb", price: 800 },
+    ],
   }),
   product({
-    slug: "grinder-4-piece",
-    name: "Grinder — 4-Piece Aluminum",
-    brand: "Everyday Carry",
-    category: "accessories",
-    strain: null,
+    slug: "fruit-punch-aaa-plus",
+    name: "Fruit Punch AAA+",
+    grade: "AAA+",
+    category: "flower",
+    strain: "hybrid",
     thcPercent: null,
     cbdPercent: null,
     weightGrams: null,
     price: 20,
     salePrice: null,
-    images: [{ url: "/images/shop/products/grinder-1.webp", alt: "4-piece aluminum grinder" }],
-    shortDescription: "Sharp diamond teeth, magnetic lid, built-in kief catcher.",
-    description: "A durable 4-piece aluminum grinder with sharp diamond-shaped teeth, a magnetic lid, and a fine screen for kief collection.",
-    stock: 100,
+    images: [{ url: "/images/shop/products/fruit-punch-aaa-plus.jpg", alt: "Fruit Punch AAA+ cannabis flower" }],
+    shortDescription: "Fruit Punch AAA+ cannabis flower. Available in multiple sizes.",
+    description: "Fruit Punch AAA+ cannabis flower. Available in multiple sizes.",
+    shortDescriptionLocalized: {
+      fr: "Fleur de cannabis Fruit Punch AAA+. Disponible en plusieurs formats.",
+      en: "Fruit Punch AAA+ cannabis flower. Available in multiple sizes.",
+    },
+    descriptionLocalized: {
+      fr: "Fleur de cannabis Fruit Punch AAA+. Disponible en plusieurs formats.",
+      en: "Fruit Punch AAA+ cannabis flower. Available in multiple sizes.",
+    },
+    stock: null,
     badges: [],
     reviews: [],
+    // No verified 2 lb price for this product — not generated/interpolated.
+    formats: [
+      { label: "3.5g", price: 20 },
+      { label: "7g", price: 30 },
+      { label: "14g", price: 50 },
+      { label: "1 oz", price: 80 },
+      { label: "QP", price: 250 },
+      { label: "HP", price: 350 },
+      { label: "1 lb", price: 650 },
+    ],
   }),
   product({
-    slug: "cooling-cbd-balm",
-    name: "Cooling CBD Balm — 50ml",
-    brand: "Pure Leaf Wellness",
-    category: "topicals",
-    strain: null,
-    thcPercent: 0,
-    cbdPercent: 3,
+    slug: "nutter-butter-aaa-plus",
+    name: "Nutter Butter AAA+",
+    grade: "AAA+",
+    category: "flower",
+    strain: "hybrid",
+    thcPercent: null,
+    cbdPercent: null,
     weightGrams: null,
-    price: 28,
+    price: 20,
     salePrice: null,
-    images: [{ url: "/images/shop/products/cbd-balm-1.webp", alt: "Cooling CBD balm jar" }],
-    shortDescription: "Menthol-cooling topical balm for sore muscles and joints.",
-    description: "A fast-absorbing topical balm combining CBD with menthol for a cooling, soothing effect on sore muscles and joints. Non-intoxicating.",
-    stock: 45,
-    badges: ["new"],
+    images: [{ url: "/images/shop/products/nutter-butter-aaa-plus.jpg", alt: "Nutter Butter AAA+ cannabis flower" }],
+    shortDescription: "Nutter Butter AAA+ cannabis flower. Available in multiple sizes.",
+    description: "Nutter Butter AAA+ cannabis flower. Available in multiple sizes.",
+    shortDescriptionLocalized: {
+      fr: "Fleur de cannabis Nutter Butter AAA+. Disponible en plusieurs formats.",
+      en: "Nutter Butter AAA+ cannabis flower. Available in multiple sizes.",
+    },
+    descriptionLocalized: {
+      fr: "Fleur de cannabis Nutter Butter AAA+. Disponible en plusieurs formats.",
+      en: "Nutter Butter AAA+ cannabis flower. Available in multiple sizes.",
+    },
+    stock: null,
+    badges: [],
     reviews: [],
-    createdAtDaysAgo: 10,
+    // No verified 2 lb price for this product — not generated/interpolated.
+    formats: [
+      { label: "3.5g", price: 20 },
+      { label: "7g", price: 35 },
+      { label: "14g", price: 60 },
+      { label: "1 oz", price: 100 },
+      { label: "QP", price: 280 },
+      { label: "HP", price: 400 },
+      { label: "1 lb", price: 700 },
+    ],
   }),
+
+  // Client-supplied real product — Discount Tips Canadian Blend cigarettes
+  // (catalog integration pass, see AGENTS.md / the accompanying task
+  // report). Format-priced by bag-quantity tier, same convention as the
+  // flower products above (`formats`, not `bulkPricing`: these are exact
+  // client-verified tiers, not a per-unit multiplier — 1/5/10/25/50 bags
+  // only, never interpolated). `inStoreOnly: true` additionally keeps this
+  // product fully non-transactional (ProductDetail hides the quantity
+  // stepper/Add to Cart/wishlist entirely and shows the in-store notice
+  // instead — see types/product.ts's inStoreOnly) since, unlike flower,
+  // this must never be addable to cart even once a format is selected.
+  //
+  // Nicotine amount, cigarette count per bag, manufacturer details beyond
+  // the product name, stock, ratings/reviews, and SKU were not provided —
+  // left unset/null/empty rather than guessed, same rule as the flower
+  // products above.
   product({
-    slug: "lions-mane-capsules",
-    name: "Lion's Mane Capsules — 60ct",
-    brand: "Mycelium Labs",
-    category: "mushrooms",
+    slug: "discount-cigarettes",
+    name: "Discount Cigarettes",
+    category: "cigarettes",
     strain: null,
     thcPercent: null,
     cbdPercent: null,
     weightGrams: null,
-    price: 34,
+    price: 25,
     salePrice: null,
-    images: [{ url: "/images/shop/products/lions-mane-capsules-1.webp", alt: "Lion's Mane capsule bottle" }],
-    shortDescription: "Functional mushroom capsules for focus and clarity — non-intoxicating, no THC.",
-    description:
-      "Sixty 500mg capsules of dual-extracted Lion's Mane fruiting body. A daily wellness supplement, not a cannabis product — zero THC, zero CBD, legal and non-intoxicating.",
-    stock: 55,
-    badges: ["new"],
-    reviews: [review("Isabelle M.", 5, "Noticeably sharper focus", "Been taking two a day for a few weeks, easy to work into the routine.", 12)],
-    createdAtDaysAgo: 9,
-  }),
-  product({
-    slug: "reishi-calm-tincture",
-    name: "Reishi Calm Tincture — 30ml",
-    brand: "Pure Leaf Wellness",
-    category: "mushrooms",
-    strain: null,
-    thcPercent: null,
-    cbdPercent: null,
-    weightGrams: null,
-    price: 38,
-    salePrice: null,
-    images: [{ url: "/images/shop/products/reishi-calm-tincture-1.webp", alt: "Reishi tincture dropper bottle" }],
-    shortDescription: "Dual-extracted Reishi tincture for evening wind-down — non-intoxicating, no THC.",
-    description:
-      "A 30ml dropper bottle of dual-extracted Reishi mushroom, taken sublingually or in tea. Purely a functional wellness product — contains no THC or CBD.",
-    stock: 30,
-    badges: ["staff-pick"],
-    reviews: [review("Owen K.", 4, "Part of my nightly routine now", "Pairs well with tea, subtle and easy to take.", 22)],
-  }),
-  product({
-    slug: "chaga-extract-powder",
-    name: "Chaga Mushroom Extract Powder — 100g",
-    brand: "Mycelium Labs",
-    category: "mushrooms",
-    strain: null,
-    thcPercent: null,
-    cbdPercent: null,
-    weightGrams: null,
-    price: 29,
-    salePrice: 24,
-    images: [{ url: "/images/shop/products/chaga-extract-powder-1.webp", alt: "Chaga extract powder pouch" }],
-    shortDescription: "Antioxidant-rich Chaga powder for coffee or smoothies — non-intoxicating, no THC.",
-    description:
-      "100g of pure Chaga mushroom extract powder, sourced from wild-harvested birch-grown Chaga. Stir into coffee or a smoothie — a functional wellness product with no THC or CBD.",
-    stock: 8,
-    badges: ["sale", "low-stock"],
+    images: [{ url: "/images/shop/products/cigarettes.jpg", alt: "Discount Tips Canadian Blend cigarette bags" }],
+    shortDescription: "Discount cigarettes available in multiple quantity formats.",
+    description: "Discount cigarettes available in multiple quantity formats.",
+    shortDescriptionLocalized: {
+      fr: "Cigarettes Discount disponibles en plusieurs formats de quantité.",
+      en: "Discount cigarettes available in multiple quantity formats.",
+    },
+    descriptionLocalized: {
+      fr: "Cigarettes Discount disponibles en plusieurs formats de quantité.",
+      en: "Discount cigarettes available in multiple quantity formats.",
+    },
+    stock: null,
+    badges: [],
     reviews: [],
-    createdAtDaysAgo: 15,
+    inStoreOnly: true,
+    // Client-verified exact tiers only (1/5/10/25/50 bags) — never
+    // interpolated (e.g. no invented "2 bags"/"20 bags"). labelLocalized
+    // carries the client-provided FR wording ("sac"/"sacs") since it
+    // genuinely differs from the EN "bag"/"bags" wording, unlike the
+    // flower products' unit-abbreviation labels above.
+    formats: [
+      { label: "1 bag", labelLocalized: { fr: "1 sac", en: "1 bag" }, price: 25 },
+      { label: "5 bags", labelLocalized: { fr: "5 sacs", en: "5 bags" }, price: 120 },
+      { label: "10 bags", labelLocalized: { fr: "10 sacs", en: "10 bags" }, price: 200 },
+      { label: "25 bags", labelLocalized: { fr: "25 sacs", en: "25 bags" }, price: 350 },
+      { label: "50 bags (1 case)", labelLocalized: { fr: "50 sacs (1 caisse)", en: "50 bags (1 case)" }, price: 600 },
+    ],
   }),
 ];

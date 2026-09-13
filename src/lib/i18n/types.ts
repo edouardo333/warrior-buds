@@ -37,6 +37,13 @@ export type LegalDocument = {
 };
 
 export type Dictionary = {
+  // Homepage <title> only — the homepage has no page-specific dictionary
+  // section of its own (unlike about/reviews/contact/etc.), so this mirrors
+  // the root layout's static metadata.title for client-side locale sync.
+  // See DocumentTitleSync.
+  home: {
+    metaTitle: string;
+  };
   nav: {
     links: {
       home: string;
@@ -83,14 +90,15 @@ export type Dictionary = {
     title: string;
     explore: string;
     items: {
-      flower: { name: string; description: string };
-      edibles: { name: string; description: string };
-      vapes: { name: string; description: string };
-      concentrates: { name: string; description: string };
-      cbd: { name: string; description: string };
-      accessories: { name: string; description: string };
-      mushrooms: { name: string; description: string };
-      topicals: { name: string; description: string };
+      flower: { name: string; description: string; alt: string };
+      edibles: { name: string; description: string; alt: string };
+      vapes: { name: string; description: string; alt: string };
+      concentrates: { name: string; description: string; alt: string };
+      cbd: { name: string; description: string; alt: string };
+      accessories: { name: string; description: string; alt: string };
+      mushrooms: { name: string; description: string; alt: string };
+      topicals: { name: string; description: string; alt: string };
+      cigarettes: { name: string; description: string; alt: string };
     };
   };
   whyWarriorBuds: {
@@ -534,7 +542,7 @@ export type Dictionary = {
     appliedMessage: (code: string, amount: string) => string;
     freeShippingMessage: (threshold: string) => string;
     errorInvalid: string;
-    errorNotFirstOrder: string;
+    errorAlreadyRedeemed: string;
     errorEmpty: string;
     discountLabel: (code: string) => string;
   };
@@ -558,6 +566,11 @@ export type Dictionary = {
     miniCartTitle: string;
     viewCart: string;
     itemsInCart: (count: number) => string;
+    // Cart-line meta text for a format-priced item (e.g. "Format: 14g") —
+    // shown under the product name in CartLineItem/MiniCart/ReviewStep. The
+    // label itself is never translated (types/product.ts's ProductFormat),
+    // only this surrounding phrase.
+    formatLabel: (label: string) => string;
   };
   wishlist: {
     metaTitle: string;
@@ -656,7 +669,6 @@ export type Dictionary = {
     shippingAddress: string;
     billingAddress: string;
     paymentMethod: string;
-    simulateAdvance: string;
     orderComplete: string;
     timeline: string;
     total: string;
@@ -695,6 +707,7 @@ export type Dictionary = {
       addToCart: string;
       outOfStock: string;
       lowStock: string;
+      startingFrom: (formattedPrice: string) => string;
     };
     detail: {
       addToCart: string;
@@ -717,6 +730,19 @@ export type Dictionary = {
       trustSecureCheckout: string;
       trustInStorePickup: string;
       trustCustomerSupport: string;
+      bulkPricingTitle: string;
+      bulkPricingQuantity: string;
+      bulkPricingPrice: string;
+      bulkPricingUnit: (quantity: number) => string;
+      totalPrice: (formattedPrice: string) => string;
+      youSave: (formattedAmount: string) => string;
+      availableFormatsTitle: string;
+      formatColumn: string;
+      priceColumn: string;
+      inStoreOnlyNotice: string;
+      selectFormatPrompt: string;
+      enlargeImage: (label: string) => string;
+      closeImage: string;
     };
     finalCta: {
       label: string;
@@ -726,6 +752,13 @@ export type Dictionary = {
       getDirections: string;
       callNow: string;
     };
+  };
+  // Global app/not-found.tsx (also reached for an invalid /products/[slug]).
+  notFoundPage: {
+    title: string;
+    message: string;
+    backToProducts: string;
+    backHome: string;
   };
   legal: {
     onThisPage: string;
