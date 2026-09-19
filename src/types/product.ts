@@ -41,6 +41,16 @@ export type ProductReview = {
 export type ProductImage = {
   url: string;
   alt: string;
+  // True for a tall (2:3) infographic-style image that must be shown whole
+  // rather than cropped into the catalog's 4:5 card / square gallery frames
+  // (ProductCard letterboxes it, ProductGallery gives it a portrait frame).
+  // Undefined for every existing product image — unchanged rendering.
+  portrait?: boolean;
+  // Width ÷ height of artwork whose printed text must not be cropped (e.g. a
+  // near-square product sheet). ProductGallery sizes its frame to this ratio
+  // and ProductCard letterboxes it, like `portrait` above. Undefined for every
+  // existing product image — unchanged rendering.
+  aspectRatio?: number;
 };
 
 // One verified quantity/price tier from a client-provided wholesale price
@@ -86,6 +96,25 @@ export type ProductFormat = {
   labelLocalized?: LocalizedText;
 };
 
+// One flavour family of a flavour-selectable product (e.g. "Fruit + Ice").
+// `label` is the localized family name (supporting UI terminology); each entry
+// of `flavours` is an official flavour name — identity data like
+// StorefrontProduct.name, never translated or localized.
+export type ProductFlavourGroup = {
+  id: string;
+  label: LocalizedText;
+  flavours: string[];
+};
+
+// One verified headline spec ("50,000 puffs", "20 mL e-liquid") shown in the
+// Product Detail spec grid. `key` picks the grid icon; label/value are
+// supporting copy and therefore localized.
+export type ProductSpec = {
+  key: "puffs" | "display" | "e-liquid" | "charging";
+  label: LocalizedText;
+  value: LocalizedText;
+};
+
 export type StorefrontProduct = {
   id: string; // e.g. "PROD-1001"
   slug: string;
@@ -120,6 +149,11 @@ export type StorefrontProduct = {
   price: number;
   salePrice: number | null;
   images: ProductImage[];
+  // Optional separate image set for the Product Detail gallery (hero, thumbs
+  // and lightbox). `images` stays the card/cart/wishlist image; when
+  // `detailImages` is unset the detail page uses `images` as before, so only
+  // a product that wants a different detail artwork sets this.
+  detailImages?: ProductImage[];
   // Default/fallback copy (English) read by consumers that don't localize
   // (search indexing in lib/shop/category-tree.ts + product-engine.ts,
   // Bud Guardian's chat text, page metadata). The storefront UI itself
@@ -162,4 +196,35 @@ export type StorefrontProduct = {
   // shows t.productCatalog.detail.inStoreOnlyNotice instead. Undefined/false
   // for every other product — never changes their existing cart behavior.
   inStoreOnly?: boolean;
+  // True when no verified price has been supplied for this product yet. It is
+  // an informational listing only: `price` holds 0 as a placeholder that must
+  // never be displayed, compared or sorted as a real price (see
+  // lib/shop/product-engine.ts's isPriceOnRequest / getPriceLabel), and it
+  // never exposes Add to Cart or wishlist controls. Undefined/false for every
+  // other product.
+  priceOnRequest?: boolean;
+  // Optional client-supplied quantity → price list shown as an informational
+  // "Pricing" table on Product Detail (and "From $X" on the card) in place of
+  // the "price on request" wording. DISPLAY ONLY: it never feeds
+  // getProductPriceForQuantity, Add to Cart, the cart or checkout, and the
+  // product stays priceOnRequest (not purchasable online) regardless. Lowest
+  // quantity first. Undefined for every other product.
+  infoPricing?: BulkPriceTier[];
+  // When true, infoPricing is presented exactly like a product's bulkPricing:
+  // the full-width "Bulk Pricing" card below the product (same markup as
+  // Pack Man), with the product's bulkUnitLabel wording — instead of the
+  // compact "Pricing" table beside the flavours. Still display only: the rows
+  // are not selectable and nothing reaches the cart. Undefined for every
+  // other product.
+  infoPricingAsBulk?: boolean;
+  // Optional selectable flavours, grouped into families (see
+  // ProductFlavourGroup). One product with many flavours, not one product per
+  // flavour. Undefined for every product without a flavour choice.
+  flavourGroups?: ProductFlavourGroup[];
+  // Optional verified headline specs (see ProductSpec), rendered after the
+  // standard category/strain/THC/CBD/weight specs.
+  specs?: ProductSpec[];
+  // Optional legally required warning shown verbatim (localized) on Product
+  // Detail — e.g. the nicotine warning printed on the product packaging.
+  warning?: LocalizedText;
 };

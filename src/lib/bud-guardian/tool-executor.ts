@@ -38,6 +38,7 @@ import {
   getStrainLabel,
   getAllCategories,
   isFormatPriced,
+  isPriceOnRequest,
 } from "@/lib/shop/product-engine";
 import { getStoreStatus, getWeeklySchedule } from "@/lib/hours";
 import { SITE } from "@/lib/site";
@@ -126,6 +127,8 @@ function toolSearchProducts(call: GuardianToolCall, ctx: ToolExecContext): Guard
   const matches = getProducts().filter((p) => {
     if (category && p.category !== category) return false;
     const price = getEffectivePrice(p);
+    // A price-on-request product has no real price to fall inside a price range.
+    if ((maxPrice != null || minPrice != null) && isPriceOnRequest(p)) return false;
     if (maxPrice != null && price > maxPrice) return false;
     if (minPrice != null && price <= minPrice) return false;
     if (!needle) return true;
@@ -138,7 +141,8 @@ function toolSearchProducts(call: GuardianToolCall, ctx: ToolExecContext): Guard
     brand: p.brand,
     category: p.category,
     strain: p.strain ? getStrainLabel(p.strain, ctx.locale) : null,
-    price: getEffectivePrice(p),
+    price: isPriceOnRequest(p) ? null : getEffectivePrice(p),
+    priceOnRequest: isPriceOnRequest(p),
     stockStatus: getStockStatus(p),
     rating: getAverageRating(p),
   }));
@@ -165,7 +169,8 @@ function toolGetProductDetails(call: GuardianToolCall, ctx: ToolExecContext): Gu
       strain: product.strain ? getStrainLabel(product.strain, ctx.locale) : null,
       thcPercent: product.thcPercent,
       cbdPercent: product.cbdPercent,
-      price: getEffectivePrice(product),
+      price: isPriceOnRequest(product) ? null : getEffectivePrice(product),
+      priceOnRequest: isPriceOnRequest(product),
       onSale: product.salePrice !== null,
       stockStatus: getStockStatus(product),
       rating: getAverageRating(product),
@@ -399,6 +404,11 @@ function toolAddToCart(call: GuardianToolCall): GuardianToolResult {
   // and product-engine.ts's isFormatPriced header) — this tool call carries
   // no format selection, so Guardian can't complete it and should direct the
   // shopper to the product page to pick a format themselves.
+  // No verified price yet (types/product.ts priceOnRequest) — not purchasable online.
+  if (isPriceOnRequest(product)) {
+    return ok(call.id, call.name, { added: false, reason: "price_on_request", productId, name: product.name }, { productId });
+  }
+
   if (isFormatPriced(product)) {
     return ok(call.id, call.name, { added: false, reason: "requires_format_selection", productId, name: product.name }, { productId });
   }

@@ -4,20 +4,25 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   ArrowLeft,
+  BatteryCharging,
   Droplet,
   Headset,
   Heart,
   Leaf,
   Minus,
+  Monitor,
   Percent,
   Plus,
   ShieldCheck,
   ShoppingCart,
   Store,
   Tag,
+  TriangleAlert,
   Weight,
+  Wind,
 } from "lucide-react";
 import ProductBadges from "./ProductBadges";
+import ProductFlavourSelector from "./ProductFlavourSelector";
 import ProductGallery from "./ProductGallery";
 import ProductReviews from "./ProductReviews";
 import ShopCta from "./ShopCta";
@@ -33,14 +38,23 @@ import {
   getBulkUnitLabel,
   getCategoryLabel,
   getEffectivePrice,
+  getInfoPricingFloor,
   getProductPriceForQuantity,
   getStockStatus,
   getStrainLabel,
   isFormatPriced,
   isInStoreOnly,
   isOnSale,
+  isPriceOnRequest,
 } from "@/lib/shop/product-engine";
-import type { ProductFormat, StorefrontProduct } from "@/types/product";
+import type { ProductFormat, ProductSpec, StorefrontProduct } from "@/types/product";
+
+const SPEC_ICONS: Record<ProductSpec["key"], typeof Tag> = {
+  puffs: Wind,
+  display: Monitor,
+  "e-liquid": Droplet,
+  charging: BatteryCharging,
+};
 
 export default function ProductDetail({ product }: { product: StorefrontProduct }) {
   const { t, locale } = useLanguage();
@@ -71,6 +85,19 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
   // Cart, and wishlist controls below regardless of formatPriced, and shows
   // the in-store notice instead. Every other product is unaffected.
   const inStoreOnly = isInStoreOnly(product);
+  // No verified price yet (types/product.ts's priceOnRequest): shows the
+  // "price on request" wording and a contact notice in place of the price and
+  // purchase controls (same gating as inStoreOnly), never a price or $0.
+  const priceOnRequest = isPriceOnRequest(product);
+  // Display-only price list (types/product.ts's infoPricing): replaces the
+  // "price on request" wording with a "From $X" line and a Pricing table below.
+  // Purely informational — never wired to quantity, cart, or checkout.
+  const infoPricing = product.infoPricing && product.infoPricing.length > 0 ? product.infoPricing : null;
+  // Tiers for the full-width "Bulk Pricing" card: a product's real bulkPricing
+  // (selectable rows) or, when infoPricingAsBulk is set, its display-only
+  // infoPricing rendered in the same card without selection.
+  const bulkDisplayOnly = Boolean(product.infoPricingAsBulk && infoPricing);
+  const bulkTiers = product.bulkPricing && product.bulkPricing.length > 0 ? product.bulkPricing : bulkDisplayOnly ? infoPricing : null;
 
   // The official product name/brand are language-independent identity data
   // (types/product.ts) and are read directly below — never through `t` or
@@ -111,6 +138,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
     product.thcPercent !== null && { key: "thc", icon: Percent, label: t.productCatalog.detail.thc, value: `${product.thcPercent}%` },
     product.cbdPercent !== null && { key: "cbd", icon: Droplet, label: t.productCatalog.detail.cbd, value: `${product.cbdPercent}%` },
     product.weightGrams !== null && { key: "weight", icon: Weight, label: t.productCatalog.detail.weight, value: `${product.weightGrams} g` },
+    ...(product.specs ?? []).map((spec) => ({ key: spec.key, icon: SPEC_ICONS[spec.key], label: spec.label[locale], value: spec.value[locale] })),
   ].filter(Boolean) as { key: string; icon: typeof Tag; label: string; value: string }[];
 
   const trustBadges = [
@@ -137,7 +165,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
-            <ProductGallery images={product.images} fallbackLabel={product.category} />
+            <ProductGallery images={product.detailImages ?? product.images} fallbackLabel={product.category} />
           </Reveal>
 
           <Reveal delay={100}>
@@ -152,7 +180,13 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
             </div>
             <ProductBadges badges={product.badges} className="mt-4" />
 
-            {formatPriced ? (
+            {priceOnRequest ? (
+              <div className="mt-6 flex items-baseline gap-3">
+                <span className="font-display text-3xl tracking-wide text-gradient-ember sm:text-4xl">
+                  {infoPricing ? t.productCatalog.card.startingFrom(formatPrice(getInfoPricingFloor(infoPricing), locale)) : t.productCatalog.card.priceOnRequest}
+                </span>
+              </div>
+            ) : formatPriced ? (
               <div className="mt-6 flex items-baseline gap-3">
                 <span className="font-display text-4xl tracking-wide text-gradient-ember">
                   {selectedFormat
@@ -198,7 +232,38 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
               </dl>
             )}
 
-            {inStoreOnly ? (
+            {product.flavourGroups && product.flavourGroups.length > 0 && <ProductFlavourSelector groups={product.flavourGroups} />}
+
+            {priceOnRequest && infoPricing && product.infoPricingAsBulk ? null : priceOnRequest && infoPricing ? (
+              <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
+                <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.infoPricingTitle}</h2>
+                <div className="mt-4 overflow-x-auto">
+                  <table className="w-full border-collapse text-sm">
+                    <thead>
+                      <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
+                        <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.bulkPricingQuantity}</th>
+                        <th className="pb-3 font-semibold">{t.productCatalog.detail.bulkPricingPrice}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {infoPricing.map((tier) => (
+                        <tr key={tier.quantity} className="border-b border-white/5 last:border-0">
+                          <td className="py-2.5 pr-4 text-foreground/80">
+                            {tier.quantity} {t.productCatalog.detail.bulkPricingUnit(tier.quantity)}
+                          </td>
+                          <td className="py-2.5 font-semibold text-foreground">{formatPrice(tier.price, locale)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ) : priceOnRequest ? (
+              <div className="mt-6 flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-foreground/70">
+                <Store className="h-4 w-4 shrink-0 text-wb-orange" strokeWidth={2} />
+                {t.productCatalog.detail.priceOnRequestNotice}
+              </div>
+            ) : inStoreOnly ? (
               <div className="mt-6 flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-foreground/70">
                 <Store className="h-4 w-4 shrink-0 text-wb-orange" strokeWidth={2} />
                 {t.productCatalog.detail.inStoreOnlyNotice}
@@ -251,6 +316,13 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                     <Heart className="h-5 w-5" fill={saved ? "currentColor" : "none"} />
                   </button>
                 )}
+              </div>
+            )}
+
+            {product.warning && (
+              <div role="note" className="mt-6 flex items-start gap-2.5 rounded-xl border border-wb-red/30 bg-wb-red/[0.06] p-4 text-sm font-semibold text-foreground/85">
+                <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-wb-red" strokeWidth={2} />
+                <span className="min-w-0 break-words">{product.warning[locale]}</span>
               </div>
             )}
 
@@ -319,7 +391,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
           </Reveal>
         )}
 
-        {product.bulkPricing && product.bulkPricing.length > 0 && (
+        {bulkTiers && (
           <Reveal className="mt-10 sm:mt-12">
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
               <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.bulkPricingTitle}</h2>
@@ -332,7 +404,18 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                     </tr>
                   </thead>
                   <tbody>
-                    {product.bulkPricing.map((tier) => {
+                    {bulkTiers.map((tier) => {
+                      // Display-only tiers (infoPricingAsBulk) are not selectable.
+                      if (bulkDisplayOnly) {
+                        return (
+                          <tr key={tier.quantity} className="border-b border-white/5 last:border-0">
+                            <td className="py-2.5 pr-4 text-foreground/80">
+                              {tier.quantity} {getBulkUnitLabel(product, tier.quantity, locale, t.productCatalog.detail.bulkPricingUnit(tier.quantity))}
+                            </td>
+                            <td className="py-2.5 font-semibold text-foreground">{formatPrice(tier.price, locale)}</td>
+                          </tr>
+                        );
+                      }
                       const active = tier.quantity === quantity;
                       return (
                         <tr

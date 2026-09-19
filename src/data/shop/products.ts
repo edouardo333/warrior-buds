@@ -277,4 +277,197 @@ export const STOREFRONT_PRODUCTS: StorefrontProduct[] = [
       { label: "50 bags (1 case)", labelLocalized: { fr: "50 sacs (1 caisse)", en: "50 bags (1 case)" }, price: 600 },
     ],
   }),
+
+  // STLTH TITAN MAX 50K — client-supplied product sheet (catalog integration
+  // pass). Append-only array: product ids are assigned by
+  // position (nextId above), so appending keeps every existing product id —
+  // and therefore every persisted cart/wishlist line — unchanged.
+  //
+  // ONE product with 25 selectable flavours in four families (flavourGroups),
+  // not 25 products. Supported facts only, all read off the supplied sheet:
+  // 50,000 puffs, smart display, 20 mL e-liquid, USB-C rechargeable, and the
+  // packaging's nicotine warning. No purchasable price was supplied, so
+  // `priceOnRequest` keeps this an informational listing (no Add to Cart/
+  // wishlist — see types/product.ts's priceOnRequest); the client's price list
+  // is shown display-only through `infoPricing`. `price: 0` is only a
+  // placeholder that is never displayed or compared. Nicotine strength, puff-count claims
+  // beyond the headline, battery capacity, stock and reviews were not
+  // provided — left null/empty rather than guessed. Storefront type:
+  // Disposables (productType), never Wax Pens/flower/strain/grade.
+  product({
+    slug: "stlth-titan-max-50k",
+    name: "STLTH TITAN MAX 50K",
+    brand: "STLTH",
+    category: "vapes",
+    productType: "disposable",
+    strain: null,
+    thcPercent: null,
+    cbdPercent: null,
+    weightGrams: null,
+    price: 0,
+    salePrice: null,
+    priceOnRequest: true,
+    // Client-supplied price list — displayed only (types/product.ts's
+    // infoPricing); no cart/checkout tier logic is attached to it.
+    infoPricing: [
+      { quantity: 1, price: 45 },
+      { quantity: 2, price: 80 },
+      { quantity: 10, price: 320 },
+      { quantity: 25, price: 700 },
+    ],
+    images: [
+      {
+        url: "/images/shop/products/stlth-titan-max-50k-puffs.jpg",
+        alt: "STLTH TITAN MAX 50K — 50,000 puffs, smart display, 20 mL e-liquid, USB-C rechargeable — Fruit, Fruit + Ice, Mint and Tobacco flavours",
+        portrait: true,
+      },
+    ],
+    shortDescription:
+      "STLTH TITAN MAX 50K — 50,000 puffs, smart display, 20 mL e-liquid and USB-C recharging. Available in 25 flavours across Fruit, Fruit + Ice, Mint and Tobacco.",
+    description:
+      "STLTH TITAN MAX 50K — 50,000 puffs, smart display, 20 mL e-liquid and USB-C recharging. Available in 25 flavours across Fruit, Fruit + Ice, Mint and Tobacco.",
+    shortDescriptionLocalized: {
+      fr: "STLTH TITAN MAX 50K — 50 000 bouffées, écran intelligent, 20 mL d'e-liquide et recharge USB-C. Offert en 25 saveurs : Fruit, Fruit + glace, Menthe et Tabac.",
+      en: "STLTH TITAN MAX 50K — 50,000 puffs, smart display, 20 mL e-liquid and USB-C recharging. Available in 25 flavours across Fruit, Fruit + Ice, Mint and Tobacco.",
+    },
+    descriptionLocalized: {
+      fr: "STLTH TITAN MAX 50K — 50 000 bouffées, écran intelligent, 20 mL d'e-liquide et recharge USB-C. Offert en 25 saveurs : Fruit, Fruit + glace, Menthe et Tabac.",
+      en: "STLTH TITAN MAX 50K — 50,000 puffs, smart display, 20 mL e-liquid and USB-C recharging. Available in 25 flavours across Fruit, Fruit + Ice, Mint and Tobacco.",
+    },
+    stock: null,
+    badges: [],
+    reviews: [],
+    specs: [
+      { key: "puffs", label: { fr: "Bouffées", en: "Puffs" }, value: { fr: "50 000", en: "50,000" } },
+      { key: "display", label: { fr: "Écran", en: "Display" }, value: { fr: "Écran intelligent", en: "Smart Display" } },
+      { key: "e-liquid", label: { fr: "E-liquide", en: "E-Liquid" }, value: { fr: "20 mL", en: "20 mL" } },
+      { key: "charging", label: { fr: "Recharge", en: "Charging" }, value: { fr: "Rechargeable USB-C", en: "USB-C Rechargeable" } },
+    ],
+    // Printed on the product packaging (EN + FR, Health Canada).
+    warning: {
+      fr: "AVERTISSEMENT : La nicotine crée une forte dépendance.",
+      en: "WARNING: Nicotine is highly addictive.",
+    },
+    flavourGroups: [
+      { id: "fruit", label: { fr: "Fruit", en: "Fruit" }, flavours: ["Blue Razz", "Juicy Peach"] },
+      {
+        id: "fruit-ice",
+        label: { fr: "Fruit + glace", en: "Fruit + Ice" },
+        flavours: [
+          "Apple Kiwi Ice",
+          "Banana Ice",
+          "Blue Peach Ice",
+          "Cherry Classic Ice",
+          "Cranberry Pom Ice",
+          "Green Apple Ice",
+          "Honeydew Ice",
+          "Juicy Grapefruit Ice",
+          "Juicy Peach Ice",
+          "Peach White Grape Ice",
+          "Punch Ice",
+          "Quad Berry Ice",
+          "Razz Currant Ice",
+          "Sour Blue Razz Ice",
+          "Strawberry Guava Ice",
+          "Strawberry Kiwi Ice",
+          "Strawnana Orange Ice",
+          "Tropical Mango Ice",
+          "White Grape Ice",
+          "White Grape Melon Ice",
+        ],
+      },
+      { id: "mint", label: { fr: "Menthe", en: "Mint" }, flavours: ["Smooth Mint", "Spearmint"] },
+      { id: "tobacco", label: { fr: "Tabac", en: "Tobacco" }, flavours: ["Smooth Tobacco"] },
+    ],
+  }),
+
+  // Heavy Hitters — a NEW, independent brand/product (not Pack Man, not STLTH),
+  // appended last so every existing product id stays unchanged. Sits in the
+  // same storefront slot as Pack Man (Vapes → Wax Pens, productType
+  // "wax-pen") even though the supplied artwork prints the word "Disposable";
+  // the storefront category is a catalog decision, not read off the artwork.
+  //
+  // Supported facts only, all read off the supplied artwork
+  // (heavy-hitter.jpg): "Premium Disposable", 1G, Indica, Premium Distillate,
+  // and the four flavour names. THC/CBD %, terpenes, effects, lab results,
+  // stock, reviews and any further flavours were not provided — left
+  // null/empty rather than guessed. No purchasable price was supplied, so
+  // `priceOnRequest` keeps this an informational listing (no Add to Cart/
+  // wishlist — see types/product.ts's priceOnRequest); the client's display
+  // prices are shown through `infoPricing` below. `price: 0` is a placeholder
+  // that is never displayed or compared. `brand` is unset (the name is the brand), so
+  // the eyebrow falls back to the category label, as for Pack Man. Copy must
+  // not use the word "cartridge" (it would also match the Cartridges filter).
+  //
+  // ONE product with four selectable flavours (a single flavourGroups family,
+  // not four products). The near-square artwork carries printed text at its
+  // edges, so `aspectRatio` makes the gallery/card show it uncropped.
+  product({
+    slug: "heavy-hitters",
+    name: "Heavy Hitters",
+    category: "vapes",
+    productType: "wax-pen",
+    strain: "indica",
+    thcPercent: null,
+    cbdPercent: null,
+    weightGrams: 1,
+    price: 0,
+    salePrice: null,
+    priceOnRequest: true,
+    // Client-supplied DISPLAY prices for Heavy Hitters 1G — exactly these six
+    // tiers, shown in the same Bulk Pricing card as Pack Man (infoPricingAsBulk)
+    // but display only: no cart/checkout tier logic is attached, and the product
+    // stays non-purchasable online.
+    infoPricing: [
+      { quantity: 1, price: 20 },
+      { quantity: 10, price: 150 },
+      { quantity: 25, price: 350 },
+      { quantity: 50, price: 600 },
+      { quantity: 100, price: 1100 },
+      { quantity: 200, price: 2000 },
+    ],
+    infoPricingAsBulk: true,
+    bulkUnitLabel: {
+      singular: { fr: "stylo", en: "pen" },
+      plural: { fr: "stylos", en: "pens" },
+    },
+    images: [
+      {
+        url: "/images/shop/products/heavy-hitter.jpg",
+        alt: "Heavy Hitters Premium Disposable 1G Indica, Premium Distillate — Juicy Watermelon, Super Lemon, Pineapple Breeze and Fizzy Grape flavours",
+        aspectRatio: 1223 / 1286,
+      },
+    ],
+    // Product Detail hero + lightbox use the Fizzy Grape artwork; the card
+    // above keeps the promotional heavy-hitter.jpg. Same single product.
+    detailImages: [
+      {
+        url: "/images/shop/products/fizzy-grape.png",
+        alt: "Heavy Hitters Premium Disposable 1G Indica — Fizzy Grape artwork",
+        aspectRatio: 1312 / 1199,
+      },
+    ],
+    shortDescription:
+      "Heavy Hitters Premium Disposable — 1G Indica made with premium distillate. Available in Juicy Watermelon, Super Lemon, Pineapple Breeze and Fizzy Grape.",
+    description:
+      "Heavy Hitters Premium Disposable — 1G Indica made with premium distillate. Available in Juicy Watermelon, Super Lemon, Pineapple Breeze and Fizzy Grape.",
+    shortDescriptionLocalized: {
+      fr: "Heavy Hitters Premium Disposable — 1 G Indica à base de distillat premium. Offert en Juicy Watermelon, Super Lemon, Pineapple Breeze et Fizzy Grape.",
+      en: "Heavy Hitters Premium Disposable — 1G Indica made with premium distillate. Available in Juicy Watermelon, Super Lemon, Pineapple Breeze and Fizzy Grape.",
+    },
+    descriptionLocalized: {
+      fr: "Heavy Hitters Premium Disposable — 1 G Indica à base de distillat premium. Offert en Juicy Watermelon, Super Lemon, Pineapple Breeze et Fizzy Grape.",
+      en: "Heavy Hitters Premium Disposable — 1G Indica made with premium distillate. Available in Juicy Watermelon, Super Lemon, Pineapple Breeze and Fizzy Grape.",
+    },
+    stock: null,
+    badges: [],
+    reviews: [],
+    flavourGroups: [
+      {
+        id: "flavours",
+        label: { fr: "Saveurs", en: "Flavours" },
+        flavours: ["Juicy Watermelon", "Super Lemon", "Pineapple Breeze", "Fizzy Grape"],
+      },
+    ],
+  }),
 ];

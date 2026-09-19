@@ -32,6 +32,30 @@ export function isInStoreOnly(product: StorefrontProduct): boolean {
   return Boolean(product.inStoreOnly);
 }
 
+// True for a product with no verified price yet (types/product.ts's
+// priceOnRequest) — an informational listing: no price shown, never sorted or
+// compared as $0, no Add to Cart/wishlist. `price` holds a 0 placeholder for
+// these that must never leak into any customer-facing price. Every other
+// product is unaffected.
+export function isPriceOnRequest(product: StorefrontProduct): boolean {
+  return Boolean(product.priceOnRequest);
+}
+
+// Lowest price in a display-only infoPricing list (types/product.ts) — the
+// "From $X" figure for cards and the detail header. Informational only.
+export function getInfoPricingFloor(tiers: BulkPriceTier[]): number {
+  return Math.min(...tiers.map((tier) => tier.price));
+}
+
+const PRICE_ON_REQUEST_LABEL: Record<Locale, string> = { fr: "Prix sur demande", en: "Price on request" };
+
+// Customer-facing price text: the localized "price on request" wording for a
+// priceOnRequest product, otherwise the regular formatted effective price.
+// Used by Bud Guardian's chat answers so they never quote the 0 placeholder.
+export function getPriceLabel(product: StorefrontProduct, locale: Locale): string {
+  return isPriceOnRequest(product) ? PRICE_ON_REQUEST_LABEL[locale] : formatPrice(getEffectivePrice(product), locale);
+}
+
 export function getEffectivePrice(product: StorefrontProduct): number {
   return product.salePrice ?? product.price;
 }
@@ -130,7 +154,10 @@ export function filterProducts(products: StorefrontProduct[], filters: ProductFi
     if (filters.onSaleOnly && !isOnSale(p)) return false;
     if (filters.search) {
       const q = filters.search.trim().toLowerCase();
-      if (q && !`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription}`.toLowerCase().includes(q)) return false;
+      // Flavour names are searchable too (e.g. "blue razz" finds the STLTH
+      // TITAN MAX 50K product) — empty for every product without flavourGroups.
+      const flavours = p.flavourGroups?.flatMap((g) => g.flavours).join(" ") ?? "";
+      if (q && !`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription} ${flavours}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -139,10 +166,12 @@ export function filterProducts(products: StorefrontProduct[], filters: ProductFi
 export function sortProducts(products: StorefrontProduct[], sort: ProductSort): StorefrontProduct[] {
   const copy = [...products];
   switch (sort) {
+    // Price-on-request products carry no real price, so they always sort after
+    // every priced product in both directions instead of as a fake $0.
     case "price-asc":
-      return copy.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+      return copy.sort((a, b) => Number(isPriceOnRequest(a)) - Number(isPriceOnRequest(b)) || getEffectivePrice(a) - getEffectivePrice(b));
     case "price-desc":
-      return copy.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+      return copy.sort((a, b) => Number(isPriceOnRequest(a)) - Number(isPriceOnRequest(b)) || getEffectivePrice(b) - getEffectivePrice(a));
     case "newest":
       return copy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     case "rating":

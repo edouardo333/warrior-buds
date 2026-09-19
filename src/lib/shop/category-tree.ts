@@ -186,7 +186,9 @@ export const CATEGORY_TREE: CategoryNode[] = [
       {
         id: "vapes-disposables",
         label: { en: "Disposables", fr: "Vapoteuses jetables" },
-        match: (p) => p.category === "vapes" && p.productType !== "wax-pen" && /disposable/.test(searchableText(p)),
+        // Structured productType first (e.g. STLTH TITAN MAX 50K, whose supplied
+        // copy never uses the word), then the original text signal.
+        match: (p) => p.category === "vapes" && p.productType !== "wax-pen" && (p.productType === "disposable" || /disposable/.test(searchableText(p))),
       },
       {
         id: "vapes-wax-pens",

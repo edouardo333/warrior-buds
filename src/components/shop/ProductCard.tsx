@@ -8,7 +8,7 @@ import ProductImageFallback from "./ProductImageFallback";
 import StarRating from "./StarRating";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart, useWishlist } from "@/lib/shop/cart-actions";
-import { formatPrice, getAverageRating, getCategoryLabel, getEffectivePrice, getStockStatus, isFormatPriced, isOnSale } from "@/lib/shop/product-engine";
+import { formatPrice, getAverageRating, getCategoryLabel, getEffectivePrice, getInfoPricingFloor, getStockStatus, isFormatPriced, isOnSale, isPriceOnRequest } from "@/lib/shop/product-engine";
 import type { StorefrontProduct } from "@/types/product";
 
 export default function ProductCard({ product }: { product: StorefrontProduct }) {
@@ -25,22 +25,30 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
   // pick a format and add to cart from the product page instead (see
   // ProductDetail.tsx). See product-engine.ts's isFormatPriced header.
   const formatPriced = isFormatPriced(product);
+  // No verified price yet (types/product.ts's priceOnRequest): shows the
+  // "price on request" wording instead of a price, and — like format-priced
+  // products — no quick-add or wishlist control.
+  const priceOnRequest = isPriceOnRequest(product);
+  const noQuickActions = formatPriced || priceOnRequest;
+  // A tall infographic image is letterboxed whole instead of cropped by the
+  // 4:5 card frame (types/product.ts's ProductImage.portrait / aspectRatio).
+  const portraitImage = Boolean(product.images[0]?.portrait || product.images[0]?.aspectRatio);
 
   return (
     <div className="wb-product-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.015] shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] hover:border-wb-orange/40 hover:shadow-[0_24px_60px_-24px_rgba(244,103,15,0.35)]">
-      <Link href={`/products/${product.slug}`} className="relative block aspect-[4/5] overflow-hidden">
+      <Link href={`/products/${product.slug}`} className={`relative block aspect-[4/5] overflow-hidden${portraitImage ? " bg-black" : ""}`}>
         <SmartImage
           src={product.images[0]?.url ?? ""}
           alt={product.images[0]?.alt ?? product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="wb-product-card__image object-cover"
+          className={`wb-product-card__image ${portraitImage ? "object-contain" : "object-cover"}`}
           fallback={<ProductImageFallback label={product.category} className="text-base" />}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-250 group-hover:opacity-100" />
         <ProductBadges badges={product.badges} className="absolute left-3 top-3 z-10" />
       </Link>
-      {!formatPriced && (
+      {!noQuickActions && (
         <button
           type="button"
           onClick={() => toggle(product.id)}
@@ -74,10 +82,16 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
           <div className="flex items-baseline gap-2">
             {isOnSale(product) && <span className="text-xs text-foreground/40 line-through">{formatPrice(product.price, locale)}</span>}
             <span className="text-lg font-semibold text-foreground">
-              {formatPriced ? t.productCatalog.card.startingFrom(formatPrice(getEffectivePrice(product), locale)) : formatPrice(getEffectivePrice(product), locale)}
+              {priceOnRequest
+                ? product.infoPricing && product.infoPricing.length > 0
+                  ? t.productCatalog.card.startingFrom(formatPrice(getInfoPricingFloor(product.infoPricing), locale))
+                  : t.productCatalog.card.priceOnRequest
+                : formatPriced
+                  ? t.productCatalog.card.startingFrom(formatPrice(getEffectivePrice(product), locale))
+                  : formatPrice(getEffectivePrice(product), locale)}
             </span>
           </div>
-          {!formatPriced && (
+          {!noQuickActions && (
             <button
               type="button"
               disabled={stockStatus === "out-of-stock"}

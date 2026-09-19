@@ -21,6 +21,10 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const current = images[active];
   const imageLabel = current?.alt ?? fallbackLabel;
+  // Tall infographic image (types/product.ts's ProductImage.portrait): shown
+  // whole in a 2:3 frame, capped in width so it never outgrows the viewport,
+  // instead of being cropped into the default square frame.
+  const portrait = Boolean(current?.portrait);
 
   // Escape-to-close, background scroll lock (with scroll position restored
   // on close), and focus management (close button focused on open, focus
@@ -49,14 +53,17 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative isolate overflow-hidden rounded-[1.75rem]">
+      <div className={`relative isolate overflow-hidden rounded-[1.75rem]${portrait ? " mx-auto w-full max-w-[26rem]" : ""}`}>
         <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-wb-orange/15 via-wb-red/10 to-transparent blur-2xl" />
         <button
           ref={triggerRef}
           type="button"
           onClick={() => setLightboxOpen(true)}
           aria-label={t.productCatalog.detail.enlargeImage(imageLabel)}
-          className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/[0.02] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.75)]"
+          // An image with its own aspectRatio (types/product.ts) gets a frame
+          // of exactly that ratio, so object-cover crops nothing.
+          style={!portrait && current?.aspectRatio ? { aspectRatio: current.aspectRatio } : undefined}
+          className={`group relative block ${portrait ? "aspect-[2/3]" : "aspect-square"} w-full cursor-zoom-in overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/[0.02] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.75)]`}
         >
           <SmartImage
             src={current?.url ?? ""}

@@ -21,7 +21,7 @@
 // recommendation ask is detected).
 
 import { getProducts } from "@/data/shop/product-store";
-import { getAvailableStock, getEffectivePrice, getStockStatus, getAverageRating, getCategoryLabel, getStrainLabel } from "@/lib/shop/product-engine";
+import { getAvailableStock, getEffectivePrice, getStockStatus, getAverageRating, getCategoryLabel, getPriceLabel, getStrainLabel, isPriceOnRequest } from "@/lib/shop/product-engine";
 import { findGuardianProducts } from "./guardian-shop-hooks";
 import { findBestMatch, type SearchableEntry } from "./search";
 import type { Locale } from "@/lib/i18n/types";
@@ -243,7 +243,7 @@ function formatProductLine(product: StorefrontProduct, locale: Locale): string {
       : stock === "low-stock"
         ? locale === "fr" ? "stock faible" : "low stock"
         : locale === "fr" ? "en stock" : "in stock";
-  const price = formatPrice(getEffectivePrice(product), locale);
+  const price = getPriceLabel(product, locale);
   const strain = product.strain ? ` — ${getStrainLabel(product.strain, locale)}` : "";
   const thc = product.thcPercent != null ? ` · THC ${product.thcPercent}%` : "";
   const cbd = product.cbdPercent != null ? ` · CBD ${product.cbdPercent}%` : "";
@@ -368,6 +368,18 @@ function buildRecommendationAnswer(category: ProductCategory | undefined, budget
 }
 
 function buildRelativePriceAnswer(anchor: StorefrontProduct, direction: "cheaper" | "more-expensive", locale: Locale): ProductQueryResult {
+  // A price-on-request anchor has no price to be cheaper/pricier than.
+  if (isPriceOnRequest(anchor)) {
+    return {
+      answer:
+        locale === "fr"
+          ? `Le prix de ${anchor.name} est sur demande, je ne peux donc pas le comparer à d'autres produits. Contactez-nous ou visitez la boutique pour plus de détails.`
+          : `The price of ${anchor.name} is on request, so I can't compare it against other products. Contact us or visit the store for details.`,
+      suggestions: ["cat-products", "products"],
+      productId: anchor.id,
+      category: anchor.category,
+    };
+  }
   const anchorPrice = getEffectivePrice(anchor);
   const budget: BudgetRange = direction === "cheaper" ? { max: anchorPrice - 0.01 } : { min: anchorPrice };
   return buildRecommendationAnswer(anchor.category, budget, locale, {
@@ -382,14 +394,14 @@ function buildRelativePriceAnswer(anchor: StorefrontProduct, direction: "cheaper
 // "similar" built only from fields the catalog actually has.
 function buildSimilarAnswer(anchor: StorefrontProduct, locale: Locale): ProductQueryResult {
   const anchorPrice = getEffectivePrice(anchor);
-  const candidates = getProducts().filter((p) => p.id !== anchor.id && getAvailableStock(p) > 0 && p.category === anchor.category);
+  const candidates = getProducts().filter((p) => p.id !== anchor.id && getAvailableStock(p) > 0 && p.category === anchor.category && !isPriceOnRequest(p));
   const scored = candidates
     .map((p) => ({
       product: p,
       score:
         (p.strain && anchor.strain && p.strain === anchor.strain ? 2 : 0) +
         (p.brand && anchor.brand && p.brand === anchor.brand ? 1 : 0) +
-        Math.max(0, 2 - Math.abs(getEffectivePrice(p) - anchorPrice) / 15),
+        (isPriceOnRequest(anchor) ? 0 : Math.max(0, 2 - Math.abs(getEffectivePrice(p) - anchorPrice) / 15)),
     }))
     .sort((a, b) => b.score - a.score || (getAverageRating(b.product) ?? 0) - (getAverageRating(a.product) ?? 0));
   const picks = scored.slice(0, 3).map((s) => s.product);
@@ -425,7 +437,7 @@ function formatComparisonLine(product: StorefrontProduct, locale: Locale): strin
       : stock === "low-stock"
         ? locale === "fr" ? "stock faible" : "low stock"
         : locale === "fr" ? "en stock" : "in stock";
-  const price = formatPrice(getEffectivePrice(product), locale);
+  const price = getPriceLabel(product, locale);
   const rating = getAverageRating(product);
   const ratingLabel = rating !== null ? `${rating}/5` : locale === "fr" ? "pas encore noté" : "not yet rated";
   return locale === "fr" ? `${product.name} : ${price}, note ${ratingLabel}, ${stockLabel}.` : `${product.name}: ${price}, rated ${ratingLabel}, ${stockLabel}.`;
@@ -445,7 +457,7 @@ function buildComparisonAnswer(a: StorefrontProduct, b: StorefrontProduct, local
   if (ratingA !== null && ratingB !== null && ratingA !== ratingB) {
     const higher = ratingA > ratingB ? a : b;
     verdict = locale === "fr" ? `${higher.name} a la meilleure note client.` : `${higher.name} has the higher customer rating.`;
-  } else if (priceA !== priceB) {
+  } else if (!isPriceOnRequest(a) && !isPriceOnRequest(b) && priceA !== priceB) {
     const cheaper = priceA < priceB ? a : b;
     verdict = locale === "fr" ? `${cheaper.name} est l'option la plus abordable.` : `${cheaper.name} is the more affordable option.`;
   } else {
@@ -461,13 +473,19 @@ function buildComparisonAnswer(a: StorefrontProduct, b: StorefrontProduct, local
 }
 
 function buildProductAnswer(product: StorefrontProduct, mode: "price" | "availability" | "detail", locale: Locale): ProductQueryResult {
-  const price = formatPrice(getEffectivePrice(product), locale);
+  const price = getPriceLabel(product, locale);
   const stock = getStockStatus(product);
   const rating = getAverageRating(product);
 
   if (mode === "price") {
     return {
-      answer: locale === "fr" ? `${product.name} est à ${price}.` : `${product.name} is ${price}.`,
+      answer: isPriceOnRequest(product)
+        ? locale === "fr"
+          ? `Le prix de ${product.name} est sur demande — contactez-nous ou visitez la boutique pour plus de détails.`
+          : `The price of ${product.name} is on request — contact us or visit the store for details.`
+        : locale === "fr"
+          ? `${product.name} est à ${price}.`
+          : `${product.name} is ${price}.`,
       suggestions: ["cat-products", "order-track"],
       productId: product.id,
       category: product.category,

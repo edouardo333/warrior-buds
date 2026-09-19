@@ -20,7 +20,7 @@ import { getOrders, getOrdersForAccount } from "@/data/shop/order-store";
 import { getProducts } from "@/data/shop/product-store";
 import type { Locale } from "@/lib/i18n/types";
 import { buildTrackingSteps, getOrderStatusLabel } from "@/lib/shop/order-engine";
-import { getAvailableStock, getAverageRating, getEffectivePrice } from "@/lib/shop/product-engine";
+import { getAvailableStock, getAverageRating, getEffectivePrice, isPriceOnRequest } from "@/lib/shop/product-engine";
 import type { ProductCategory, StorefrontProduct } from "@/types/product";
 import type { ShopOrder } from "@/types/shop-order";
 
@@ -68,6 +68,8 @@ export type ProductAdviceSort = "rating" | "price-asc";
 export function findGuardianProducts(filters: ProductAdviceFilters, sort: ProductAdviceSort = "rating", limit = 3): StorefrontProduct[] {
   const matches = getProducts().filter((p) => {
     if (getAvailableStock(p) <= 0) return false;
+    // Never recommend a product with no verified price (not purchasable online).
+    if (isPriceOnRequest(p)) return false;
     if (filters.excludeId && p.id === filters.excludeId) return false;
     if (filters.category && p.category !== filters.category) return false;
     const price = getEffectivePrice(p);

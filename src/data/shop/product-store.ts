@@ -39,7 +39,19 @@ function loadJson<T>(key: string, fallback: () => T): T {
   return fallback();
 }
 
-let products: StorefrontProduct[] = loadJson(PRODUCTS_KEY, () => STOREFRONT_PRODUCTS.map((p) => ({ ...p })));
+// Products added to the seed after a browser already persisted PRODUCTS_KEY
+// (e.g. STLTH TITAN MAX 50K, appended last so existing ids never shift) are
+// merged in by id rather than by bumping the key, so the persisted copy —
+// including any customer-written reviews — is kept, not wiped and reseeded.
+// Products already persisted are left exactly as stored.
+function withNewSeedProducts(stored: StorefrontProduct[]): StorefrontProduct[] {
+  if (!Array.isArray(stored)) return STOREFRONT_PRODUCTS.map((p) => ({ ...p }));
+  const known = new Set(stored.map((p) => p.id));
+  const missing = STOREFRONT_PRODUCTS.filter((p) => !known.has(p.id)).map((p) => ({ ...p }));
+  return missing.length > 0 ? [...stored, ...missing] : stored;
+}
+
+let products: StorefrontProduct[] = withNewSeedProducts(loadJson(PRODUCTS_KEY, () => STOREFRONT_PRODUCTS.map((p) => ({ ...p }))));
 
 const listeners = new Set<() => void>();
 
@@ -59,7 +71,7 @@ function notify(): void {
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (event) => {
     if (event.key !== PRODUCTS_KEY) return;
-    products = loadJson(PRODUCTS_KEY, () => products);
+    products = withNewSeedProducts(loadJson(PRODUCTS_KEY, () => products));
     notify();
   });
 }

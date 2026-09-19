@@ -708,6 +708,7 @@ export type Dictionary = {
       outOfStock: string;
       lowStock: string;
       startingFrom: (formattedPrice: string) => string;
+      priceOnRequest: string;
     };
     detail: {
       addToCart: string;
@@ -741,6 +742,13 @@ export type Dictionary = {
       priceColumn: string;
       inStoreOnlyNotice: string;
       selectFormatPrompt: string;
+      priceOnRequestNotice: string;
+      infoPricingTitle: string;
+      flavourProfile: string;
+      flavour: string;
+      flavourCount: (count: number) => string;
+      chooseFlavour: string;
+      selectedFlavour: string;
       enlargeImage: (label: string) => string;
       closeImage: string;
     };

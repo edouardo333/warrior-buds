@@ -26,7 +26,7 @@ import type { Locale } from "@/lib/i18n/types";
 import type { QuickActionId } from "@/data/bud-guardian/types";
 import type { StorefrontProduct } from "@/types/product";
 import { getProducts } from "@/data/shop/product-store";
-import { getAvailableStock, getEffectivePrice, isFormatPriced } from "@/lib/shop/product-engine";
+import { getAvailableStock, getEffectivePrice, isFormatPriced, isPriceOnRequest } from "@/lib/shop/product-engine";
 import {
   getCartLines,
   getCartTotals,
@@ -193,8 +193,9 @@ function resolveReferencedProduct(text: string, lastProductId: string | null, ca
         .map((id) => getProducts().find((p) => p.id === id))
         .filter((p): p is StorefrontProduct => !!p);
       if (candidates.length > 0) {
-        const sorted = [...candidates].sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
-        return CHEAPEST_RE.test(text) ? sorted[0] : sorted[sorted.length - 1];
+        // Price-on-request products have no real price to rank by.
+        const sorted = candidates.filter((p) => !isPriceOnRequest(p)).sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+        if (sorted.length > 0) return CHEAPEST_RE.test(text) ? sorted[0] : sorted[sorted.length - 1];
       }
     }
   }
@@ -277,6 +278,19 @@ function buildAddAnswer(ownerId: string, product: StorefrontProduct, requestedQu
   // points the shopper to the product page to pick a format there.
   // buildSetQuantityAnswer falls back to this function for a product not yet
   // in the cart, so this guard covers that path too.
+  // A priceOnRequest product (types/product.ts) has no verified price and is
+  // never purchasable online, so Guardian can't add it either.
+  if (isPriceOnRequest(product)) {
+    return {
+      answer:
+        locale === "fr"
+          ? `${product.name} n'est pas encore offert à l'achat en ligne — son prix est sur demande. Contactez-nous ou visitez la boutique pour plus de détails.`
+          : `${product.name} can't be added to your cart online yet — its price is on request. Contact us or visit the store for details.`,
+      suggestions: CART_SUGGESTIONS,
+      productId: product.id,
+    };
+  }
+
   if (isFormatPriced(product)) {
     return {
       answer:

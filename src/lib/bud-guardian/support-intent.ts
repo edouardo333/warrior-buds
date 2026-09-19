@@ -30,7 +30,7 @@
 import type { Locale } from "@/lib/i18n/types";
 import type { QuickActionId } from "@/data/bud-guardian/types";
 import { getProducts } from "@/data/shop/product-store";
-import { getEffectivePrice, getStockStatus } from "@/lib/shop/product-engine";
+import { getPriceLabel, getStockStatus, isPriceOnRequest } from "@/lib/shop/product-engine";
 import { getCartLines } from "@/lib/shop/cart-engine";
 import { getOrdersForAccount } from "@/data/shop/order-store";
 import { findAccountById } from "@/data/shop/account-store";
@@ -259,11 +259,13 @@ function buildStockIssueAnswer(text: string, locale: Locale, context: SupportAdv
   }
 
   const stockStatus = getStockStatus(resolved);
-  const price = formatPrice(getEffectivePrice(resolved), locale);
+  // No "at $X" phrase for a price-on-request product (never quote its 0 placeholder).
+  const priceOnRequest = isPriceOnRequest(resolved);
+  const price = getPriceLabel(resolved, locale);
 
   if (stockStatus === "out-of-stock") {
     const alternatives = findGuardianProducts({ category: resolved.category, excludeId: resolved.id }, "rating", 3);
-    const altLines = alternatives.map((p) => `• ${p.name} — ${formatPrice(getEffectivePrice(p), locale)}`);
+    const altLines = alternatives.map((p) => `• ${p.name} — ${getPriceLabel(p, locale)}`);
     const altBlock = altLines.length > 0 ? `\n${altLines.join("\n")}` : "";
 
     return {
@@ -280,8 +282,8 @@ function buildStockIssueAnswer(text: string, locale: Locale, context: SupportAdv
   return {
     answer:
       locale === "fr"
-        ? `Bonne nouvelle : ${resolved.name} est actuellement « ${stockLabel} » à ${price}, pas en rupture. Si le site vous montre autre chose, essayez de rafraîchir la page — sinon je peux vous mettre en contact avec notre équipe.`
-        : `Good news: ${resolved.name} is currently showing "${stockLabel}" at ${price}, not out of stock. If the site is showing you something else, try refreshing the page — otherwise I can connect you with our team.`,
+        ? `Bonne nouvelle : ${resolved.name} est actuellement « ${stockLabel} »${priceOnRequest ? "" : ` à ${price}`}, pas en rupture. Si le site vous montre autre chose, essayez de rafraîchir la page — sinon je peux vous mettre en contact avec notre équipe.`
+        : `Good news: ${resolved.name} is currently showing "${stockLabel}"${priceOnRequest ? "" : ` at ${price}`}, not out of stock. If the site is showing you something else, try refreshing the page — otherwise I can connect you with our team.`,
     suggestions: [...SHOP_SUGGESTIONS, "instagram"],
   };
 }
