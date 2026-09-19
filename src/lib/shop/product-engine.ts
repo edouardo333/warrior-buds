@@ -93,6 +93,15 @@ export function getBulkSavings(product: StorefrontProduct, quantity: number): nu
   return savings > 0 ? savings : null;
 }
 
+// Noun shown after a bulk tier's quantity ("pen"/"pens") — the product's own
+// bulkUnitLabel when it has one, otherwise the caller's generic localized
+// "unit(s)" fallback.
+export function getBulkUnitLabel(product: StorefrontProduct, quantity: number, locale: Locale, fallback: string): string {
+  const label = product.bulkUnitLabel;
+  if (!label) return fallback;
+  return (quantity === 1 ? label.singular : label.plural)[locale];
+}
+
 // Locale-aware CAD currency formatting — the single formatter shared by
 // Product Detail, the bulk pricing table, the cart, and checkout so a
 // price's FORMATTING (not its numeric value) is the only thing that changes

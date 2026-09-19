@@ -27,56 +27,73 @@ function product(input: Omit<StorefrontProduct, "id" | "createdAt"> & { createdA
 }
 
 export const STOREFRONT_PRODUCTS: StorefrontProduct[] = [
+  // Pack Man 2G Liquid Diamond Pens — replaces the former Whole Melts wax pen
+  // in the vapes slot (same category family). Client-supplied facts only:
+  // Liquid Diamonds + Live Resin, all-in-one wax pen (storefront type: Wax Pens, NOT Disposables), 2G, multiple
+  // flavours available, plus the exact 8-tier price sheet below. THC/CBD %,
+  // strain, terpenes, effects, flavour names, stock, and lab results were not
+  // provided — left null/empty rather than guessed. `brand` is unset (no
+  // separate manufacturer name was supplied), so cards/detail fall back to
+  // the category label for the eyebrow.
   product({
-    slug: "whole-melts-dual-chamber-2g",
-    name: "Whole Melts Extracts — Dual Chamber 2G",
-    brand: "Whole Melts Extracts",
+    slug: "pack-man-2g-liquid-diamond-pens",
+    name: "Pack Man 2G Liquid Diamond Pens",
     category: "vapes",
-    // Not yet verified by the client — left unset rather than guessed.
+    productType: "wax-pen",
     strain: null,
     thcPercent: null,
     cbdPercent: null,
-    // The 2G size is the one verified spec value for this product.
+    // The 2G size is a client-verified spec value for this product.
     weightGrams: 2,
+    // Base per-unit price — used only for card/sort display and for
+    // quantities that don't exactly match a bulkPricing tier below.
     price: 40,
     salePrice: null,
     images: [
       {
-        url: "/images/shop/products/whole-melts-dual-chamber-2g.jpg",
-        alt: "Whole Melts Extracts Dual Chamber 2G wax pen",
+        url: "/images/shop/products/pack-man-2g-liquid-diamond-pens.jpg",
+        alt: "Pack Man 2G Liquid Diamond Pens all-in-one wax pen vape",
       },
     ],
     // Default/fallback copy (English) — read by non-localizing consumers
     // (search, Bud Guardian, page metadata). See shortDescriptionLocalized/
     // descriptionLocalized below for what the storefront UI actually shows.
-    shortDescription: "Whole Melts Extracts Dual Chamber 2G wax pen.",
-    description: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+    shortDescription: "Pack Man 2G all-in-one wax pen vaporizer featuring Liquid Diamonds + Live Resin. Multiple flavours available.",
+    description: "Pack Man 2G all-in-one wax pen vaporizer featuring Liquid Diamonds + Live Resin. Multiple flavours available.",
     shortDescriptionLocalized: {
-      fr: "Wax pen Whole Melts Extracts Dual Chamber au format 2G.",
-      en: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+      fr: "Wax pen tout-en-un Pack Man 2G avec Liquid Diamonds + Live Resin. Plusieurs saveurs disponibles.",
+      en: "Pack Man 2G all-in-one wax pen vaporizer featuring Liquid Diamonds + Live Resin. Multiple flavours available.",
     },
     descriptionLocalized: {
-      fr: "Wax pen Whole Melts Extracts Dual Chamber au format 2G.",
-      en: "Whole Melts Extracts Dual Chamber 2G wax pen.",
+      fr: "Wax pen tout-en-un Pack Man 2G avec Liquid Diamonds + Live Resin. Plusieurs saveurs disponibles.",
+      en: "Pack Man 2G all-in-one wax pen vaporizer featuring Liquid Diamonds + Live Resin. Multiple flavours available.",
     },
     // No verified inventory count from the client — null rather than an
-    // invented number (e.g. the old placeholder "50"). Treated as "no known
-    // cap" throughout (see product-engine.ts's getAvailableStock/
-    // getStockStatus); the product stays purchasable, including at every
-    // bulk tier up to 1000 units, without displaying any stock figure.
+    // invented number. Treated as "no known cap" throughout (see
+    // product-engine.ts's getAvailableStock/getStockStatus); the product
+    // stays purchasable, including at every bulk tier up to 300 units,
+    // without displaying any stock figure.
     stock: null,
     badges: [],
     reviews: [],
+    // Exact client-supplied TOTAL prices per quantity (not per-unit prices) —
+    // resolved by getProductPriceForQuantity on an exact quantity match only.
+    // Any quantity between tiers is priced at the base `price` × quantity;
+    // no intermediate tier is interpolated or invented.
     bulkPricing: [
       { quantity: 1, price: 40 },
+      { quantity: 2, price: 70 },
       { quantity: 10, price: 300 },
       { quantity: 25, price: 550 },
       { quantity: 50, price: 900 },
-      { quantity: 100, price: 1700 },
-      { quantity: 200, price: 3200 },
-      { quantity: 500, price: 7500 },
-      { quantity: 1000, price: 14000 },
+      { quantity: 100, price: 1800 },
+      { quantity: 200, price: 3500 },
+      { quantity: 300, price: 4800 },
     ],
+    bulkUnitLabel: {
+      singular: { fr: "stylo", en: "pen" },
+      plural: { fr: "stylos", en: "pens" },
+    },
   }),
 
   // Three client-supplied real cannabis flower products (catalog integration
@@ -93,7 +110,7 @@ export const STOREFRONT_PRODUCTS: StorefrontProduct[] = [
   // instead carries the client-supplied quality grade (already part of the
   // official title, e.g. "AAA"/"AAA+") — see types/product.ts's `grade` for
   // why this is a distinct field, not the brand. ProductCard/ProductDetail
-  // fall back to `grade` for the eyebrow label Whole Melts' real brand fills.
+  // fall back to `grade` for the eyebrow label a real brand would fill.
   //
   // THC/CBD percent, stock, ratings/reviews, terpenes, effects, and
   // genetics/origin were not provided — left null/empty rather than guessed

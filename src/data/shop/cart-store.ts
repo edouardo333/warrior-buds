@@ -16,7 +16,13 @@ import type { Cart, Wishlist } from "@/types/cart";
 // Reseeding from an empty wb-shop-carts-v2 key closes that gap. The old
 // wb-shop-carts-v1 payload, if still present in a visitor's browser, is
 // simply never read again — no compatibility mapping to real products.
-const CARTS_KEY = "wb-shop-carts-v2";
+//
+// v3 — bumped when Whole Melts was replaced by Pack Man. Pack Man reuses the
+// catalog's first product ID (PROD-1001, previously Whole Melts), so a v2 cart
+// line for the old product would otherwise silently resolve to Pack Man at the
+// old quantity. Whole Melts was the only product ever addable to a cart
+// (flower/cigarettes are format-priced/in-store-only), so nothing else is lost.
+const CARTS_KEY = "wb-shop-carts-v3";
 // v2 — bumped for the same reason as CARTS_KEY above: a pre-migration
 // wishlist can still hold stale fake/demo product IDs from the old 18-product
 // demo seed. computeWishlistProducts() already drops items whose productId no
@@ -26,7 +32,10 @@ const CARTS_KEY = "wb-shop-carts-v2";
 // browser start over from an empty wb-shop-wishlists-v2 instead. The old
 // wb-shop-wishlists-v1 payload, if still present, is simply never read again
 // — no compatibility mapping to real products.
-const WISHLISTS_KEY = "wb-shop-wishlists-v2";
+//
+// v3 — bumped alongside CARTS_KEY above for the same PROD-1001 reuse: a v2
+// wishlist entry for Whole Melts would otherwise turn into a Pack Man entry.
+const WISHLISTS_KEY = "wb-shop-wishlists-v3";
 
 export const GUEST_OWNER_ID = "guest";
 

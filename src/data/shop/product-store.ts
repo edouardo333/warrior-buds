@@ -13,7 +13,15 @@ import { STOREFRONT_PRODUCTS } from "./products";
 // Warrior Buds catalog, so browsers that already persisted the old
 // 18-product demo seed reseed from the new STOREFRONT_PRODUCTS instead of
 // reading stale fake products back out of localStorage.
-const PRODUCTS_KEY = "wb-shop-products-v2";
+//
+// v3 — bumped when Whole Melts was replaced by Pack Man in the catalog, so
+// browsers holding the v2 payload (which still contains the removed Whole
+// Melts product and lacks Pack Man) reseed from the current STOREFRONT_PRODUCTS.
+//
+// v4 — bumped when Pack Man was reclassified from "disposable" to Wax Pens
+// (productType + copy change), so a persisted v3 payload doesn't keep the old
+// classification/wording.
+const PRODUCTS_KEY = "wb-shop-products-v4";
 
 function uid(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;

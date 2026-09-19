@@ -8,7 +8,7 @@ import ProductImageFallback from "./ProductImageFallback";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { ProductImage } from "@/types/product";
 
-// Shared by every Product Detail page (Whole Melts and the flower products
+// Shared by every Product Detail page (Pack Man and the flower products
 // alike) so the click-to-enlarge lightbox is implemented once here instead
 // of duplicated per product. Shows only the currently active image (the
 // same one already selected via the thumbnail strip below) — no separate

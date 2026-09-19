@@ -109,6 +109,10 @@ export type StorefrontProduct = {
   // name/brand. `null`/undefined means no verified grade.
   grade?: string | null;
   category: ProductCategory;
+  // Optional structured storefront product type within `category` (e.g.
+  // "wax-pen" under vapes) — read directly by lib/shop/category-tree.ts's
+  // matching leaf node, never inferred from description text.
+  productType?: string | null;
   strain: ProductStrain | null;
   thcPercent: number | null;
   cbdPercent: number | null;
@@ -138,6 +142,10 @@ export type StorefrontProduct = {
   // Optional verified bulk/wholesale pricing tiers, lowest quantity first.
   // Undefined when no bulk pricing has been provided for a product.
   bulkPricing?: BulkPriceTier[];
+  // Optional product-specific noun for a bulk tier's quantity ("1 pen" /
+  // "2 pens") shown in Product Detail's bulk pricing table and total line.
+  // Falls back to the generic localized "unit(s)" wording when unset.
+  bulkUnitLabel?: { singular: LocalizedText; plural: LocalizedText };
   // Optional verified format-based pricing (see ProductFormat above),
   // smallest format first. When set, `price` above holds the lowest
   // verified format's price for card/sort/search display ("starting from")

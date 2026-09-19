@@ -186,12 +186,12 @@ export const CATEGORY_TREE: CategoryNode[] = [
       {
         id: "vapes-disposables",
         label: { en: "Disposables", fr: "Vapoteuses jetables" },
-        match: (p) => p.category === "vapes" && /disposable/.test(searchableText(p)),
+        match: (p) => p.category === "vapes" && p.productType !== "wax-pen" && /disposable/.test(searchableText(p)),
       },
       {
         id: "vapes-wax-pens",
         label: { en: "Wax Pens", fr: "Wax Pens" },
-        match: (p) => p.category === "vapes" && /wax pen/.test(searchableText(p)),
+        match: (p) => p.category === "vapes" && (p.productType === "wax-pen" || /wax pen/.test(searchableText(p))),
       },
     ],
   },

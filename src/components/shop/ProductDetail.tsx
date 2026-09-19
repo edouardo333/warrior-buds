@@ -30,6 +30,7 @@ import {
   getAvailableStock,
   getAverageRating,
   getBulkSavings,
+  getBulkUnitLabel,
   getCategoryLabel,
   getEffectivePrice,
   getProductPriceForQuantity,
@@ -167,7 +168,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                 </div>
                 {quantity > 1 && (
                   <p className="mt-1.5 text-xs text-foreground/50">
-                    {quantity} {t.productCatalog.detail.bulkPricingUnit(quantity)}
+                    {quantity} {getBulkUnitLabel(product, quantity, locale, t.productCatalog.detail.bulkPricingUnit(quantity))}
                     <br />
                     {t.productCatalog.detail.totalPrice(formatPrice(totalPrice, locale))}
                   </p>
@@ -323,7 +324,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
               <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.bulkPricingTitle}</h2>
               <div className="mt-5 max-w-2xl overflow-x-auto">
-                <table className="w-full min-w-[320px] border-collapse text-sm">
+                <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
                       <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.bulkPricingQuantity}</th>
@@ -350,7 +351,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                           }`}
                         >
                           <td className={`py-2.5 pr-4 ${active ? "font-semibold text-wb-orange" : "text-foreground/80"}`}>
-                            {tier.quantity} {t.productCatalog.detail.bulkPricingUnit(tier.quantity)}
+                            {tier.quantity} {getBulkUnitLabel(product, tier.quantity, locale, t.productCatalog.detail.bulkPricingUnit(tier.quantity))}
                           </td>
                           <td className={`py-2.5 font-semibold ${active ? "text-wb-orange" : "text-foreground"}`}>
                             {formatPrice(tier.price, locale)}
