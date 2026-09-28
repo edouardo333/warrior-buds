@@ -17,7 +17,7 @@ const GROUP_DOT: Record<string, string> = {
 
 // Two-step flavour picker for a product with `flavourGroups`: choose a
 // family (Fruit / Fruit + Ice / Mint / Tobacco), then one flavour inside it.
-// A product with a single family (e.g. Heavy Hitters' four flavours) skips the
+// A product with a single flavour family skips the
 // family step and shows its flavours directly.
 // Flavour names are official identity data and render exactly as stored;
 // only the family labels and surrounding UI copy are localized. The chosen

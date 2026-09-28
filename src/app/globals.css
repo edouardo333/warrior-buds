@@ -13,6 +13,12 @@
   --wb-guardian-green: #3ce27a;
   --wb-guardian-blue: #2f9bf0;
   --wb-guardian-red-dim: #5c0f16;
+  /* Telegram brand blue. "bright" is the logo blue, used on black (icon,
+     footer label, focus ring). The base shade is a touch deeper so white
+     button text keeps WCAG AA contrast (≈4.5:1). */
+  --wb-telegram: #0a7cc0;
+  --wb-telegram-hover: #0870b0;
+  --wb-telegram-bright: #2aabee;
 }
 
 @theme inline {
@@ -25,6 +31,9 @@
   --color-wb-gold: var(--wb-gold);
   --color-wb-charcoal: var(--wb-charcoal);
   --color-wb-charcoal-light: var(--wb-charcoal-light);
+  --color-wb-telegram: var(--wb-telegram);
+  --color-wb-telegram-hover: var(--wb-telegram-hover);
+  --color-wb-telegram-bright: var(--wb-telegram-bright);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-bebas);
@@ -771,7 +780,28 @@ body {
   transform: translateY(1px);
 }
 
+/* Phones/tablets (below lg): keep the ambient effects, drop their infinite
+   animations. The pulse-glow blobs are 120–160px blur layers, and the hero
+   zoom scales a full-bleed filtered photo that sits under two
+   backdrop-filter panels (reviews card, opening-status badge) — animating
+   either keeps the GPU re-blurring every frame for the life of the page,
+   which costs battery and scroll smoothness on phones. Static glows sit at
+   the animation's midpoint so the look is unchanged. */
+@media (max-width: 63.999rem) {
+  .animate-pulse-glow {
+    animation: none;
+    opacity: 0.8;
+  }
+  .wb-hero-zoom {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow {
+    animation: none !important;
+    opacity: 0.8;
+  }
   .wb-risk-details-in,
   .wb-badge-pop,
   .wb-dropdown-in,

@@ -18,7 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const product = STOREFRONT_PRODUCTS.find((p) => p.slug === slug);
   if (!product) return {};
   const title = `${product.name} | Warrior Buds`;
-  const description = product.shortDescription;
+  // Box-priced wax pens carry no description copy — fall back to the image alt.
+  const description = product.shortDescription || (product.images[0]?.alt ?? product.name);
   const url = `/products/${product.slug}`;
   const image = product.images[0];
   return {

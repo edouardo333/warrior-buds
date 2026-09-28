@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
-import { ArrowRight, Sparkles, UserCheck, Users, type LucideIcon } from "lucide-react";
+import { Sparkles, UserCheck, Users, type LucideIcon } from "lucide-react";
 import SmartImage from "./SmartImage";
 import Reveal from "./Reveal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -74,14 +73,22 @@ export default function WhyWarriorBuds() {
         </Reveal>
 
         <Reveal delay={150}>
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-sm sm:p-10 lg:p-12">
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm min-[410px]:p-8 sm:p-10 lg:p-12">
             <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-wb-red/15 via-wb-orange/15 to-wb-yellow/15 blur-[100px]" />
 
             <p className="relative text-xs font-semibold uppercase tracking-[0.35em] text-wb-orange">
               {t.whyWarriorBuds.eyebrow}
             </p>
-            <h2 className="relative mt-3 whitespace-nowrap font-display text-4xl tracking-wide text-foreground sm:text-5xl lg:text-6xl">
-              {t.whyWarriorBuds.title}
+            {/* One line, sized to fit: at fixed sizes the nowrap FR title
+                ("Pourquoi Warrior Buds", ~8.2em wide) outgrew this card on
+                phones (forcing the card past the screen edge, where the
+                section's overflow-hidden cut its text) and in the narrower
+                2-column lg layout (where the card clipped "BUDS"). Fluid
+                below sm and at lg; unchanged text-5xl at sm and text-6xl at
+                xl+. May wrap (balanced) only below 360px. */}
+            <h2 className="relative mt-3 text-balance font-display text-[clamp(1.75rem,8.8vw,2.25rem)] leading-[1.1] tracking-wide text-foreground min-[360px]:whitespace-nowrap sm:text-5xl sm:leading-none lg:text-[clamp(2.625rem,4.15vw,3.75rem)] xl:text-6xl">
+              {t.whyWarriorBuds.title.replace(/\s*Buds$/i, "")}{" "}
+              <span className="text-gradient-ember">{t.whyWarriorBuds.title.match(/Buds$/i)?.[0]}</span>
             </h2>
             <p className="relative mt-5 max-w-md text-foreground/60">{t.whyWarriorBuds.lead}</p>
 
@@ -118,20 +125,6 @@ export default function WhyWarriorBuds() {
                 );
               })}
             </div>
-
-            <Reveal delay={700}>
-              <Link
-                href="/about"
-                className="group relative isolate mt-10 inline-flex items-center gap-2 overflow-hidden rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground backdrop-blur-sm transition-[border-color,color,box-shadow,transform] duration-300 ease-out hover:scale-105 hover:border-wb-orange/60 hover:text-wb-orange hover:shadow-[0_0_28px_-6px_rgba(244,103,15,0.45)] motion-reduce:transition-none motion-reduce:hover:scale-100"
-              >
-                <span className="pointer-events-none absolute inset-0 -z-10 -translate-x-full bg-gradient-to-r from-transparent via-wb-orange/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
-                {t.whyWarriorBuds.cta}
-                <ArrowRight
-                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                  strokeWidth={2}
-                />
-              </Link>
-            </Reveal>
           </div>
         </Reveal>
       </div>

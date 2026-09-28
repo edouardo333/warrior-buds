@@ -5,23 +5,30 @@ import { useSearchParams } from "next/navigation";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
 import ShopCta from "./ShopCta";
+import MinimumOrderCTA from "@/components/MinimumOrderCTA";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useProducts } from "@/lib/shop/product-actions";
 import { findCategoryNode } from "@/lib/shop/category-tree";
 import type { ProductFilters as Filters, ProductSort } from "@/lib/shop/product-engine";
 
+// Reads ?category= and hands it to the catalog. useSearchParams makes the
+// statically prerendered /products bail out to client rendering up to the
+// nearest Suspense boundary — app/products/page.tsx therefore uses
+// <ProductCatalog /> (default filters) as that boundary's fallback, so the
+// prerendered HTML carries the real catalog instead of an empty page.
 export default function ProductCatalogView() {
-  const { t } = useLanguage();
   const searchParams = useSearchParams();
+  return <ProductCatalog initialCategory={searchParams.get("category")} />;
+}
+
+export function ProductCatalog({ initialCategory = null }: { initialCategory?: string | null }) {
+  const { t } = useLanguage();
   // Homepage category cards (e.g. Topicals) can deep-link here via
   // ?category=<node id> to open the catalog pre-filtered. Only used to seed
   // the initial filter state — the dropdown filter logic itself is untouched.
-  const [filters, setFilters] = useState<Filters>(() => {
-    const requestedCategory = searchParams.get("category");
-    return requestedCategory && findCategoryNode(requestedCategory)
-      ? { categoryNode: requestedCategory }
-      : {};
-  });
+  const [filters, setFilters] = useState<Filters>(() =>
+    initialCategory && findCategoryNode(initialCategory) ? { categoryNode: initialCategory } : {}
+  );
   const [sort, setSort] = useState<ProductSort>("featured");
   const products = useProducts(filters, sort);
 
@@ -44,6 +51,7 @@ export default function ProductCatalogView() {
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-wb-orange">{t.categories.eyebrow}</p>
           <h1 className="mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl">{t.nav.links.products}</h1>
         </div>
+        <MinimumOrderCTA className="mb-10" />
         <ProductFilters filters={filters} onFiltersChange={setFilters} sort={sort} onSortChange={setSort} />
         <p className="mb-4 mt-6 text-sm text-foreground/50">{t.productCatalog.filters.resultsCount(products.length)}</p>
         <ProductGrid products={products} />

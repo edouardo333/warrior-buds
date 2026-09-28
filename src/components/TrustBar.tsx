@@ -63,21 +63,25 @@ export default function TrustBar() {
         {TRUST_ITEMS.map(({ icon: Icon, primary, secondary }, index) => (
           <div
             key={secondary}
-            className={`group flex items-center justify-center gap-3 px-4 py-6 text-center sm:flex-col sm:gap-[clamp(0.3rem,1vh,0.55rem)] sm:px-3 sm:py-[clamp(0.65rem,2.4vh,1.375rem)] sm:text-center sm:transition-all sm:duration-[220ms] sm:ease-out sm:hover:-translate-y-0.5 sm:hover:bg-white/[0.03] ${
+            className={`group grid min-w-0 grid-cols-[auto_auto] content-start items-center gap-x-2.5 px-3 py-5 text-left min-[360px]:gap-x-3 min-[360px]:px-4 sm:flex sm:flex-col sm:items-center sm:justify-center sm:gap-[clamp(0.3rem,1vh,0.55rem)] sm:px-3 sm:py-[clamp(0.65rem,2.4vh,1.375rem)] sm:text-center sm:transition-all sm:duration-[220ms] sm:ease-out sm:hover:-translate-y-0.5 sm:hover:bg-white/[0.03] ${
               // 5 items in a 2-col mobile grid leaves the last card alone in
               // its row — span it across both columns so it's centered
               // instead of stranded on the left with dead space beside it.
-              index === TRUST_ITEMS.length - 1 ? "col-span-2 sm:col-span-1" : ""
+              // On mobile the icon and value share the first grid row, so
+              // values stay level across columns even when a label wraps.
+              index === TRUST_ITEMS.length - 1 ? "col-span-2 justify-center sm:col-span-1" : "justify-start"
             }`}
           >
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-wb-red via-wb-orange to-wb-yellow text-black transition-all duration-[220ms] ease-out sm:h-[clamp(1.75rem,4.2vh,2.25rem)] sm:w-[clamp(1.75rem,4.2vh,2.25rem)] sm:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_0_16px_-4px_rgba(244,103,15,0.55)] sm:group-hover:scale-105 sm:group-hover:shadow-[0_0_0_1px_rgba(255,255,255,0.14),0_0_20px_-2px_rgba(244,103,15,0.9)]">
               <Icon />
             </span>
-            <span className="flex flex-col items-start leading-tight sm:items-center">
-              <span className="font-display text-lg tracking-wide text-foreground sm:text-lg sm:leading-none lg:text-xl">
+            <span className="contents leading-tight sm:flex sm:min-w-0 sm:flex-col sm:items-center">
+              <span className="min-w-0 font-display text-lg tracking-wide text-foreground sm:text-lg sm:leading-none lg:text-xl">
                 {primary}
               </span>
-              <span className="text-[11px] font-medium uppercase tracking-widest text-foreground/55 sm:mt-0.5 sm:text-[10px] lg:text-[11px]">
+              {/* Tighter tracking/padding only below 360px, where the
+                  single-word EN label "WHOLESALE" overran its 2-col cell. */}
+              <span className="col-start-2 min-w-0 text-[11px] font-medium uppercase tracking-wide text-foreground/55 min-[360px]:tracking-widest sm:mt-0.5 sm:text-[10px] lg:text-[11px]">
                 {secondary}
               </span>
             </span>

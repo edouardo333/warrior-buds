@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { RotateCcw, Search } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { getStrainLabel, type ProductFilters as Filters, type ProductSort } from "@/lib/shop/product-engine";
@@ -11,7 +12,7 @@ const STRAINS: ProductStrain[] = ["sativa", "indica", "hybrid"];
 const SORTS: ProductSort[] = ["featured", "price-asc", "price-desc", "newest", "rating"];
 
 const inputClass =
-  "wb-select w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-foreground placeholder-foreground/35 outline-none transition-all duration-250 focus:border-wb-orange/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(244,103,15,0.15)] hover:border-white/20";
+  "wb-select w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-base text-foreground sm:text-sm placeholder-foreground/35 outline-none transition-all duration-250 focus:border-wb-orange/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(244,103,15,0.15)] hover:border-white/20";
 
 const labelClass = "text-xs font-semibold uppercase tracking-widest text-foreground/50";
 
@@ -27,6 +28,7 @@ export default function ProductFilters({
   onSortChange: (sort: ProductSort) => void;
 }) {
   const { t, locale } = useLanguage();
+  const searchId = useId();
 
   const sortLabels: Record<ProductSort, string> = {
     featured: t.productCatalog.filters.sortFeatured,
@@ -52,11 +54,17 @@ export default function ProductFilters({
       </div>
       <div className="relative flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-end">
         <div className="min-w-[200px] flex-1">
-          <label className={labelClass}>{t.productCatalog.filters.search}</label>
+          <label htmlFor={searchId} className={labelClass}>{t.productCatalog.filters.search}</label>
           <div className="relative mt-2">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/35" strokeWidth={2} />
+            {/* text-base below sm: iOS Safari auto-zooms the page on focus
+                for any input under 16px and doesn't zoom back out. */}
             <input
+              id={searchId}
               type="text"
+              inputMode="search"
+              enterKeyHint="search"
+              autoComplete="off"
               placeholder={t.productCatalog.filters.searchPlaceholder}
               value={filters.search ?? ""}
               onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}

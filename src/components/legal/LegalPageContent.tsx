@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight, ArrowUp, Phone } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import Reveal from "@/components/Reveal";
-import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type LegalPageContentProps = {
@@ -13,8 +11,7 @@ type LegalPageContentProps = {
 // Shared renderer for /privacy-policy, /terms-and-conditions and
 // /cookie-policy — each page just names which translated LegalDocument to
 // render (t.legal.privacy / .terms / .cookies) and gets the same premium
-// black/red/orange treatment, numbered sections, on-page nav and contact
-// CTA. Looking the doc up from `t` here (instead of taking it as a prop)
+// black/red/orange treatment, numbered sections and on-page nav. Looking the doc up from `t` here (instead of taking it as a prop)
 // keeps it reactive to the language switcher, same pattern as
 // PlaceholderSection's `t.placeholders[page]`.
 export default function LegalPageContent({ page }: LegalPageContentProps) {
@@ -120,32 +117,6 @@ export default function LegalPageContent({ page }: LegalPageContentProps) {
             </a>
           </div>
         </div>
-      </section>
-
-      {/* Contact CTA */}
-      <section className="relative overflow-hidden bg-wb-charcoal px-5 py-20 sm:px-8 lg:py-24">
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-wb-orange/10 blur-[150px]" />
-        <Reveal className="relative mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-wb-orange">{legal.contactEyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl tracking-wide text-foreground sm:text-4xl">{legal.contactTitle}</h2>
-          <p className="mt-3 text-sm text-foreground/60 sm:text-base">{legal.contactSubtitle}</p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black transition-transform duration-200 hover:scale-105"
-            >
-              {legal.contactCta}
-              <ArrowRight className="h-4 w-4" strokeWidth={2} />
-            </Link>
-            <a
-              href={SITE.phoneHref}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange/60 hover:text-wb-orange"
-            >
-              <Phone className="h-4 w-4" strokeWidth={2} />
-              {SITE.phoneDisplay}
-            </a>
-          </div>
-        </Reveal>
       </section>
     </>
   );

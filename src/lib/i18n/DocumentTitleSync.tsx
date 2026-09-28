@@ -22,64 +22,23 @@ function resolveTitle(pathname: string, t: Dictionary): string | null {
   switch (pathname) {
     case "/":
       return t.home.metaTitle;
-    case "/about":
-      return t.about.metaTitle;
     case "/contact":
       return t.contact.metaTitle;
-    case "/gallery":
-      return t.gallery.metaTitle;
     case "/reviews":
       return t.reviews.metaTitle;
     case "/learning-center":
       return t.learningCenter.metaTitle;
-    case "/faq":
-      return t.faq.metaTitle;
     case "/products":
       return t.productCatalog.metaTitle;
-    case "/cart":
-      return t.cart.metaTitle;
-    case "/wishlist":
-      return t.wishlist.metaTitle;
-    case "/track-order":
-      return t.trackOrder.metaTitle;
-    case "/checkout":
-      return t.checkout.metaTitle;
-    case "/login":
-      return t.auth.login.metaTitle;
-    case "/signup":
-      return t.auth.signup.metaTitle;
-    case "/forgot-password":
-      return t.auth.forgotPassword.metaTitle;
-    case "/reset-password":
-      return t.auth.resetPassword.metaTitle;
-    case "/verify-email":
-      return t.auth.verifyEmail.metaTitle;
     case "/privacy-policy":
       return t.legal.privacy.metaTitle;
     case "/terms-and-conditions":
       return t.legal.terms.metaTitle;
     case "/cookie-policy":
       return t.legal.cookies.metaTitle;
-    case "/account":
-      return `${t.account.dashboard.title} | Warrior Buds`;
-    case "/account/profile":
-      return `${t.account.profile.title} | Warrior Buds`;
-    case "/account/addresses":
-      return `${t.account.addresses.title} | Warrior Buds`;
-    case "/account/payment-methods":
-      return `${t.account.paymentMethods.title} | Warrior Buds`;
-    case "/account/settings":
-      return `${t.account.settings.title} | Warrior Buds`;
-    case "/account/orders":
-      return `${t.account.orders.title} | Warrior Buds`;
     default:
-      // /account/orders/[id] — a dynamic segment under the exact-match above
-      if (pathname.startsWith("/account/orders/")) return `${t.orderDetail.title} | Warrior Buds`;
-      // /checkout/confirmation/[id]
-      if (pathname.startsWith("/checkout/confirmation/")) return t.checkout.confirmation.metaTitle;
       // Not localized here: /products/[slug] keeps its server title (the
-      // product name doesn't vary by locale — see generateMetadata there),
-      // and /staff/** is an internal tool outside the customer FR/EN toggle.
+      // product name doesn't vary by locale — see generateMetadata there).
       return null;
   }
 }

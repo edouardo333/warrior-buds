@@ -74,13 +74,15 @@ export default function ProductCategoryMenu({
     triggerRef.current?.focus();
   }
 
+  // pointerdown, not mousedown: iOS Safari doesn't dispatch mouse events for
+  // taps on non-clickable page areas, so a tap outside never closed the menu.
   useEffect(() => {
     if (!open) return;
-    function onPointerDown(event: MouseEvent) {
+    function onPointerDown(event: PointerEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) close();
     }
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -126,7 +128,7 @@ export default function ProductCategoryMenu({
             ref={panelRef}
             role="group"
             aria-label={t.productCatalog.filters.category}
-            className="wb-dropdown-in absolute left-0 top-full z-50 mt-2 w-[min(92vw,560px)] overflow-hidden rounded-2xl border border-white/10 bg-wb-charcoal/98 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.85)] backdrop-blur-xl sm:grid sm:grid-cols-[200px_1fr]"
+            className="wb-dropdown-in absolute left-0 top-full z-50 mt-2 w-full overflow-hidden sm:w-[min(92vw,560px)] rounded-2xl border border-white/10 bg-wb-charcoal/98 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.85)] backdrop-blur-xl sm:grid sm:grid-cols-[200px_1fr]"
           >
             <ul className="max-h-[70vh] overflow-y-auto border-white/10 p-2 sm:border-r">
               <li>
@@ -179,6 +181,12 @@ export default function ProductCategoryMenu({
 
                     {hasChildren && isExpanded && (
                       <ul className="ml-3 flex flex-col gap-0.5 border-l border-white/10 py-1 pl-2 sm:hidden">
+                        <li>
+                          <button type="button" onClick={() => select(node.id)} className={`${rowLabelClass} w-full ${isSelected ? rowLabelActiveClass : ""}`}>
+                            {t.productCatalog.filters.categoryMenu.allInCategory}
+                            <span className={countClass}>{counts.get(node.id) ?? 0}</span>
+                          </button>
+                        </li>
                         {node.children!.map((child) => (
                           <li key={child.id}>
                             <button
@@ -201,6 +209,16 @@ export default function ProductCategoryMenu({
             <div className="hidden max-h-[70vh] overflow-y-auto p-2 sm:block">
               {activeNode?.children ? (
                 <ul className="flex flex-col gap-0.5">
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => select(activeNode.id)}
+                      className={`${rowLabelClass} w-full ${value === activeNode.id ? rowLabelActiveClass : ""}`}
+                    >
+                      {t.productCatalog.filters.categoryMenu.allInCategory}
+                      <span className={countClass}>{counts.get(activeNode.id) ?? 0}</span>
+                    </button>
+                  </li>
                   {activeNode.children.map((child) => (
                     <li key={child.id}>
                       <button

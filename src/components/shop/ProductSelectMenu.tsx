@@ -60,13 +60,14 @@ export default function ProductSelectMenu({
     triggerRef.current?.focus();
   }
 
+  // pointerdown, not mousedown — see ProductCategoryMenu (iOS tap-outside).
   useEffect(() => {
     if (!open) return;
-    function onPointerDown(event: MouseEvent) {
+    function onPointerDown(event: PointerEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) close();
     }
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
   function handleKeyDown(event: React.KeyboardEvent) {

@@ -6,15 +6,14 @@ import {
   ArrowLeft,
   BatteryCharging,
   Droplet,
+  FlaskConical,
   Headset,
-  Heart,
+  Layers,
   Leaf,
-  Minus,
   Monitor,
+  Package,
   Percent,
-  Plus,
-  ShieldCheck,
-  ShoppingCart,
+  Scale,
   Store,
   Tag,
   TriangleAlert,
@@ -24,15 +23,15 @@ import {
 import ProductBadges from "./ProductBadges";
 import ProductFlavourSelector from "./ProductFlavourSelector";
 import ProductGallery from "./ProductGallery";
-import ProductReviews from "./ProductReviews";
 import ShopCta from "./ShopCta";
 import StarRating from "./StarRating";
 import Reveal from "@/components/Reveal";
+import { TelegramIcon } from "@/components/SocialIcons";
+import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useCart, useWishlist } from "@/lib/shop/cart-actions";
 import {
+  formatBoxPrice,
   formatPrice,
-  getAvailableStock,
   getAverageRating,
   getBulkSavings,
   getBulkUnitLabel,
@@ -54,14 +53,21 @@ const SPEC_ICONS: Record<ProductSpec["key"], typeof Tag> = {
   display: Monitor,
   "e-liquid": Droplet,
   charging: BatteryCharging,
+  format: Weight,
+  type: Layers,
+  box: Package,
+  line: Tag,
+  "thc-total": Leaf,
+  "thc-per-unit": Leaf,
+  "cbd-total": Droplet,
+  doses: Layers,
+  volume: FlaskConical,
+  ratio: Scale,
 };
 
 export default function ProductDetail({ product }: { product: StorefrontProduct }) {
   const { t, locale } = useLanguage();
-  const { addItem } = useCart();
-  const { toggle, isSaved } = useWishlist();
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
   // Format-priced products only (see isFormatPriced below): the format row
   // the shopper clicked in the "Available Formats" table, or null before any
   // click — no format is pre-selected on load, so the top price area keeps
@@ -71,39 +77,38 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
 
   const stockStatus = getStockStatus(product);
   const rating = getAverageRating(product);
-  const saved = isSaved(product.id);
-  const availableStock = getAvailableStock(product);
   // Format-priced products (verified format/size pricing, e.g. regulated
   // cannabis flower — types/product.ts's ProductFormat) skip the
-  // quantity-tier stepper/pricing entirely and price/add to cart through
-  // whichever format row the shopper picked in the "Available Formats" table
-  // below instead — see selectedFormat above and product-engine.ts's
-  // isFormatPriced header. No wishlist control for these (unchanged).
+  // quantity-tier pricing entirely and show the price of whichever format
+  // row the shopper picked in the "Available Formats" table below instead —
+  // see selectedFormat above and product-engine.ts's isFormatPriced header.
   const formatPriced = isFormatPriced(product);
   // Never purchasable through this site (e.g. age-restricted cigarettes —
-  // types/product.ts's inStoreOnly): hides the quantity stepper, Add to
-  // Cart, and wishlist controls below regardless of formatPriced, and shows
-  // the in-store notice instead. Every other product is unaffected.
+  // types/product.ts's inStoreOnly): shows the in-store notice below.
   const inStoreOnly = isInStoreOnly(product);
   // No verified price yet (types/product.ts's priceOnRequest): shows the
-  // "price on request" wording and a contact notice in place of the price and
-  // purchase controls (same gating as inStoreOnly), never a price or $0.
+  // "price on request" wording and a contact notice in place of the price,
+  // never a price or $0.
   const priceOnRequest = isPriceOnRequest(product);
   // Display-only price list (types/product.ts's infoPricing): replaces the
   // "price on request" wording with a "From $X" line and a Pricing table below.
-  // Purely informational — never wired to quantity, cart, or checkout.
+  // Purely informational — never wired to quantity.
   const infoPricing = product.infoPricing && product.infoPricing.length > 0 ? product.infoPricing : null;
   // Tiers for the full-width "Bulk Pricing" card: a product's real bulkPricing
-  // (selectable rows) or, when infoPricingAsBulk is set, its display-only
-  // infoPricing rendered in the same card without selection.
-  const bulkDisplayOnly = Boolean(product.infoPricingAsBulk && infoPricing);
-  const bulkTiers = product.bulkPricing && product.bulkPricing.length > 0 ? product.bulkPricing : bulkDisplayOnly ? infoPricing : null;
+  // (selectable rows) only. Display-only infoPricingAsBulk tiers are never
+  // tabled on the detail page — only their "From $X" floor is shown.
+  const bulkTiers = product.bulkPricing && product.bulkPricing.length > 0 ? product.bulkPricing : null;
+  // Plain price line for Telegram-ordered products — see ProductCard's priceLabel.
+  const priceLabel = product.boxPricing
+    ? t.productCatalog.card.boxPrice(formatBoxPrice(product.boxPricing.price, locale), product.boxPricing.quantity)
+    : product.telegramOrder && infoPricing
+      ? t.productCatalog.card.startingFrom(formatPrice(getInfoPricingFloor(infoPricing), locale))
+      : null;
 
   // The official product name/brand are language-independent identity data
   // (types/product.ts) and are read directly below — never through `t` or
   // any locale-keyed lookup. Only supporting copy is localized here.
   const shortDescription = product.shortDescriptionLocalized?.[locale] ?? product.shortDescription;
-  const description = product.descriptionLocalized?.[locale] ?? product.description;
 
   // Total price for the selected quantity — resolves to the verified bulk
   // tier when `quantity` matches one exactly, otherwise unit price × quantity.
@@ -113,24 +118,6 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
   // formatPriced branches below) — so these are skipped for them.
   const totalPrice = formatPriced ? 0 : getProductPriceForQuantity(product, quantity);
   const savings = formatPriced ? null : getBulkSavings(product, quantity);
-
-  // Disabled/enabled state for the Add to Cart button below: a format-priced
-  // product requires a format to be selected first (requirement: "A format
-  // must be selected before Add to Cart is enabled"); an ordinary product is
-  // always addable from here (out-of-stock is handled by its own branch
-  // further down, which hides this control entirely).
-  const canAdd = !formatPriced || selectedFormat !== null;
-
-  function handleAdd() {
-    if (!canAdd) return;
-    // Format-priced add: pass the selected format's label as the cart line's
-    // identity (types/cart.ts's selectedFormatLabel) — the price itself is
-    // never passed here, only ever re-read live from product.formats by the
-    // cart layer (lib/shop/cart-engine.ts computeCartLines).
-    addItem(product.id, quantity, formatPriced ? selectedFormat!.label : undefined);
-    setAdded(true);
-    window.setTimeout(() => setAdded(false), 2000);
-  }
 
   const specs = [
     { key: "category", icon: Tag, label: t.productCatalog.detail.category, value: getCategoryLabel(product.category, locale) },
@@ -142,7 +129,6 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
   ].filter(Boolean) as { key: string; icon: typeof Tag; label: string; value: string }[];
 
   const trustBadges = [
-    { icon: ShieldCheck, label: t.productCatalog.detail.trustSecureCheckout },
     { icon: Store, label: t.productCatalog.detail.trustInStorePickup },
     { icon: Headset, label: t.productCatalog.detail.trustCustomerSupport },
   ];
@@ -163,12 +149,17 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
           {t.productCatalog.detail.backToShop}
         </Link>
 
+        {/* The gallery and info columns are plain divs, not <Reveal>: they're
+            above the fold on every screen size, and Reveal renders at
+            opacity 0 until hydration + its IntersectionObserver fire — which
+            held back the product image (the page's LCP) and title/price on
+            phones. Lower sections below keep their Reveal entrance. */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
-          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+          <div className="lg:sticky lg:top-28 lg:self-start">
             <ProductGallery images={product.detailImages ?? product.images} fallbackLabel={product.category} />
-          </Reveal>
+          </div>
 
-          <Reveal delay={100}>
+          <div className="min-w-0">
             {/* Same brand → grade → category-label fallback as ProductCard's
                 eyebrow — see its comment. */}
             <p className="text-xs font-semibold uppercase tracking-widest text-foreground/40">
@@ -180,7 +171,11 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
             </div>
             <ProductBadges badges={product.badges} className="mt-4" />
 
-            {priceOnRequest ? (
+            {priceLabel ? (
+              <div className="mt-6 flex items-baseline gap-3">
+                <span className="font-display text-3xl tracking-wide text-gradient-ember sm:text-4xl">{priceLabel}</span>
+              </div>
+            ) : priceOnRequest ? (
               <div className="mt-6 flex items-baseline gap-3">
                 <span className="font-display text-3xl tracking-wide text-gradient-ember sm:text-4xl">
                   {infoPricing ? t.productCatalog.card.startingFrom(formatPrice(getInfoPricingFloor(infoPricing), locale)) : t.productCatalog.card.priceOnRequest}
@@ -199,6 +194,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                 <div className="mt-6 flex items-baseline gap-3">
                   {isOnSale(product) && <span className="text-lg text-foreground/40 line-through">{formatPrice(product.price * quantity, locale)}</span>}
                   <span className="font-display text-4xl tracking-wide text-gradient-ember">{formatPrice(totalPrice, locale)}</span>
+                  {product.priceUnit && <span className="text-lg font-semibold text-foreground/70">/ {product.priceUnit[locale]}</span>}
                 </div>
                 {quantity > 1 && (
                   <p className="mt-1.5 text-xs text-foreground/50">
@@ -213,7 +209,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
               </>
             )}
 
-            <p className="mt-4 text-sm leading-relaxed text-foreground/70">{shortDescription}</p>
+            {shortDescription && <p className="mt-4 text-sm leading-relaxed text-foreground/70">{shortDescription}</p>}
 
             {specs.length > 0 && (
               <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -236,20 +232,26 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
 
             {priceOnRequest && infoPricing && product.infoPricingAsBulk ? null : priceOnRequest && infoPricing ? (
               <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
-                <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.infoPricingTitle}</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">
+                  {product.infoPricingAsFormats ? t.productCatalog.detail.availableFormatsTitle : t.productCatalog.detail.infoPricingTitle}
+                </h2>
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
-                        <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.bulkPricingQuantity}</th>
-                        <th className="pb-3 font-semibold">{t.productCatalog.detail.bulkPricingPrice}</th>
+                        <th className="pb-3 pr-4 font-semibold">
+                          {product.infoPricingAsFormats ? t.productCatalog.detail.formatColumn : t.productCatalog.detail.bulkPricingQuantity}
+                        </th>
+                        <th className="pb-3 font-semibold">
+                          {product.infoPricingAsFormats ? t.productCatalog.detail.priceColumn : t.productCatalog.detail.bulkPricingPrice}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {infoPricing.map((tier) => (
-                        <tr key={tier.quantity} className="border-b border-white/5 last:border-0">
+                        <tr key={tier.label?.en ?? tier.quantity} className="border-b border-white/5 last:border-0">
                           <td className="py-2.5 pr-4 text-foreground/80">
-                            {tier.quantity} {t.productCatalog.detail.bulkPricingUnit(tier.quantity)}
+                            {tier.label ? tier.label[locale] : `${tier.quantity} ${t.productCatalog.detail.bulkPricingUnit(tier.quantity)}`}
                           </td>
                           <td className="py-2.5 font-semibold text-foreground">{formatPrice(tier.price, locale)}</td>
                         </tr>
@@ -270,53 +272,22 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
               </div>
             ) : !formatPriced && stockStatus === "out-of-stock" ? (
               <p className="mt-6 text-sm font-semibold text-wb-red">{t.productCatalog.detail.outOfStock}</p>
-            ) : (
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div className="flex items-center justify-between rounded-full border border-white/12 bg-white/[0.03] sm:justify-start">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="flex h-12 w-12 items-center justify-center text-foreground/70 transition-colors duration-250 hover:text-wb-orange"
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="w-10 text-center text-sm font-semibold text-foreground">{quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(availableStock, q + 1))}
-                    className="flex h-12 w-12 items-center justify-center text-foreground/70 transition-colors duration-250 hover:text-wb-orange"
-                    aria-label="Increase quantity"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleAdd}
-                  disabled={!canAdd}
-                  aria-disabled={!canAdd}
-                  title={!canAdd ? t.productCatalog.detail.selectFormatPrompt : undefined}
-                  className="group relative isolate flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black shadow-[0_10px_30px_-8px_rgba(244,103,15,0.6)] transition-[background-position,box-shadow,transform] duration-500 ease-out hover:scale-[1.02] hover:bg-right hover:shadow-[0_14px_38px_-6px_rgba(244,103,15,0.75)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:scale-100 disabled:pointer-events-none disabled:opacity-40 disabled:shadow-none disabled:hover:scale-100"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  {added ? t.productCatalog.detail.addedToCart : formatPriced && !selectedFormat ? t.productCatalog.detail.selectFormatPrompt : t.productCatalog.detail.addToCart}
-                </button>
-                {!formatPriced && (
-                  <button
-                    type="button"
-                    onClick={() => toggle(product.id)}
-                    aria-label={saved ? t.productCatalog.detail.removeFromWishlist : t.productCatalog.detail.addToWishlist}
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border transition-all duration-250 ${
-                      saved
-                        ? "border-wb-red bg-wb-red/10 text-wb-red shadow-[0_0_16px_-4px_rgba(224,32,46,0.6)]"
-                        : "border-white/15 bg-white/[0.03] text-foreground/70 hover:border-wb-orange/50 hover:text-wb-orange"
-                    }`}
-                  >
-                    <Heart className="h-5 w-5" fill={saved ? "currentColor" : "none"} />
-                  </button>
-                )}
-              </div>
+            ) : null}
+
+            {/* Team communication link only — carries no price, quantity or
+                order state (types/product.ts's telegramContact). Every vape
+                shows it, since vapes are ordered through the team on Telegram. */}
+            {(product.telegramContact || product.category === "vapes") && (
+              <a
+                href={SITE.telegramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t.productCatalog.detail.telegramContactAria}
+                className="mt-6 flex w-full items-center justify-center gap-2.5 rounded-full bg-wb-telegram px-6 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-white ring-1 ring-inset ring-white/15 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:scale-[1.02] hover:bg-wb-telegram-hover hover:shadow-[0_0_28px_-6px_rgba(42,171,238,0.6)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wb-telegram-bright sm:w-auto sm:inline-flex"
+              >
+                <TelegramIcon variant="mono" className="h-5 w-5 shrink-0" />
+                {t.productCatalog.detail.telegramContact}
+              </a>
             )}
 
             {product.warning && (
@@ -326,7 +297,7 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
               </div>
             )}
 
-            <div className="mt-8 grid grid-cols-1 gap-2.5 border-t border-white/10 pt-6 sm:grid-cols-3">
+            <div className="mt-8 grid grid-cols-1 gap-2.5 border-t border-white/10 pt-6 sm:grid-cols-2">
               {trustBadges.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2.5 text-xs text-foreground/60">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-wb-orange">
@@ -336,22 +307,15 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                 </div>
               ))}
             </div>
-          </Reveal>
-        </div>
-
-        <Reveal className="mt-16 sm:mt-20">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.description}</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-foreground/70">{description}</p>
           </div>
-        </Reveal>
+        </div>
 
         {product.formats && product.formats.length > 0 && (
           <Reveal className="mt-10 sm:mt-12">
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
               <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.availableFormatsTitle}</h2>
               <div className="mt-5 max-w-2xl overflow-x-auto">
-                <table className="w-full min-w-[280px] border-collapse text-sm">
+                <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-white/10 text-left text-[11px] font-semibold uppercase tracking-widest text-foreground/40">
                       <th className="pb-3 pr-4 font-semibold">{t.productCatalog.detail.formatColumn}</th>
@@ -405,17 +369,6 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
                   </thead>
                   <tbody>
                     {bulkTiers.map((tier) => {
-                      // Display-only tiers (infoPricingAsBulk) are not selectable.
-                      if (bulkDisplayOnly) {
-                        return (
-                          <tr key={tier.quantity} className="border-b border-white/5 last:border-0">
-                            <td className="py-2.5 pr-4 text-foreground/80">
-                              {tier.quantity} {getBulkUnitLabel(product, tier.quantity, locale, t.productCatalog.detail.bulkPricingUnit(tier.quantity))}
-                            </td>
-                            <td className="py-2.5 font-semibold text-foreground">{formatPrice(tier.price, locale)}</td>
-                          </tr>
-                        );
-                      }
                       const active = tier.quantity === quantity;
                       return (
                         <tr
@@ -448,15 +401,6 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
             </div>
           </Reveal>
         )}
-
-        <Reveal className="mt-10 sm:mt-12">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-wb-orange">{t.productCatalog.detail.reviewsTitle}</h2>
-            <div className="mt-6 max-w-2xl">
-              <ProductReviews reviews={product.reviews} />
-            </div>
-          </div>
-        </Reveal>
 
         <ShopCta />
       </div>

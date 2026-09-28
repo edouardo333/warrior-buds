@@ -33,7 +33,10 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
   useEffect(() => {
     if (!lightboxOpen) return;
     const trigger = triggerRef.current;
-    const previouslyFocused = (document.activeElement as HTMLElement | null) ?? trigger;
+    // iOS Safari doesn't focus a <button> on tap, so activeElement is often
+    // <body> here — fall back to the trigger so focus lands back on the image.
+    const active = document.activeElement;
+    const previouslyFocused = active instanceof HTMLElement && active !== document.body ? active : trigger;
     const scrollY = window.scrollY;
     closeButtonRef.current?.focus();
     document.body.style.overflow = "hidden";
@@ -65,11 +68,15 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
           style={!portrait && current?.aspectRatio ? { aspectRatio: current.aspectRatio } : undefined}
           className={`group relative block ${portrait ? "aspect-[2/3]" : "aspect-square"} w-full cursor-zoom-in overflow-hidden rounded-[1.75rem] border border-white/12 bg-white/[0.02] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.75)]`}
         >
+          {/* The page's LCP element — fetched eagerly at high priority
+              instead of waiting on lazy-load's viewport check. */}
           <SmartImage
             src={current?.url ?? ""}
             alt={imageLabel}
             fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            loading="eager"
+            fetchPriority="high"
+            sizes={portrait ? "(max-width: 448px) 100vw, 416px" : "(max-width: 1024px) 100vw, 560px"}
             className="object-cover"
             fallback={<ProductImageFallback label={fallbackLabel} className="text-2xl" />}
           />
@@ -108,13 +115,12 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
 
       {lightboxOpen &&
         createPortal(
-          // Portaled straight to <body>: ProductDetail renders this gallery
-          // inside a Reveal wrapper (components/Reveal.tsx), whose mount
-          // animation sets a non-"none" CSS `translate` on that ancestor —
-          // which (like `transform`) establishes its own containing block
-          // for `position: fixed` descendants. Left un-portaled, this dialog
-          // would size/position itself against that small wrapper box
-          // instead of the viewport. Portaling escapes it entirely.
+          // Portaled straight to <body>: any transformed/translated ancestor
+          // (e.g. a Reveal wrapper, components/Reveal.tsx) establishes its own
+          // containing block for `position: fixed` descendants, which would
+          // size/position this dialog against that wrapper box instead of
+          // the viewport. Portaling escapes it regardless of where the
+          // gallery is rendered.
           <div role="dialog" aria-modal="true" aria-label={imageLabel} className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8">
             <button
               type="button"
@@ -131,7 +137,7 @@ export default function ProductGallery({ images, fallbackLabel }: { images: Prod
             >
               <X className="h-5 w-5" strokeWidth={2} />
             </button>
-            <div onClick={(e) => e.stopPropagation()} className="relative z-[5] h-[90vh] w-[90vw] max-h-[90vh] max-w-[90vw]">
+            <div onClick={(e) => e.stopPropagation()} className="relative z-[5] h-[90dvh] w-[90vw] max-h-[90dvh] max-w-[90vw]">
               <SmartImage
                 src={current?.url ?? ""}
                 alt={imageLabel}

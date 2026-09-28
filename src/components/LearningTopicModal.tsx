@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 import { X } from "lucide-react";
 import type { LearningCategory, LearningTopic } from "@/data/learning-center";
 import type { Locale } from "@/lib/i18n/types";
@@ -29,6 +29,8 @@ export default function LearningTopicModal({
   onClose,
 }: LearningTopicModalProps) {
   const Icon = category.icon;
+  const titleId = useId();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -42,8 +44,21 @@ export default function LearningTopicModal({
     };
   }, [onClose]);
 
+  // Move focus into the dialog on open and hand it back to the topic card
+  // that opened it on close (keyboard + screen-reader users).
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+    return () => previouslyFocused?.focus();
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-6">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-6"
+    >
       <button
         type="button"
         aria-label={closeLabel}
@@ -54,10 +69,11 @@ export default function LearningTopicModal({
       <div className="wb-guardian-message-in relative flex max-h-[90svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-wb-charcoal-light shadow-[0_32px_80px_-24px_rgba(0,0,0,0.9)] sm:max-h-[85svh] sm:rounded-3xl">
         <div className="relative shrink-0 border-b border-white/10 bg-gradient-to-b from-white/[0.05] to-transparent px-6 py-6 sm:px-8">
           <button
+            ref={closeButtonRef}
             type="button"
             aria-label={closeLabel}
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-black/40 text-foreground/70 transition-colors hover:border-wb-orange/40 hover:text-wb-orange"
+            className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/40 text-foreground/70 transition-colors hover:border-wb-orange/40 hover:text-wb-orange focus:outline-none focus-visible:ring-2 focus-visible:ring-wb-orange/60"
           >
             <X className="h-4 w-4" />
           </button>
@@ -70,7 +86,7 @@ export default function LearningTopicModal({
               <p className={`text-xs font-semibold uppercase tracking-widest ${ACCENT_TEXT[category.accent]}`}>
                 {category.title[locale]}
               </p>
-              <h2 className="mt-0.5 truncate font-display text-2xl tracking-wide text-foreground sm:text-3xl">
+              <h2 id={titleId} className="mt-0.5 line-clamp-2 break-words font-display text-2xl leading-tight tracking-wide text-foreground sm:text-3xl">
                 {topic.title[locale]}
               </h2>
             </div>

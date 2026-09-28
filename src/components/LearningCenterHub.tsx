@@ -83,7 +83,7 @@ export default function LearningCenterHub() {
               return (
                 <Reveal
                   key={category.slug}
-                  delay={index * 70}
+                  delay={(index % 3) * 70}
                   className={isLastInIncompleteRow ? "lg:col-start-2" : ""}
                 >
                   <button
@@ -169,7 +169,7 @@ export default function LearningCenterHub() {
               {activeCategory.topics.map((topic, index) => {
                 const accent = ACCENT[activeCategory.accent];
                 return (
-                  <Reveal key={topic.slug} delay={index * 60}>
+                  <Reveal key={topic.slug} delay={(index % 3) * 60}>
                     <button
                       type="button"
                       onClick={() => setActiveTopic({ category: activeCategory, topic })}

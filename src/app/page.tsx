@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
+import MinimumOrderCTA from "@/components/MinimumOrderCTA";
 import Categories from "@/components/Categories";
 import WhyWarriorBuds from "@/components/WhyWarriorBuds";
-import HomeSeoAccordion from "@/components/HomeSeoAccordion";
 import HomeFinalCta from "@/components/HomeFinalCta";
 import Footer from "@/components/Footer";
 import { SITE } from "@/lib/site";
@@ -39,9 +39,9 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <TrustBar />
+        <MinimumOrderCTA className="mx-auto max-w-6xl px-5 pt-12 sm:px-8 sm:pt-16" />
         <Categories />
         <WhyWarriorBuds />
-        <HomeSeoAccordion />
         <HomeFinalCta />
       </main>
       <Footer hideCta />

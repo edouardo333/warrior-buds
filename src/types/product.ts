@@ -61,6 +61,10 @@ export type ProductImage = {
 export type BulkPriceTier = {
   quantity: number;
   price: number;
+  // Optional exact row label for a display-only infoPricing tier whose
+  // quantity isn't a unit count (e.g. "½ Pound"). Replaces the generic
+  // "N unit(s)" wording in the Pricing table. Undefined everywhere else.
+  label?: LocalizedText;
 };
 
 // A piece of copy that legitimately differs by language (descriptions only —
@@ -110,7 +114,7 @@ export type ProductFlavourGroup = {
 // Product Detail spec grid. `key` picks the grid icon; label/value are
 // supporting copy and therefore localized.
 export type ProductSpec = {
-  key: "puffs" | "display" | "e-liquid" | "charging";
+  key: "puffs" | "display" | "e-liquid" | "charging" | "format" | "type" | "box" | "line" | "thc-total" | "thc-per-unit" | "cbd-total" | "doses" | "volume" | "ratio";
   label: LocalizedText;
   value: LocalizedText;
 };
@@ -148,6 +152,11 @@ export type StorefrontProduct = {
   weightGrams: number | null;
   price: number;
   salePrice: number | null;
+  // Optional client-supplied amount the regular `price` is quoted for (e.g.
+  // "1 Pound"). ProductCard/ProductDetail show it after the price
+  // ("$550.00 / 1 Pound"). Undefined for every other product — unchanged
+  // price display.
+  priceUnit?: LocalizedText;
   images: ProductImage[];
   // Optional separate image set for the Product Detail gallery (hero, thumbs
   // and lightbox). `images` stays the card/cart/wishlist image; when
@@ -217,6 +226,25 @@ export type StorefrontProduct = {
   // are not selectable and nothing reaches the cart. Undefined for every
   // other product.
   infoPricingAsBulk?: boolean;
+  // When true, the compact infoPricing table is headed "Available Formats"
+  // with Format / Price columns (each tier sets `label`, e.g. "½ Pound")
+  // instead of "Pricing" with Quantity / Price. Same display-only rows.
+  // Undefined for every other product.
+  infoPricingAsFormats?: boolean;
+  // When true, Product Detail shows a separate Telegram link to the team
+  // (plain external link — never tied to price, quantity, cart or checkout).
+  // Every "vapes" product shows it regardless of this flag.
+  // Undefined for every other product.
+  telegramContact?: boolean;
+  // Official price for ONE box of `quantity` units. Shown only as a plain
+  // box-price line (never a per-unit price, never wired to a cart or
+  // checkout). `price` above mirrors this box price for sorting only.
+  // Undefined for every other product.
+  boxPricing?: BulkPriceTier;
+  // When true, the price area is a plain line like boxPricing's, labelled
+  // "From $X" with the lowest infoPricing tier. Never wired to a cart or
+  // checkout. Undefined for every other product.
+  telegramOrder?: boolean;
   // Optional selectable flavours, grouped into families (see
   // ProductFlavourGroup). One product with many flavours, not one product per
   // flavour. Undefined for every product without a flavour choice.

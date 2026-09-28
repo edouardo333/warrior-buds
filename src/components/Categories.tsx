@@ -131,7 +131,11 @@ export default function Categories() {
           {CATEGORY_META.map((category, index) => {
             const content = t.categories.items[category.key];
             return (
-              <Reveal key={category.key} delay={index * 80}>
+              // Stagger by position within a 3-card row, not global index:
+              // on phones (1 column) each card reveals on its own as it
+              // scrolls in, and index * 80 left the last cards waiting
+              // up to 640ms after they were already on screen.
+              <Reveal key={category.key} delay={(index % 3) * 80}>
                 <CategoryCard
                   name={content.name}
                   description={content.description}

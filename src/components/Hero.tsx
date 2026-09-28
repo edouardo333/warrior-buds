@@ -1,20 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef } from "react";
 import SmartImage from "./SmartImage";
+import { TelegramIcon } from "./SocialIcons";
 import Logo from "./Logo";
 import OpeningStatus from "./OpeningStatus";
+import GoogleReviewsPanel from "./GoogleReviewsPanel";
 import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-
-function StarGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
-      <path d="M12 2.5l2.9 6.06 6.6.79-4.9 4.5 1.3 6.55L12 16.9l-5.9 3.5 1.3-6.55-4.9-4.5 6.6-.79L12 2.5z" />
-    </svg>
-  );
-}
 
 // Nudges the button toward the cursor within a small radius, then springs
 // back on leave — a "magnetic" feel without pulling in a gesture library.
@@ -52,8 +45,7 @@ function useMagneticHover<T extends HTMLElement>(strength = 0.25, max = 8) {
 export default function Hero() {
   const { t } = useLanguage();
   const parallaxRef = useRef<HTMLDivElement>(null);
-  const primaryMagnet = useMagneticHover<HTMLAnchorElement>();
-  const secondaryMagnet = useMagneticHover<HTMLAnchorElement>();
+  const telegramMagnet = useMagneticHover<HTMLAnchorElement>();
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -127,23 +119,9 @@ export default function Hero() {
             WARRIOR <span className="text-gradient-ember">BUDS</span>
           </h1>
 
-          <div className="wb-hero-reveal mt-5 flex items-center gap-2.5" style={{ animationDelay: "200ms" }}>
-            <span className="flex items-center gap-0.5 text-wb-yellow" aria-hidden="true">
-              <StarGlyph />
-              <StarGlyph />
-              <StarGlyph />
-              <StarGlyph />
-              <StarGlyph />
-            </span>
-            <span className="text-sm font-semibold text-foreground">{SITE.googleRating}</span>
-            <span className="text-sm text-foreground/50">{t.trustBar.googleRating}</span>
+          <div className="wb-hero-reveal mt-6 w-full max-w-xl" style={{ animationDelay: "200ms" }}>
+            <GoogleReviewsPanel variant="hero" />
           </div>
-          <p
-            className="wb-hero-reveal mt-1 text-xs uppercase tracking-widest text-foreground/45"
-            style={{ animationDelay: "240ms" }}
-          >
-            {t.hero.trustText}
-          </p>
 
           <p
             className="wb-hero-reveal mt-5 text-base font-semibold uppercase tracking-[0.25em] text-foreground/80 sm:text-lg"
@@ -163,24 +141,17 @@ export default function Hero() {
             {t.hero.lead}
           </p>
 
-          <div className="wb-hero-reveal mt-9 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: "400ms" }}>
-            <Link
-              ref={primaryMagnet}
-              href="/products"
-              className="group relative isolate overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-black transition-[background-position,box-shadow,transform] duration-500 ease-out hover:bg-right hover:shadow-[0_0_32px_-4px_rgba(244,103,15,0.65)] focus-visible:scale-105"
-            >
-              <span className="pointer-events-none absolute -inset-1 -z-10 rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-60" />
-              {t.hero.ctaPrimary}
-            </Link>
+          <div className="wb-hero-reveal mt-9 flex w-full justify-center sm:w-auto lg:justify-start" style={{ animationDelay: "400ms" }}>
             <a
-              ref={secondaryMagnet}
-              href={SITE.mapsUrl}
+              ref={telegramMagnet}
+              href={SITE.telegramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative isolate overflow-hidden rounded-full border border-white/25 bg-white/5 px-8 py-3.5 text-center text-sm font-semibold uppercase tracking-wide text-foreground backdrop-blur-sm transition-[border-color,color,box-shadow,transform] duration-300 ease-out hover:border-wb-orange/60 hover:text-wb-orange hover:shadow-[0_0_28px_-6px_rgba(244,103,15,0.45)] focus-visible:scale-105"
+              className="group relative isolate inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-full bg-wb-telegram px-4 py-4 text-center text-sm leading-tight font-bold min-[400px]:px-6 min-[400px]:text-[15px] uppercase tracking-wide text-white shadow-[0_12px_32px_-14px_rgba(42,171,238,0.7)] ring-1 ring-inset ring-white/15 transition-[background-color,box-shadow,transform] duration-300 ease-out hover:bg-wb-telegram-hover hover:shadow-[0_16px_40px_-14px_rgba(42,171,238,0.85)] focus-visible:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-wb-telegram-bright sm:w-auto sm:gap-3.5 sm:px-11 sm:py-5 sm:text-lg"
             >
-              <span className="pointer-events-none absolute inset-0 -z-10 -translate-x-full bg-gradient-to-r from-transparent via-wb-orange/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
-              {t.hero.ctaSecondary}
+              <span className="pointer-events-none absolute inset-0 -z-10 -translate-x-full bg-gradient-to-r from-transparent via-white/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full" />
+              <TelegramIcon variant="mono" className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
+              {t.hero.ctaTelegram}
             </a>
           </div>
 

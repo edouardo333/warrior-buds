@@ -21,7 +21,17 @@ import { STOREFRONT_PRODUCTS } from "./products";
 // v4 — bumped when Pack Man was reclassified from "disposable" to Wax Pens
 // (productType + copy change), so a persisted v3 payload doesn't keep the old
 // classification/wording.
-const PRODUCTS_KEY = "wb-shop-products-v4";
+//
+// v5 — bumped when the Pack Man / STLTH / cigarettes price tiers were cut
+// (Pack Man now Telegram-order only), so a persisted v4 payload doesn't keep
+// the removed 1/2-unit and 1/5-bag tiers.
+//
+// v6 — bumped when the four original accessories went from "price on request"
+// to their $3.50 price, so a persisted v5 payload doesn't keep them unpriced.
+//
+// v7 — bumped when Maserati Hash's price changed ($1,000 → $750 / 1 lb), so a
+// persisted v6 payload doesn't keep the stale Maserati pricing.
+const PRODUCTS_KEY = "wb-shop-products-v7";
 
 function uid(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -44,11 +54,25 @@ function loadJson<T>(key: string, fallback: () => T): T {
 // merged in by id rather than by bumping the key, so the persisted copy —
 // including any customer-written reviews — is kept, not wiped and reseeded.
 // Products already persisted are left exactly as stored.
+//
+// The reverse also applies: products removed from the seed (their ids are
+// retired in products.ts, never reused) are dropped from the persisted copy,
+// so a stale localStorage payload can never bring a removed product back.
+//
+// Image URLs are always taken from the seed, never the persisted copy: the
+// product photos moved from .png to .webp and the old files were deleted, so
+// a stored payload's image URLs would otherwise 404. The Telegram contact flag
+// is display-only config, so it is likewise always read from the seed.
 function withNewSeedProducts(stored: StorefrontProduct[]): StorefrontProduct[] {
   if (!Array.isArray(stored)) return STOREFRONT_PRODUCTS.map((p) => ({ ...p }));
-  const known = new Set(stored.map((p) => p.id));
+  const seedById = new Map(STOREFRONT_PRODUCTS.map((p) => [p.id, p]));
+  const current = stored.flatMap((p) => {
+    const seed = seedById.get(p.id);
+    return seed ? [{ ...p, images: seed.images, detailImages: seed.detailImages, telegramContact: seed.telegramContact }] : [];
+  });
+  const known = new Set(current.map((p) => p.id));
   const missing = STOREFRONT_PRODUCTS.filter((p) => !known.has(p.id)).map((p) => ({ ...p }));
-  return missing.length > 0 ? [...stored, ...missing] : stored;
+  return [...current, ...missing];
 }
 
 let products: StorefrontProduct[] = withNewSeedProducts(loadJson(PRODUCTS_KEY, () => STOREFRONT_PRODUCTS.map((p) => ({ ...p }))));

@@ -10,13 +10,23 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import { getProducts, subscribeProducts } from "@/data/shop/product-store";
+import { STOREFRONT_PRODUCTS } from "@/data/shop/products";
 import * as productEngine from "./product-engine";
 import type { StorefrontProduct } from "@/types/product";
 
-const EMPTY_PRODUCTS: StorefrontProduct[] = [];
+// Server (and hydration) snapshot: the static seed catalog, not an empty
+// array. An empty server snapshot made /products SSR its "no results" state
+// and every /products/[slug] SSR nothing at all between header and footer —
+// on phones the page stayed blank (footer right under the header) until JS
+// hydrated, then the whole catalog popped in. The seed is a stable module
+// constant identical on server and client, so hydration can't mismatch;
+// React then swaps to the persisted client store (getProducts) right after.
+function getServerProducts(): StorefrontProduct[] {
+  return STOREFRONT_PRODUCTS;
+}
 
 function useRawProducts(): StorefrontProduct[] {
-  return useSyncExternalStore(subscribeProducts, getProducts, () => EMPTY_PRODUCTS);
+  return useSyncExternalStore(subscribeProducts, getProducts, getServerProducts);
 }
 
 export function useProducts(filters: productEngine.ProductFilters = {}, sort: productEngine.ProductSort = "featured") {

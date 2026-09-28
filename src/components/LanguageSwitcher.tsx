@@ -8,7 +8,14 @@ const OPTIONS: { code: Locale; label: string }[] = [
   { code: "en", label: "EN" },
 ];
 
-export default function LanguageSwitcher({ className = "" }: { className?: string }) {
+export default function LanguageSwitcher({
+  className = "",
+  buttonClassName = "",
+}: {
+  className?: string;
+  // Extra classes per button, e.g. a 44px touch target in the mobile menu.
+  buttonClassName?: string;
+}) {
   const { locale, setLocale } = useLanguage();
 
   return (
@@ -28,7 +35,7 @@ export default function LanguageSwitcher({ className = "" }: { className?: strin
             type="button"
             onClick={() => setLocale(option.code)}
             aria-pressed={locale === option.code}
-            className={`transition-colors ${
+            className={`inline-flex items-center transition-colors ${buttonClassName} ${
               locale === option.code
                 ? "text-wb-orange"
                 : "text-foreground/60 hover:text-foreground"

@@ -21,8 +21,9 @@ export const SITE = {
   // ever changes.
   email: "contact@warriorbuds.ca",
   emailHref: "mailto:contact@warriorbuds.ca",
-  instagramUrl: "https://www.instagram.com/warriorbudscafe/",
+  instagramUrl: "https://www.instagram.com/warriorbuds.wtf/",
   linktreeUrl: "https://linktr.ee/mohawkvibez",
+  telegramUrl: "https://t.me/warriorbuddy",
   // Official Warrior Buds Dispensary Google Business listing — always link
   // here (not a generic street-address search) so "Get Directions" / map
   // CTAs open the real business profile with reviews, hours, and photos.

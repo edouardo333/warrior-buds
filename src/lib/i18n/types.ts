@@ -55,25 +55,15 @@ export type Dictionary = {
       faq: string;
       contact: string;
     };
-    visitStore: string;
+    joinUs: string;
     openMenu: string;
     closeMenu: string;
-    account: string;
-    login: string;
-    cart: string;
-    wishlist: string;
-    trackOrder: string;
-    cartItemsAria: (count: number) => string;
-  };
-  announcementBar: {
-    message: string;
   };
   hero: {
     kicker: string;
     tagline: string;
     lead: string;
-    ctaPrimary: string;
-    ctaSecondary: string;
+    ctaTelegram: string;
     finePrint: string;
     trustText: string;
   };
@@ -112,18 +102,6 @@ export type Dictionary = {
     };
     cta: string;
   };
-  // Homepage SEO/information accordion, placed between "Why Warrior Buds"
-  // and the "Ready to Visit" final CTA. Just the section chrome lives here —
-  // the actual accordion questions/answers (long-form, per data file
-  // convention) live in data/homepage-seo.ts, same split as t.faq vs
-  // data/faq.ts.
-  homeSeo: {
-    eyebrow: string;
-    title: string;
-    intro: string[];
-    expand: (title: string) => string;
-    collapse: (title: string) => string;
-  };
   homeFinalCta: {
     label: string;
     titlePrefix: string;
@@ -131,6 +109,17 @@ export type Dictionary = {
     subtitle: string;
     getDirections: string;
     callNow: string;
+  };
+  // Shared $250 minimum-order banner (MinimumOrderCTA) — rendered on both
+  // the homepage and /products. The heading is split around the amount so
+  // it can be emphasized, since EN puts it first ("$250 MINIMUM ORDER") and
+  // FR puts it last ("COMMANDE MINIMUM DE 250 $").
+  minimumOrderCta: {
+    titleBefore: string;
+    titleAmount: string;
+    titleAfter: string;
+    body: string;
+    telegramButton: string;
   };
   footer: {
     tagline: string;
@@ -144,6 +133,7 @@ export type Dictionary = {
     contactHeading: string;
     instagram: string;
     linktree: string;
+    telegram: string;
     ctaTitlePrefix: string;
     ctaTitleHighlight: string;
     ctaSubtitle: string;
@@ -151,7 +141,6 @@ export type Dictionary = {
     paymentMethodsHeading: string;
     paymentMethodsNote: string;
     copyright: (year: number) => string;
-    credit: string;
     privacyPolicy: string;
     terms: string;
     cookiePolicy: string;
@@ -271,6 +260,7 @@ export type Dictionary = {
       callNow: string;
       instagram: string;
       linktree: string;
+      telegram: string;
     };
     map: {
       title: string;
@@ -279,7 +269,6 @@ export type Dictionary = {
       eyebrow: string;
       title: string;
       description: string;
-      chatCta: string;
       emailCta: string;
     };
     form: {
@@ -369,314 +358,6 @@ export type Dictionary = {
       callNow: string;
     };
   };
-  auth: {
-    backToWebsite: string;
-    login: {
-      metaTitle: string;
-      metaDescription: string;
-      title: string;
-      subtitle: string;
-      email: string;
-      password: string;
-      submit: string;
-      submitting: string;
-      forgotPassword: string;
-      noAccount: string;
-      signUpLink: string;
-      errorInvalidCredentials: string;
-    };
-    signup: {
-      metaTitle: string;
-      metaDescription: string;
-      title: string;
-      subtitle: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      password: string;
-      marketingOptIn: string;
-      submit: string;
-      submitting: string;
-      haveAccount: string;
-      loginLink: string;
-      errorEmailTaken: string;
-    };
-    forgotPassword: {
-      metaTitle: string;
-      metaDescription: string;
-      title: string;
-      subtitle: string;
-      email: string;
-      submit: string;
-      backToLogin: string;
-      successTitle: string;
-      successMessage: string;
-      devTokenLabel: string;
-      continueToReset: string;
-      errorNotFound: string;
-    };
-    resetPassword: {
-      metaTitle: string;
-      metaDescription: string;
-      title: string;
-      subtitle: string;
-      token: string;
-      newPassword: string;
-      confirmPassword: string;
-      submit: string;
-      successTitle: string;
-      successMessage: string;
-      goToLogin: string;
-      errorInvalidToken: string;
-      errorMismatch: string;
-    };
-    verifyEmail: {
-      metaTitle: string;
-      metaDescription: string;
-      title: string;
-      subtitle: string;
-      token: string;
-      submit: string;
-      successTitle: string;
-      successMessage: string;
-      resend: string;
-      resent: string;
-      alreadyVerified: string;
-      errorInvalidToken: string;
-    };
-  };
-  account: {
-    nav: {
-      dashboard: string;
-      profile: string;
-      addresses: string;
-      paymentMethods: string;
-      orders: string;
-      wishlist: string;
-      settings: string;
-      logout: string;
-      backToSite: string;
-    };
-    guardTitle: string;
-    guardMessage: string;
-    guardCta: string;
-    dashboard: {
-      title: string;
-      welcomeBack: (name: string) => string;
-      recentOrders: string;
-      viewAllOrders: string;
-      noOrders: string;
-      shopNow: string;
-      quickLinks: string;
-    };
-    profile: {
-      title: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      save: string;
-      saved: string;
-    };
-    addresses: {
-      title: string;
-      addNew: string;
-      empty: string;
-      label: string;
-      fullName: string;
-      line1: string;
-      line2: string;
-      city: string;
-      province: string;
-      postalCode: string;
-      country: string;
-      phone: string;
-      setDefault: string;
-      defaultBadge: string;
-      edit: string;
-      delete: string;
-      save: string;
-      cancel: string;
-    };
-    paymentMethods: {
-      title: string;
-      addNew: string;
-      empty: string;
-      label: string;
-      provider: string;
-      setDefault: string;
-      defaultBadge: string;
-      delete: string;
-      save: string;
-      cancel: string;
-      interacHint: string;
-    };
-    orders: {
-      title: string;
-      empty: string;
-      shopNow: string;
-      orderNumber: string;
-      placedOn: string;
-      status: string;
-      total: string;
-      viewDetails: string;
-    };
-    settings: {
-      title: string;
-      marketingOptIn: string;
-      changePassword: string;
-      currentPassword: string;
-      newPassword: string;
-      save: string;
-      saved: string;
-      errorCurrentPassword: string;
-    };
-  };
-  promo: {
-    label: string;
-    placeholder: string;
-    apply: string;
-    applying: string;
-    remove: string;
-    appliedMessage: (code: string, amount: string) => string;
-    freeShippingMessage: (threshold: string) => string;
-    errorInvalid: string;
-    errorAlreadyRedeemed: string;
-    errorEmpty: string;
-    discountLabel: (code: string) => string;
-  };
-  cart: {
-    metaTitle: string;
-    title: string;
-    empty: string;
-    emptyCta: string;
-    product: string;
-    price: string;
-    quantity: string;
-    lineTotal: string;
-    remove: string;
-    subtotal: string;
-    shipping: string;
-    freeShipping: string;
-    tax: string;
-    total: string;
-    checkout: string;
-    continueShopping: string;
-    miniCartTitle: string;
-    viewCart: string;
-    itemsInCart: (count: number) => string;
-    // Cart-line meta text for a format-priced item (e.g. "Format: 14g") —
-    // shown under the product name in CartLineItem/MiniCart/ReviewStep. The
-    // label itself is never translated (types/product.ts's ProductFormat),
-    // only this surrounding phrase.
-    formatLabel: (label: string) => string;
-  };
-  wishlist: {
-    metaTitle: string;
-    title: string;
-    empty: string;
-    emptyCta: string;
-    addToCart: string;
-    remove: string;
-    moveToCart: string;
-  };
-  checkout: {
-    metaTitle: string;
-    title: string;
-    steps: {
-      shipping: string;
-      billing: string;
-      review: string;
-      payment: string;
-    };
-    identity: {
-      subtitle: string;
-      guestTitle: string;
-      guestSubtitle: string;
-      guestEmailLabel: string;
-      guestCta: string;
-      accountTitle: string;
-      accountSubtitle: string;
-      accountCta: string;
-      haveAccount: string;
-      loginLink: string;
-      benefitsTitle: string;
-      benefits: string[];
-      benefitsFooter: string;
-    };
-    shipping: {
-      title: string;
-      addNew: string;
-      useAddress: string;
-      method: string;
-      standard: string;
-      expedited: string;
-      pickup: string;
-      continueBtn: string;
-      noAddresses: string;
-    };
-    billing: {
-      title: string;
-      sameAsShipping: string;
-      continueBtn: string;
-    };
-    review: {
-      title: string;
-      items: string;
-      edit: string;
-      continueBtn: string;
-    };
-    payment: {
-      title: string;
-      choose: string;
-      demoBadge: string;
-      placeOrder: string;
-      placing: string;
-    };
-    confirmation: {
-      metaTitle: string;
-      title: string;
-      thankYou: (orderId: string) => string;
-      whatNext: string;
-      viewOrder: string;
-      continueShopping: string;
-    };
-    back: string;
-    emptyCartTitle: string;
-    emptyCartMessage: string;
-    emptyCartCta: string;
-  };
-  trackOrder: {
-    metaTitle: string;
-    metaDescription: string;
-    title: string;
-    subtitle: string;
-    orderNumber: string;
-    email: string;
-    submit: string;
-    notFound: string;
-  };
-  orderDetail: {
-    title: string;
-    orderNumber: string;
-    placedOn: string;
-    shippingMethod: string;
-    shippingMethods: { standard: string; expedited: string; pickup: string };
-    trackingNumber: string;
-    trackingPending: string;
-    items: string;
-    shippingAddress: string;
-    billingAddress: string;
-    paymentMethod: string;
-    orderComplete: string;
-    timeline: string;
-    total: string;
-    subtotal: string;
-    shippingCost: string;
-    tax: string;
-    discount: (code: string) => string;
-  };
   productCatalog: {
     metaTitle: string;
     metaDescription: string;
@@ -687,6 +368,7 @@ export type Dictionary = {
         showSubcategories: (name: string) => string;
         hideSubcategories: (name: string) => string;
         hoverHint: string;
+        allInCategory: string;
       };
       strain: string;
       allStrains: string;
@@ -704,17 +386,13 @@ export type Dictionary = {
       resultsCount: (count: number) => string;
     };
     card: {
-      addToCart: string;
       outOfStock: string;
       lowStock: string;
       startingFrom: (formattedPrice: string) => string;
       priceOnRequest: string;
+      boxPrice: (formattedPrice: string, quantity: number) => string;
     };
     detail: {
-      addToCart: string;
-      addedToCart: string;
-      addToWishlist: string;
-      removeFromWishlist: string;
       outOfStock: string;
       thc: string;
       cbd: string;
@@ -728,7 +406,6 @@ export type Dictionary = {
       noReviews: string;
       verifiedPurchase: string;
       backToShop: string;
-      trustSecureCheckout: string;
       trustInStorePickup: string;
       trustCustomerSupport: string;
       bulkPricingTitle: string;
@@ -741,9 +418,11 @@ export type Dictionary = {
       formatColumn: string;
       priceColumn: string;
       inStoreOnlyNotice: string;
-      selectFormatPrompt: string;
       priceOnRequestNotice: string;
       infoPricingTitle: string;
+      boxPriceCta: string;
+      telegramContact: string;
+      telegramContactAria: string;
       flavourProfile: string;
       flavour: string;
       flavourCount: (count: number) => string;
@@ -772,10 +451,6 @@ export type Dictionary = {
     onThisPage: string;
     backToTopLabel: string;
     lastUpdatedLabel: string;
-    contactEyebrow: string;
-    contactTitle: string;
-    contactSubtitle: string;
-    contactCta: string;
     todoLabel: string;
     privacy: LegalDocument;
     terms: LegalDocument;
@@ -803,7 +478,6 @@ export type Dictionary = {
       label: string;
       title: string;
       subtitle: string;
-      askButton: string;
       contactButton: string;
     };
   };

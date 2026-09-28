@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
-import BudGuardian from "@/components/bud-guardian/BudGuardianLoader";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -105,7 +104,6 @@ export default function RootLayout({
               "@type": "LocalBusiness",
               name: SITE.name,
               url: SITE.url,
-              telephone: SITE.phoneHref.replace(/^tel:/, ""),
               email: SITE.email,
               address: {
                 "@type": "PostalAddress",
@@ -115,13 +113,12 @@ export default function RootLayout({
                 postalCode: SITE.postalCode,
                 addressCountry: SITE.addressCountry,
               },
-              sameAs: [SITE.instagramUrl, SITE.linktreeUrl],
+              sameAs: [SITE.instagramUrl, SITE.linktreeUrl, SITE.telegramUrl],
             }),
           }}
         />
         <LanguageProvider>
           {children}
-          <BudGuardian />
         </LanguageProvider>
       </body>
     </html>

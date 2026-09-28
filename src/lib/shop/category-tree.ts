@@ -116,16 +116,20 @@ export const CATEGORY_TREE: CategoryNode[] = [
     label: { en: "Concentrates", fr: "Concentrés" },
     match: (p) => p.category === "concentrates",
     children: [
-      { id: "concentrates-budder", label: { en: "Budder", fr: "Budder" }, match: (p) => p.category === "concentrates" && /\bbudder\b/.test(searchableText(p)) },
+      // Budder / Distillates / Hash / Live Resin / Shatter: structured
+      // productType first (the 1 oz concentrates and the Hash products named
+      // without "Hash", e.g. AK-47, carry no description copy), then the
+      // original text signal.
+      { id: "concentrates-budder", label: { en: "Budder", fr: "Budder" }, match: (p) => p.category === "concentrates" && (p.productType === "budder" || /\bbudder\b/.test(searchableText(p))) },
       { id: "concentrates-caviar", label: { en: "Caviar", fr: "Caviar" }, match: (p) => p.category === "concentrates" && /\bcaviar\b/.test(searchableText(p)) },
       { id: "concentrates-crumble", label: { en: "Crumble", fr: "Crumble" }, match: (p) => p.category === "concentrates" && /\bcrumble\b/.test(searchableText(p)) },
       { id: "concentrates-diamonds", label: { en: "Diamonds", fr: "Diamants" }, match: (p) => p.category === "concentrates" && /(thca|diamonds?)\b/.test(searchableText(p)) },
-      { id: "concentrates-distillate", label: { en: "Distillate", fr: "Distillat" }, match: (p) => p.category === "concentrates" && /\bdistillate\b/.test(searchableText(p)) },
-      { id: "concentrates-hash", label: { en: "Hash", fr: "Hash" }, match: (p) => p.category === "concentrates" && /\bhash\b/.test(searchableText(p)) },
+      { id: "concentrates-distillate", label: { en: "Distillates", fr: "Distillats" }, match: (p) => p.category === "concentrates" && (p.productType === "distillate" || /\bdistillates?\b/.test(searchableText(p))) },
+      { id: "concentrates-hash", label: { en: "Hash", fr: "Hash" }, match: (p) => p.category === "concentrates" && (p.productType === "hash" || /\bhash\b/.test(searchableText(p))) },
       { id: "concentrates-kief", label: { en: "Kief", fr: "Kief" }, match: (p) => p.category === "concentrates" && /\bkief\b/.test(searchableText(p)) },
-      { id: "concentrates-live-resin", label: { en: "Live Resin", fr: "Live Resin" }, match: (p) => p.category === "concentrates" && /live resin/.test(searchableText(p)) },
+      { id: "concentrates-live-resin", label: { en: "Live Resin", fr: "Live Resin" }, match: (p) => p.category === "concentrates" && (p.productType === "live-resin" || /live resin/.test(searchableText(p))) },
       { id: "concentrates-rosin", label: { en: "Rosin", fr: "Rosin" }, match: (p) => p.category === "concentrates" && /\brosin\b/.test(searchableText(p)) },
-      { id: "concentrates-shatter", label: { en: "Shatter", fr: "Shatter" }, match: (p) => p.category === "concentrates" && /\bshatter\b/.test(searchableText(p)) },
+      { id: "concentrates-shatter", label: { en: "Shatter", fr: "Shatter" }, match: (p) => p.category === "concentrates" && (p.productType === "shatter" || /\bshatter\b/.test(searchableText(p))) },
       { id: "concentrates-sugar-wax", label: { en: "Sugar Wax", fr: "Sugar Wax" }, match: (p) => p.category === "concentrates" && /sugar wax/.test(searchableText(p)) },
       { id: "concentrates-terp-sauce", label: { en: "Terp Sauce", fr: "Terp Sauce" }, match: (p) => p.category === "concentrates" && /terp sauce/.test(searchableText(p)) },
       { id: "concentrates-wax", label: { en: "Wax", fr: "Wax" }, match: (p) => p.category === "concentrates" && /\bwax\b/.test(searchableText(p)) },
@@ -135,15 +139,22 @@ export const CATEGORY_TREE: CategoryNode[] = [
     id: "edibles",
     label: { en: "Edibles", fr: "Comestibles" },
     match: (p) => p.category === "edibles",
+    // Exactly two subcategories: Gummies and Drinks (THC syrups are Drinks).
+    // Structured productType first (the Twisted Extracts gummies carry no
+    // description copy), then a text signal. Each excludes the other's
+    // productType so no product is ever counted under both.
     children: [
-      { id: "edibles-baked", label: { en: "Baked Edibles", fr: "Comestibles cuits au four" }, match: (p) => p.category === "edibles" && /(baked|cookie|brownie|cake)/.test(searchableText(p)) },
-      { id: "edibles-candies", label: { en: "Candies", fr: "Bonbons" }, match: (p) => p.category === "edibles" && /(\bcandy\b|\bcandies\b|bonbon)/.test(searchableText(p)) },
-      { id: "edibles-chocolates", label: { en: "Chocolates", fr: "Chocolats" }, match: (p) => p.category === "edibles" && /chocolate/.test(searchableText(p)) },
-      { id: "edibles-gummies", label: { en: "Gummies", fr: "Gommes" }, match: (p) => p.category === "edibles" && /gumm(y|ies)/.test(searchableText(p)) },
-      { id: "edibles-capsules", label: { en: "Capsules", fr: "Capsules" }, match: (p) => p.category === "edibles" && /capsule/.test(searchableText(p)) },
-      { id: "edibles-drinks", label: { en: "Drinks", fr: "Boissons" }, match: (p) => p.category === "edibles" && /(drink|beverage|seltzer|soda)/.test(searchableText(p)) },
-      { id: "edibles-syrups", label: { en: "Syrups", fr: "Sirops" }, match: (p) => p.category === "edibles" && /syrup/.test(searchableText(p)) },
-      { id: "edibles-teas-cocoa", label: { en: "Teas / Cocoa", fr: "Thés / Cacao" }, match: (p) => p.category === "edibles" && /(\btea\b|\bteas\b|cocoa)/.test(searchableText(p)) },
+      {
+        id: "edibles-gummies",
+        label: { en: "Gummies", fr: "Gummies" },
+        match: (p) => p.category === "edibles" && p.productType !== "drinks" && (p.productType === "gummies" || /gumm(y|ies)/.test(searchableText(p))),
+      },
+      {
+        id: "edibles-drinks",
+        label: { en: "Drinks", fr: "Boissons" },
+        match: (p) =>
+          p.category === "edibles" && p.productType !== "gummies" && (p.productType === "drinks" || /(drink|beverage|seltzer|soda|syrup)/.test(searchableText(p))),
+      },
     ],
   },
   {
@@ -154,7 +165,19 @@ export const CATEGORY_TREE: CategoryNode[] = [
       {
         id: "accessories-papers",
         label: { en: "Papers", fr: "Papiers à rouler" },
-        match: (p) => p.category === "accessories" && /(rolling paper|filter tip|\bpapers?\b)/.test(searchableText(p)),
+        match: (p) =>
+          p.category === "accessories" &&
+          (p.productType === "rolling-papers" || p.productType === "filter-tips" || /(rolling paper|filter tip|\bpapers?\b)/.test(searchableText(p))),
+      },
+      {
+        id: "accessories-cigars",
+        label: { en: "Cigars", fr: "Cigares" },
+        match: (p) => p.category === "accessories" && p.productType === "cigars",
+      },
+      {
+        id: "accessories-lighters",
+        label: { en: "Lighters", fr: "Briquets" },
+        match: (p) => p.category === "accessories" && p.productType === "lighter",
       },
       {
         id: "accessories-grinders",
@@ -216,18 +239,25 @@ export const CATEGORY_TREE: CategoryNode[] = [
   },
   {
     id: "topicals",
-    label: { en: "Topicals", fr: "Topiques" },
+    label: { en: "Topicals", fr: "Produits topiques" },
     match: (p) => p.category === "topicals",
     children: [
       {
         id: "topicals-balms-salves",
         label: { en: "Balms & Salves", fr: "Baumes et onguents" },
-        match: (p) => p.category === "topicals" && /(balm|salve)/.test(searchableText(p)),
+        match: (p) => p.category === "topicals" && p.productType !== "bath-bomb" && /(balm|salve)/.test(searchableText(p)),
       },
       {
         id: "topicals-creams-lotions",
         label: { en: "Creams & Lotions", fr: "Crèmes et lotions" },
-        match: (p) => p.category === "topicals" && /(cream|lotion)/.test(searchableText(p)),
+        // Bath bombs are excluded so a scent name like "Coconut Cream" is never
+        // miscounted as a cream.
+        match: (p) => p.category === "topicals" && p.productType !== "bath-bomb" && /(cream|lotion)/.test(searchableText(p)),
+      },
+      {
+        id: "topicals-bath-bombs",
+        label: { en: "Bath Bombs", fr: "Bombes de bain" },
+        match: (p) => p.category === "topicals" && (p.productType === "bath-bomb" || /bath ?bombs?/.test(searchableText(p))),
       },
     ],
   },

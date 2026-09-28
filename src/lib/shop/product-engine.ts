@@ -134,6 +134,12 @@ export function formatPrice(amount: number, locale: Locale): string {
   return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(amount);
 }
 
+// Same CAD formatter as formatPrice, minus the ".00" for whole-dollar amounts
+// — used for official box prices ("$1,000" / "1 000 $").
+export function formatBoxPrice(amount: number, locale: Locale): string {
+  return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD", minimumFractionDigits: 0 }).format(amount);
+}
+
 export type ProductFilters = {
   // Selected node id from the Products page category mega-dropdown
   // (lib/shop/category-tree.ts) — may be a top-level parent (e.g.
@@ -157,7 +163,10 @@ export function filterProducts(products: StorefrontProduct[], filters: ProductFi
       // Flavour names are searchable too (e.g. "blue razz" finds the STLTH
       // TITAN MAX 50K product) — empty for every product without flavourGroups.
       const flavours = p.flavourGroups?.flatMap((g) => g.flavours).join(" ") ?? "";
-      if (q && !`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription} ${flavours}`.toLowerCase().includes(q)) return false;
+      // Category names in both locales (e.g. "Concentrates" / "Concentrés"),
+      // so a category word finds its products whatever the UI language.
+      const category = `${CATEGORY_LABELS[p.category].en} ${CATEGORY_LABELS[p.category].fr}`;
+      if (q && !`${p.name} ${p.brand ?? ""} ${p.grade ?? ""} ${p.shortDescription} ${flavours} ${category}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -190,7 +199,7 @@ const CATEGORY_LABELS: Record<ProductCategory, Record<Locale, string>> = {
   vapes: { fr: "Vapoteuses", en: "Vapes" },
   cbd: { fr: "CBD", en: "CBD" },
   accessories: { fr: "Accessoires", en: "Accessories" },
-  topicals: { fr: "Topiques", en: "Topicals" },
+  topicals: { fr: "Produits topiques", en: "Topicals" },
   mushrooms: { fr: "Champignons", en: "Mushrooms" },
   cigarettes: { fr: "Cigarettes", en: "Cigarettes" },
 };

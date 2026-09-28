@@ -19,7 +19,10 @@ export default function LearningCenterHero() {
           <p className="text-xs font-semibold uppercase tracking-[0.4em] text-wb-orange sm:text-sm">
             {t.learningCenter.hero.eyebrow}
           </p>
-          <h1 className="mt-4 font-display text-6xl tracking-wide text-foreground sm:text-7xl lg:text-8xl">
+          {/* Fluid size below sm: at a fixed 60px, FR "D'APPRENTISSAGE" (one
+              unbreakable word) is wider than a 320–390px phone. Reaches the
+              original text-6xl from ~460px up. */}
+          <h1 className="mt-4 text-balance font-display text-[clamp(2.5rem,13vw,3.75rem)] leading-none tracking-wide text-foreground sm:text-7xl lg:text-8xl">
             {t.learningCenter.hero.title}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-foreground/70 sm:text-lg">
