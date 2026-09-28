@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent } from "react";
-import { useSearchParams } from "next/navigation";
+import { memo, useEffect, useLayoutEffect, useMemo, useState, type MouseEvent } from "react";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
 import ShopCta from "./ShopCta";
@@ -11,20 +10,10 @@ import { useProducts } from "@/lib/shop/product-actions";
 import { findCategoryNode } from "@/lib/shop/category-tree";
 import type { ProductFilters as Filters, ProductSort } from "@/lib/shop/product-engine";
 
-// Reads ?category= and hands it to the catalog. useSearchParams makes the
-// statically prerendered /products bail out to client rendering up to the
-// nearest Suspense boundary — app/products/page.tsx therefore uses
-// <ProductCatalog /> (default filters) as that boundary's fallback, so the
-// prerendered HTML carries the real catalog instead of an empty page.
-export default function ProductCatalogView() {
-  const searchParams = useSearchParams();
-  return <ProductCatalog initialCategory={searchParams.get("category")} />;
-}
-
 // Cards rendered per batch — divisible by the 2/3/4-column grid so the last
 // row of every batch is full. Filtering/sorting always runs on the complete
 // catalog (useProducts); only how many matching cards are mounted is capped.
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 12;
 
 // Snapshot taken when a product card is clicked, consumed once when the
 // catalog remounts (Back from a product page) so the shopper returns to the
@@ -39,19 +28,18 @@ type ReturnState = {
   scrollY: number;
 };
 
-export function ProductCatalog({ initialCategory = null }: { initialCategory?: string | null }) {
+// Memoized (with visibleProducts below) so catalog state that doesn't change
+// the visible slice — e.g. the Back scroll restore — skips the grid entirely.
+const MemoProductGrid = memo(ProductGrid);
+
+export default function ProductCatalog() {
   const { t } = useLanguage();
-  // Homepage category cards (e.g. Topicals) can deep-link here via
-  // ?category=<node id> to open the catalog pre-filtered. Only used to seed
-  // the initial filter state — the dropdown filter logic itself is untouched.
-  const [filters, setFilters] = useState<Filters>(() =>
-    initialCategory && findCategoryNode(initialCategory) ? { categoryNode: initialCategory } : {}
-  );
+  const [filters, setFilters] = useState<Filters>({});
   const [sort, setSort] = useState<ProductSort>("featured");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [pendingScrollY, setPendingScrollY] = useState<number | null>(null);
   const products = useProducts(filters, sort);
-  const visibleProducts = products.slice(0, visibleCount);
+  const visibleProducts = useMemo(() => products.slice(0, visibleCount), [products, visibleCount]);
 
   const handleFiltersChange = (next: Filters) => {
     setFilters(next);
@@ -62,9 +50,16 @@ export function ProductCatalog({ initialCategory = null }: { initialCategory?: s
     setVisibleCount(PAGE_SIZE);
   };
 
-  // Restore the snapshot after mount (not in a state initializer) so the
-  // prerendered markup and first client render stay identical.
-  useEffect(() => {
+  // Seed browser-only state after mount (not in a state initializer) so the
+  // prerendered markup and first client render stay identical. A layout
+  // effect applies it before the first paint, so Back from a product (or a
+  // ?category= deep link) never flashes the default catalog first.
+  //
+  // ?category= is read from window.location here rather than through
+  // useSearchParams, which would make the static /products bail out to
+  // client rendering: the prerendered catalog would be thrown away and
+  // rebuilt from scratch (every card and image remounted) on each hard load.
+  useLayoutEffect(() => {
     let saved: ReturnState | null = null;
     try {
       const raw = sessionStorage.getItem(RETURN_STATE_KEY);
@@ -73,8 +68,15 @@ export function ProductCatalog({ initialCategory = null }: { initialCategory?: s
     } catch {
       saved = null;
     }
-    if (!saved || saved.search !== window.location.search) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore of a browser-only snapshot
+    if (!saved || saved.search !== window.location.search) {
+      // Homepage category cards (e.g. Topicals) can deep-link here via
+      // ?category=<node id> to open the catalog pre-filtered. Only used to
+      // seed the initial filter state — the dropdown filter logic is untouched.
+      const category = new URLSearchParams(window.location.search).get("category");
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of the browser URL
+      if (category && findCategoryNode(category)) setFilters({ categoryNode: category });
+      return;
+    }
     setFilters(saved.filters);
     setSort(saved.sort);
     setVisibleCount(Math.max(PAGE_SIZE, saved.visibleCount));
@@ -131,7 +133,7 @@ export function ProductCatalog({ initialCategory = null }: { initialCategory?: s
         <ProductFilters filters={filters} onFiltersChange={handleFiltersChange} sort={sort} onSortChange={handleSortChange} />
         <p className="mb-4 mt-6 text-sm text-foreground/50">{t.productCatalog.filters.resultsCount(products.length)}</p>
         <div onClickCapture={saveReturnState}>
-          <ProductGrid products={visibleProducts} />
+          <MemoProductGrid products={visibleProducts} />
         </div>
         {visibleProducts.length < products.length && (
           <div className="mt-10 flex flex-col items-center gap-3">

@@ -75,7 +75,16 @@ function withNewSeedProducts(stored: StorefrontProduct[]): StorefrontProduct[] {
   return [...current, ...missing];
 }
 
-let products: StorefrontProduct[] = withNewSeedProducts(loadJson(PRODUCTS_KEY, () => STOREFRONT_PRODUCTS.map((p) => ({ ...p }))));
+// Nothing persisted yet (the common case — only a review or checkout ever
+// writes PRODUCTS_KEY): use the seed array itself. Every mutation below builds
+// new arrays/objects and never mutates in place, so sharing it is safe — and
+// it keeps the client snapshot referentially identical to the server snapshot
+// (product-actions.ts's getServerProducts), so hydration doesn't re-render the
+// whole catalog a second time just because the array was copied.
+let products: StorefrontProduct[] = (() => {
+  const stored = loadJson<StorefrontProduct[] | null>(PRODUCTS_KEY, () => null);
+  return stored ? withNewSeedProducts(stored) : STOREFRONT_PRODUCTS;
+})();
 
 const listeners = new Set<() => void>();
 

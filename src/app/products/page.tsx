@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ProductCatalogView, { ProductCatalog } from "@/components/shop/ProductCatalogView";
+import ProductCatalog from "@/components/shop/ProductCatalogView";
 
 export const metadata: Metadata = {
   title: "Produits | Warrior Buds",
@@ -26,11 +25,9 @@ export default function ProductsPage() {
     <>
       <Navbar />
       <main className="flex-1">
-        {/* Fallback is the full catalog with default filters, not null: it's
-            what the prerendered HTML contains (see ProductCatalogView). */}
-        <Suspense fallback={<ProductCatalog />}>
-          <ProductCatalogView />
-        </Suspense>
+        {/* Prerendered with default filters and hydrated in place; ?category=
+            is applied client-side before first paint (see ProductCatalogView). */}
+        <ProductCatalog />
       </main>
       <Footer hideCta />
     </>

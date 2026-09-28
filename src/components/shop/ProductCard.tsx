@@ -1,6 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import SmartImage from "@/components/SmartImage";
 import ProductBadges from "./ProductBadges";
 import ProductImageFallback from "./ProductImageFallback";
@@ -9,8 +11,19 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { formatBoxPrice, formatPrice, getAverageRating, getCategoryLabel, getEffectivePrice, getInfoPricingFloor, getStockStatus, isFormatPriced, isOnSale, isPriceOnRequest } from "@/lib/shop/product-engine";
 import type { StorefrontProduct } from "@/types/product";
 
-export default function ProductCard({ product }: { product: StorefrontProduct }) {
+// Memoized: product objects come straight from the store and keep their
+// identity, so "Load more" or a search keystroke only renders cards that
+// actually changed instead of every mounted card.
+export default memo(function ProductCard({ product }: { product: StorefrontProduct }) {
   const { t, locale } = useLanguage();
+  const router = useRouter();
+  const href = `/products/${product.slug}`;
+  // Viewport prefetch is off for card links: each card entering the viewport
+  // fired ~4 route-segment requests, so scrolling the catalog on a phone
+  // queued hundreds of them in front of the product images. The route is
+  // prefetched on intent instead — pointerenter fires on desktop hover and
+  // on touch before the tap's click, focus covers keyboard users.
+  const prefetch = () => router.prefetch(href);
   const stockStatus = getStockStatus(product);
   const rating = getAverageRating(product);
   // Format-priced and "price on request" products show a "starting from"
@@ -31,13 +44,19 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
       : null;
 
   return (
-    <div className="wb-product-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.015] shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] hover:border-wb-orange/40 hover:shadow-[0_24px_60px_-24px_rgba(244,103,15,0.35)]">
-      <Link href={`/products/${product.slug}`} className={`relative block aspect-[4/5] overflow-hidden${portraitImage ? " bg-black" : ""}`}>
+    <div
+      onPointerEnter={prefetch}
+      onFocus={prefetch}
+      className="wb-product-card group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.015] shadow-[0_16px_40px_-24px_rgba(0,0,0,0.7)] hover:border-wb-orange/40 hover:shadow-[0_24px_60px_-24px_rgba(244,103,15,0.35)]"
+    >
+      <Link href={href} prefetch={false} className={`relative block aspect-[4/5] overflow-hidden${portraitImage ? " bg-black" : ""}`}>
+        {/* Last size: the grid stops growing at max-w-7xl, so wide screens
+            get a ~300px card, not a quarter of the viewport. */}
         <SmartImage
           src={product.images[0]?.url ?? ""}
           alt={product.images[0]?.alt ?? product.name}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 300px"
           className={`wb-product-card__image ${portraitImage ? "object-contain" : "object-cover"}`}
           fallback={<ProductImageFallback label={product.category} className="text-base" />}
         />
@@ -56,7 +75,8 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
           {product.brand ?? product.grade ?? getCategoryLabel(product.category, locale)}
         </p>
         <Link
-          href={`/products/${product.slug}`}
+          href={href}
+          prefetch={false}
           className="line-clamp-3 text-sm font-semibold leading-snug text-foreground transition-colors duration-250 hover:text-wb-orange"
         >
           {product.name}
@@ -90,4 +110,4 @@ export default function ProductCard({ product }: { product: StorefrontProduct })
       </div>
     </div>
   );
-}
+});
