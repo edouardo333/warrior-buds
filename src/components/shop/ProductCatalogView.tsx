@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductFilters from "./ProductFilters";
 import ProductGrid from "./ProductGrid";
@@ -21,6 +21,24 @@ export default function ProductCatalogView() {
   return <ProductCatalog initialCategory={searchParams.get("category")} />;
 }
 
+// Cards rendered per batch — divisible by the 2/3/4-column grid so the last
+// row of every batch is full. Filtering/sorting always runs on the complete
+// catalog (useProducts); only how many matching cards are mounted is capped.
+const PAGE_SIZE = 24;
+
+// Snapshot taken when a product card is clicked, consumed once when the
+// catalog remounts (Back from a product page) so the shopper returns to the
+// same filters, loaded batch and scroll position.
+const RETURN_STATE_KEY = "wb:products:return-state";
+
+type ReturnState = {
+  search: string;
+  filters: Filters;
+  sort: ProductSort;
+  visibleCount: number;
+  scrollY: number;
+};
+
 export function ProductCatalog({ initialCategory = null }: { initialCategory?: string | null }) {
   const { t } = useLanguage();
   // Homepage category cards (e.g. Topicals) can deep-link here via
@@ -30,7 +48,65 @@ export function ProductCatalog({ initialCategory = null }: { initialCategory?: s
     initialCategory && findCategoryNode(initialCategory) ? { categoryNode: initialCategory } : {}
   );
   const [sort, setSort] = useState<ProductSort>("featured");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [pendingScrollY, setPendingScrollY] = useState<number | null>(null);
   const products = useProducts(filters, sort);
+  const visibleProducts = products.slice(0, visibleCount);
+
+  const handleFiltersChange = (next: Filters) => {
+    setFilters(next);
+    setVisibleCount(PAGE_SIZE);
+  };
+  const handleSortChange = (next: ProductSort) => {
+    setSort(next);
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  // Restore the snapshot after mount (not in a state initializer) so the
+  // prerendered markup and first client render stay identical.
+  useEffect(() => {
+    let saved: ReturnState | null = null;
+    try {
+      const raw = sessionStorage.getItem(RETURN_STATE_KEY);
+      sessionStorage.removeItem(RETURN_STATE_KEY);
+      if (raw) saved = JSON.parse(raw) as ReturnState;
+    } catch {
+      saved = null;
+    }
+    if (!saved || saved.search !== window.location.search) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time restore of a browser-only snapshot
+    setFilters(saved.filters);
+    setSort(saved.sort);
+    setVisibleCount(Math.max(PAGE_SIZE, saved.visibleCount));
+    setPendingScrollY(saved.scrollY);
+  }, []);
+
+  // Scroll once the restored batch has rendered and the page is tall enough.
+  useEffect(() => {
+    if (pendingScrollY === null) return;
+    const id = requestAnimationFrame(() => {
+      window.scrollTo({ top: pendingScrollY, behavior: "instant" });
+      setPendingScrollY(null);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [pendingScrollY]);
+
+  const saveReturnState = (event: MouseEvent<HTMLDivElement>) => {
+    const link = (event.target as HTMLElement).closest("a[href^='/products/']");
+    if (!link) return;
+    const state: ReturnState = {
+      search: window.location.search,
+      filters,
+      sort,
+      visibleCount,
+      scrollY: window.scrollY,
+    };
+    try {
+      sessionStorage.setItem(RETURN_STATE_KEY, JSON.stringify(state));
+    } catch {
+      // Storage unavailable (private mode) — Back simply starts fresh.
+    }
+  };
 
   return (
     <div className="relative isolate overflow-hidden">
@@ -52,9 +128,25 @@ export function ProductCatalog({ initialCategory = null }: { initialCategory?: s
           <h1 className="mt-3 font-display text-4xl tracking-wide text-foreground sm:text-5xl">{t.nav.links.products}</h1>
         </div>
         <MinimumOrderCTA className="mb-10" />
-        <ProductFilters filters={filters} onFiltersChange={setFilters} sort={sort} onSortChange={setSort} />
+        <ProductFilters filters={filters} onFiltersChange={handleFiltersChange} sort={sort} onSortChange={handleSortChange} />
         <p className="mb-4 mt-6 text-sm text-foreground/50">{t.productCatalog.filters.resultsCount(products.length)}</p>
-        <ProductGrid products={products} />
+        <div onClickCapture={saveReturnState}>
+          <ProductGrid products={visibleProducts} />
+        </div>
+        {visibleProducts.length < products.length && (
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <p className="text-xs text-foreground/50">
+              {t.productCatalog.filters.showingCount(visibleProducts.length, products.length)}
+            </p>
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-wb-orange/40 bg-white/[0.04] px-8 py-3 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-wb-orange hover:bg-wb-orange/10 hover:text-wb-orange"
+            >
+              {t.productCatalog.filters.loadMore}
+            </button>
+          </div>
+        )}
         <ShopCta />
       </div>
     </div>

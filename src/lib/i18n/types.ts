@@ -384,6 +384,8 @@ export type Dictionary = {
       clear: string;
       noResults: string;
       resultsCount: (count: number) => string;
+      loadMore: string;
+      showingCount: (shown: number, total: number) => string;
     };
     card: {
       outOfStock: string;

@@ -390,6 +390,8 @@ const en: Dictionary = {
       clear: "Clear Filters",
       noResults: "No products match your filters.",
       resultsCount: (count) => `${count} product${count === 1 ? "" : "s"}`,
+      loadMore: "Load More",
+      showingCount: (shown, total) => `Showing ${shown} of ${total}`,
     },
     card: {
       outOfStock: "Out of Stock",

@@ -391,6 +391,8 @@ const fr: Dictionary = {
       clear: "Réinitialiser les filtres",
       noResults: "Aucun produit ne correspond à vos filtres.",
       resultsCount: (count) => `${count} produit${count === 1 ? "" : "s"}`,
+      loadMore: "Voir plus",
+      showingCount: (shown, total) => `${shown} sur ${total} affichés`,
     },
     card: {
       outOfStock: "Rupture de stock",

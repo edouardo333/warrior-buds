@@ -1,9 +1,7 @@
 "use client";
 
-import { MapPin } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import StoreTelegramButton from "@/components/StoreTelegramButton";
-import { SITE } from "@/lib/site";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ShopCta() {
@@ -24,15 +22,6 @@ export default function ShopCta() {
         <p className="mt-4 text-foreground/60">{cta.subtitle}</p>
 
         <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row sm:flex-wrap">
-          <a
-            href={SITE.mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-wb-red via-wb-orange to-wb-yellow bg-[length:200%_100%] bg-left px-8 py-3.5 text-sm font-semibold uppercase tracking-wide text-black transition-[background-position,box-shadow,transform] duration-500 ease-out hover:-translate-y-1 hover:scale-105 hover:bg-right hover:shadow-[0_0_32px_-4px_rgba(244,103,15,0.65)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100"
-          >
-            <MapPin className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" strokeWidth={2} />
-            {cta.getDirections}
-          </a>
           <StoreTelegramButton />
         </div>
       </Reveal>

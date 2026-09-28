@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev", "--", "--webpack"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "warrior-buds-turbopack",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
     }
   ]
 }
