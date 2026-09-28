@@ -733,8 +733,13 @@ body {
     box-shadow 250ms ease-out;
 }
 
-.wb-product-card:hover {
-  transform: translateY(-4px);
+/* Hover effects gated to real hover devices: on touch, a tap sets a sticky
+   :hover that started the lift, the 500ms image zoom and a repaint-per-frame
+   shadow transition at the exact moment the product-detail navigation began. */
+@media (hover: hover) {
+  .wb-product-card:hover {
+    transform: translateY(-4px);
+  }
 }
 
 .wb-product-card::after {
@@ -758,16 +763,18 @@ body {
   pointer-events: none;
 }
 
-.wb-product-card:hover::after {
-  opacity: 1;
-}
-
 .wb-product-card__image {
   transition: transform 500ms ease-out;
 }
 
-.wb-product-card:hover .wb-product-card__image {
-  transform: scale(1.06);
+@media (hover: hover) {
+  .wb-product-card:hover::after {
+    opacity: 1;
+  }
+
+  .wb-product-card:hover .wb-product-card__image {
+    transform: scale(1.06);
+  }
 }
 
 /* Shop — custom select chevron rotation on focus */
@@ -794,6 +801,18 @@ body {
   }
   .wb-hero-zoom {
     animation: none;
+  }
+  /* Shop glows (catalog, product detail, shop CTA): a 120–140px
+     filter: blur() on a ~300px blob renders into a ~1000px offscreen
+     surface each (≈38M device px across the detail page at DPR 3) that the
+     GPU re-rasterizes on every /products ⇄ /products/[slug] navigation —
+     the mobile freeze. A radial mask gives the same faint 10–20% glow with
+     no convolution pass. */
+  .wb-glow-soft {
+    filter: none;
+    scale: 2;
+    -webkit-mask-image: radial-gradient(closest-side, rgb(0 0 0 / 0.55), transparent);
+    mask-image: radial-gradient(closest-side, rgb(0 0 0 / 0.55), transparent);
   }
 }
 

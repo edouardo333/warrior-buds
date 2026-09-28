@@ -137,9 +137,9 @@ export default function ProductDetail({ product }: { product: StorefrontProduct 
     <div className="relative isolate overflow-hidden">
       <div className="absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_top,_#1a0f08_0%,_#050403_45%,_#000000_100%)]" />
       <div className="absolute inset-0 -z-20 bg-noise opacity-[0.035]" />
-      <div className="pointer-events-none absolute -top-20 left-[8%] -z-10 h-72 w-72 animate-pulse-glow rounded-full bg-wb-red/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-20 left-[8%] -z-10 h-72 w-72 animate-pulse-glow rounded-full bg-wb-red/10 blur-[120px] wb-glow-soft" />
       <div
-        className="pointer-events-none absolute top-1/4 right-[4%] -z-10 h-80 w-80 animate-pulse-glow rounded-full bg-wb-orange/10 blur-[140px]"
+        className="pointer-events-none absolute top-1/4 right-[4%] -z-10 h-80 w-80 animate-pulse-glow rounded-full bg-wb-orange/10 blur-[140px] wb-glow-soft"
         style={{ animationDelay: "1s" }}
       />
 
